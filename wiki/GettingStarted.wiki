@@ -21,7 +21,7 @@ To parse the {{{string[] args}}} from your Main() method to the class, call
 {{{
   public static void Main(string[] args)
   {
-    MyArgs parsedArgs = MiP.ShellArgs.Parser.Parse<MyArgs>(args);
+    MyArgs parsedArgs = Parser.Parse<MyArgs>(args);
   }
 }}}
 
