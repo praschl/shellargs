@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{72442C72-19A6-4FF2-93F8-679A5139DC64}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MiP.ShellArgs</RootNamespace>
+    <AssemblyName>MiP.ShellArgs</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>..\Parser.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Debug\MiP.ShellArgs.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>..\Parser.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
+    <DocumentationFile>bin\Release\MiP.ShellArgs.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AutoWireAttributes\AliasesAttribute.cs" />
+    <Compile Include="Fluent\AutoWireOptionBuilder.cs" />
+    <Compile Include="Fluent\AutoWireOptionCustomizer.cs" />
+    <Compile Include="OptionCollectionExtensions.cs" />
+    <Compile Include="ParsingContext.cs" />
+    <Compile Include="IAutoWireOptionCustomizer.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="IAutoWireOptionBuilder.cs" />
+    <Compile Include="AutoWireAttributes\IgnoreOptionAttribute.cs" />
+    <Compile Include="Implementation\PropertySetter.cs" />
+    <Compile Include="Implementation\ValueSetEventArgs.cs" />
+    <Compile Include="IOptionBuilder.cs" />
+    <Compile Include="IParser.cs" />
+    <Compile Include="IParserConfigurator.cs" />
+    <Compile Include="IParserResult.cs" />
+    <Compile Include="Fluent\OptionBuilder.cs" />
+    <Compile Include="AutoWireAttributes\OptionAttribute.cs" />
+    <Compile Include="AutoWireAttributes\ValueDescriptionAttribute.cs" />
+    <Compile Include="Implementation\ParseEventArgs.cs" />
+    <Compile Include="Fluent\ParserConfigurator.cs" />
+    <Compile Include="ParserExtensions.cs" />
+    <Compile Include="Fluent\ParserResult.cs" />
+    <Compile Include="AutoWireAttributes\PositionAttribute.cs" />
+    <Compile Include="Parser.cs" />
+    <Compile Include="ParserInitializationException.cs" />
+    <Compile Include="ParserSettings.cs" />
+    <Compile Include="ParsingException.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AutoWireAttributes\RequiredAttribute.cs" />
+    <Compile Include="StringConversion\IStringConverter.cs" />
+    <Compile Include="StringConversion\IStringParser.cs" />
+    <Compile Include="StringConversion\IStringParserProvider.cs" />
+    <Compile Include="StringConversion\StringConverter.cs" />
+    <Compile Include="StringConversion\StringParser.cs" />
+    <Compile Include="Implementation\Reflection\BooleanPropertySetter.cs" />
+    <Compile Include="Implementation\Reflection\CollectionPropertySetter.cs" />
+    <Compile Include="Implementation\Reflection\DefaultPropertySetter.cs" />
+    <Compile Include="Implementation\DelegatingPropertySetter.cs" />
+    <Compile Include="Implementation\HelpGenerator.cs" />
+    <Compile Include="Implementation\IPropertySetter.cs" />
+    <Compile Include="Implementation\OptionDescription.cs" />
+    <Compile Include="Implementation\Reflection\PropertyReflector.cs" />
+    <Compile Include="Implementation\OptionValidator.cs" />
+    <Compile Include="Implementation\TypeExtensions.cs" />
+    <Compile Include="Implementation\Argument.cs" />
+    <Compile Include="Implementation\ArgumentFactory.cs" />
+    <Compile Include="Implementation\OptionDefinition.cs" />
+    <Compile Include="Implementation\Token.cs" />
+    <Compile Include="Implementation\TokenConverter.cs" />
+    <Compile Include="StringConversion\StringToBoolParser.cs" />
+    <Compile Include="StringConversion\StringToDateTimeParser.cs" />
+    <Compile Include="StringConversion\StringToTimeSpanParser.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TODOs.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
