@@ -1,0 +1,29 @@
+#summary Types supported by the Parser, and how to add support for custom types.
+= Types supported by the parser =
+By default, the parser supports all types which can be converted by {{{Convert.ChangeType(object value, Type conversionType)}}}.
+
+== System types ==
+This includes the following types
+  * System.String
+  * System.Char
+  * System.Int16
+  * System.Int32
+  * System.Int64
+  * System.UInt16
+  * System.UInt32
+  * System.UInt64
+  * System.Boolean
+  * System.Single
+  * System.Double
+
+== Enums ==
+The parser can convert Enums from numbers or the Enum names (case insensitive). {{{[Flags]}}} enums are also supported and can be parsed from comma separated strings.
+
+== Nullable`<T>` ==  
+All value types may also be used with {{{Nullable<T>}}}, this does NOT affect if a generated option is required.
+
+== Custom types ==
+To add support from custom types
+  * deriving from {{{MiP.ShellArgs.StringConversion.StringParser<TTarget>}}} (recommended) or 
+  * implement {{{MiP.ShellArgs.StringConversion.IStringParser<out TTarget>}}}
+  * add the type or an instance of it to the {{{MiP.ShellArgs.ParserSettings}}}

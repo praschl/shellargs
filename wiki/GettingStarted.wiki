@@ -1,6 +1,6 @@
 #summary How to get started
 = Getting started =
-First download the latest package, unzip it, and add a reference to MiP.ShellArgs.dll to your project.
+First download the latest package, unzip it, and add a reference to MiP.!ShellArgs.dll to your project.
 
 == Most simplistic way to parse arguments to a class =
 === Define the argument container ===

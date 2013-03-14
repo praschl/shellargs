@@ -1,4 +1,4 @@
-﻿move to google code.
+﻿Add support for converting with TypeDescriptor.
 
 Write a text documentation.
 
