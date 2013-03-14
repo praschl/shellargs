@@ -3,7 +3,6 @@
 First download the latest package, unzip it, and add a reference to MiP.ShellArgs.dll to your project.
 
 == Most simplistic way to parse arguments to a class =
-
 === Define the argument container ===
 Create a class and create a property for each option you want to make available to the user:
 {{{
@@ -48,4 +47,4 @@ If you just want to try it out from your tests, call it like this
   }
 }}}
 
-The arguments will be parsed to an instance of !MyArgs, and contain the values.
+The arguments will be parsed to an instance of {{{MyArgs}}}, and contain the values.
