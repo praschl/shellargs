@@ -17,13 +17,17 @@ This includes the following types
   * System.Double
 
 == Enums ==
-The parser can convert Enums from numbers or the Enum names (case insensitive). {{{[Flags]}}} enums are also supported and can be parsed from comma separated strings.
+The parser can convert Enums from numbers or the Enum names (case insensitive). {{{[Flags]}}} enums are supported and can be parsed from comma separated strings.
 
 == Nullable`<T>` ==  
-All value types may also be used with {{{Nullable<T>}}}, this does NOT affect if a generated option is required.
+All value types may be used with {{{Nullable<T>}}}, this does NOT affect if a generated option is required.
 
 == Custom types ==
 To add support from custom types
-  * deriving from {{{MiP.ShellArgs.StringConversion.StringParser<TTarget>}}} (recommended) or 
+  * derive from {{{MiP.ShellArgs.StringConversion.StringParser<TTarget>}}} (recommended) or 
   * implement {{{MiP.ShellArgs.StringConversion.IStringParser<out TTarget>}}}
   * add the type or an instance of it to the {{{MiP.ShellArgs.ParserSettings}}}
+
+The easiest way is to derive from {{{StringParser<TTarget>}}}. There is only the {{{ValueDescription}}} property and the {{{TTarget Parse(string value)}}} method to override.
+
+{{{ValueDescription}}} may return null. If it does not, it's value will take precedence over the default value description. The description can still be overridden with the {{{[ValueDescriptionAttribute]}}} or the {{{ValueDescription(string)}}} method of the fluent api.

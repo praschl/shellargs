@@ -8,7 +8,7 @@ When you add a container class to the parser, options are automatically generate
   
 Getters and setters may be private, protected or internal. If the property's type implements {{{ICollection<T>}}}, you may completely remove the setter, in which case the property must be initialized to an empty collection by the constructor.
 
-The property may be of any .NET type. The Parser supports many of the [SupportedTypes standard .NET types], enums and {{{Nullable<T>}}}. [SupportForCustomTypes Support for custom types] is easy to add.
+The property may be of any .NET type. The Parser supports many of the [SupportedTypes standard .NET types], enums and {{{Nullable<T>}}}. [SupportedTypes#Custom_types Support for custom types] is easy to add.
 
 == Attributes ==
 The generated options can be customized by attaching the following .NET attributes to the properties
