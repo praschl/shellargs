@@ -295,6 +295,15 @@ namespace MiP.ShellArgs.Tests
             Parser.Parse(new OptionalStringProperties(), new ParserSettings(), new [] {"-S1","1"});
         }
 
+        [TestMethod]
+        public void CanUsePrivateProperties()
+        {
+            var container = Parser.Parse<PrivatePropertyContainer>("-Value", "Hello");
+
+            Assert.IsNotNull(container);
+            Assert.AreEqual("Hello", container.GetValue());
+        }
+
         #region Classes used by Test
 
         public class OptionalStringProperties
@@ -502,6 +511,16 @@ namespace MiP.ShellArgs.Tests
         public class NumberOption
         {
             public int Number { get; set; }
+        }
+
+        internal class PrivatePropertyContainer
+        {
+            private string Value { get; set; }
+
+            public string GetValue()
+            {
+                return Value;
+            }
         }
 
         #endregion

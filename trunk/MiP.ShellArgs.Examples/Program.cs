@@ -14,6 +14,7 @@ namespace MiP.ShellArgs.Examples
             TwoInstancesGeneric();
             TwoExistingInstances();
             FluentWithOption();
+            GettingStartedMain();
         }
 
         private static void Simple()
@@ -105,6 +106,16 @@ namespace MiP.ShellArgs.Examples
                               }))
                 //
                 .Parse("-hello", "1");
+        }
+
+        private static void GettingStartedMain(params string[] args)
+        {
+            MyArgs p = Parser.Parse<MyArgs>(args);
+
+            Console.WriteLine("Gender: {0}", p.Gender);
+            Console.WriteLine("Name: {0}", p.Name);
+            Console.WriteLine("Birthday: {0}", p.DayOfBirth);
+            Console.WriteLine("Weight: {0}", p.Weight);
         }
     }
 
