@@ -4,17 +4,17 @@ By default, the parser supports all types which can be converted by {{{Convert.C
 
 == System types ==
 This includes the following types
-  * System.String
-  * System.Char
-  * System.Int16
-  * System.Int32
-  * System.Int64
-  * System.UInt16
-  * System.UInt32
-  * System.UInt64
-  * System.Boolean
-  * System.Single
-  * System.Double
+  * {{{System.String}}}
+  * {{{System.Char}}}
+  * {{{System.Int16}}}
+  * {{{System.Int32}}}
+  * {{{System.Int64}}}
+  * {{{System.UInt16}}}
+  * {{{System.UInt32}}}
+  * {{{System.UInt64}}}
+  * {{{System.Boolean}}}
+  * {{{System.Single}}}
+  * {{{System.Double}}}
 
 == Enums ==
 The parser can convert Enums from numbers or the Enum names (case insensitive). {{{[Flags]}}} enums are supported and can be parsed from comma separated strings.
