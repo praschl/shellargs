@@ -58,8 +58,6 @@ namespace MiP.ShellArgs.Tests
 
         private class MyParser : StringParser<int>
         {
-            public override string ValueDescription { get { return "int"; } }
-
             public override int Parse(string value)
             {
                 return 4711;
