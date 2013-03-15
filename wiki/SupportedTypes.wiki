@@ -1,4 +1,5 @@
 #summary Types supported by the Parser, and how to add support for custom types.
+#labels Featured
 = Types supported by the parser =
 By default, the parser supports all types which can be converted by {{{Convert.ChangeType(object value, Type conversionType)}}}.
 
