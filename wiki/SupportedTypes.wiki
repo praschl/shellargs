@@ -26,7 +26,7 @@ The parser can convert Enums from numbers or the Enum names (case insensitive). 
 All value types may be used with {{{Nullable<T>}}}, this does NOT affect if a generated option is required.
 
 == Collections ==
-Collections of any type are supported as long as ICollection<T> is implemented and {{{T}}} can be parsed. The type of the property may be a concrete type of a collection or just {{{ICollection<T>}}}. If the property has a setter and is not initialized to an instance of the collection, the parser will try to create an instance. The parser can not create an instance for abstract types or types which have no default constructor. In these cases, initialize the property in the constructor of the container.
+Collections of any type are supported as long as {{{ICollection<T>}}} is implemented and {{{T}}} can be parsed. The type of the property may be a concrete type of a collection or just {{{ICollection<T>}}}. If the property has a setter and is not initialized to an instance of the collection, the parser will try to create an instance. The parser can not create an instance for abstract types or types which have no default constructor. In these cases, initialize the property in the constructor of the container.
 
 == Custom types ==
 To add support from custom types
@@ -42,9 +42,6 @@ The easiest way is to derive from {{{StringParser<TTarget>}}}. There is only the
 
 == Predefined Stringparsers ==
 The following string parsers are predefined and always added to the parser:
-* {{{StringToBoolParser}}}
-  Adds the possibility to parse "+" to true and "-" to false.
-
-* {{{StringToDateTimeParser}}}
-* {{{StringToTimeSpanParser}}}
-  These two add the possibility to parse to {{{System.DateTime}}} and {{{System.TimeSpan}}}.
+|| {{{StringToBoolParser}}} || Can also parse "+" to true and "-" to false) ||
+|| {{{StringToDateTimeParser}}} || Parses to !DateTime ||
+|| {{{StringToTimeSpanParser}}} || Parses to !TimeSpan ||
