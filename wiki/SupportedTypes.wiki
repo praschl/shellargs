@@ -42,9 +42,9 @@ The easiest way is to derive from {{{StringParser<TTarget>}}}. There is only the
 
 == Predefined Stringparsers ==
 The following string parsers are predefined and always added to the parser:
-* StringToBoolParser
+* {{{StringToBoolParser}}}
   Adds the possibility to parse "+" to true and "-" to false.
 
-* StringToDateTimeParser
-* StringToTimeSpanParser
+* {{{StringToDateTimeParser}}}
+* {{{StringToTimeSpanParser}}}
   These two add the possibility to parse to {{{System.DateTime}}} and {{{System.TimeSpan}}}.
