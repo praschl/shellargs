@@ -99,11 +99,17 @@ If you want to know when an option was parsed, subscribe a handler with this cod
 {{{
   Parser parser = new Parser()
          .AutoWire<MyArgs>(
-		 b => b.WhenParsed(x => x.Input)  // after parsing a value for the "in" option
-		       .Do(pc => DoSomething(pc)) // call DoSomething with the ParsingContext
-			   .WhenParsed("out")         // after parsing a value for the "out" option
-			   .Do(pc => { Console.WriteLine(pc.Container.Value); })
-			   );
+
+               // after parsing a value for the "in" option
+         b => b.WhenParsed(x => x.Input)  
+
+               // call DoSomething with the ParsingContext
+               .Do(pc => DoSomething(pc)) 
+
+               // after parsing a value for the "out" option
+               .WhenParsed("out")
+               .Do(pc => { Console.WriteLine(pc.Container.Value); })
+               );
 }}}
 
 This will call {{{DoSomething(ParsingContext pc}}} when a value for the option was parsed and set to the property. If the property is not accessible from where you create the parser because it is {{{private/internal/protected}}}, you can also pass the options name as a string, but I recommend using the {{{Expression<T>}}} overload, because it makes refactor/rename easier and safer.
@@ -113,13 +119,17 @@ In case your property is a collection, you need to use the extension method {{{I
 {{{
   Parser parser = new Parser()
          .AutoWire<MyArgs>(
-		 b => b.WhenParsed(x => x.Numbers.CurrentValue()) // after parsing a value for the Numbers property and adding it to the collection
-		       .Do(pc => DoSomething(pc))                 // call DoSomething with the ParsingContext
-			   );
+
+                // after parsing a value for the Numbers property and adding it to the collection
+         b => b.WhenParsed(x => x.Numbers.CurrentValue()) 
+               
+               // call DoSomething with the ParsingContext
+               .Do(pc => DoSomething(pc))
+               );
 }}}
 
 === !ParsingContext ===
 The {{{class ParsingContext<TContainer, TArgument>}}} has the following properties
-  || {{{TContainer Container}}} || Access to the container for which the handler is called ||
-  || {{{string Option}}} || Name of the parsed option ||
-  || {{{TValue Value}}} || Value which was parsed from the args ||
+|| {{{TContainer Container}}} || Access to the container for which the handler is called ||
+|| {{{string Option}}} || Name of the parsed option ||
+|| {{{TValue Value}}} || Value which was parsed from the args ||
