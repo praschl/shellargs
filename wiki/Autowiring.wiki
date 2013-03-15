@@ -1,4 +1,5 @@
 #summary How to automatically create options from container classes and how to customize them
+#labels Featured
 = Autowiring container classes to create options =
 == Introduction ==
 Its not necessary to create each option manually with the fluent api, instead set up a class with properties, add some attributes and your options can be created automatically.
