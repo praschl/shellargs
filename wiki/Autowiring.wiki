@@ -83,7 +83,7 @@ The following overloads are available:
 }}}
 
 You can either let the parser create an instance of your container class or create it yourself (if you want to set some defaults).
-The other overloads let you specify an instance of [ParserSettings {{{ParserSettings}}}] which is used to change the parsers behavior.
+The other overloads let you specify an instance of ParserSettings which is used to change the parsers behavior.
 
 == Fluent api ==
 === Adding the container ===
