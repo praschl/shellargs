@@ -9,7 +9,7 @@ namespace MiP.ShellArgs.StringConversion
         /// <summary>
         /// Gets a text describing the intent of the value in help.
         /// </summary>
-        public abstract string ValueDescription { get; }
+        public virtual string ValueDescription { get { return null; } }
 
         /// <summary>
         /// Parses the string to &lt;TTarget&gt;

@@ -1,6 +1,20 @@
-﻿Add support for converting with TypeDescriptor.
+﻿Documentation:
+# Settings
+# Fluent Api
+# Result
+# Help
 
-Write a text documentation.
+{
+    OverrideExistingOptions() 
+        which allows to override options instead of throwing an error on duplicate option names
+    ContinuePositions() 
+        which appends positional options to options which have been created with a previous call to AutoWire()
+    
+    if possible, both methods should be callable before and after calls to  WithOption
+    document both in Autowiring.wiki
+}
+
+Add support for converting with TypeDescriptor.
 
 Support for Dictionary <string, AnyType>
 {

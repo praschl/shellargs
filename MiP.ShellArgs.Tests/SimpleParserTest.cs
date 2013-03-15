@@ -447,8 +447,6 @@ namespace MiP.ShellArgs.Tests
 
         public class StringToMyStringParser : StringParser<MyString>
         {
-            public override string ValueDescription { get { return "myString"; } }
-
             public override MyString Parse(string value)
             {
                 return new MyString
