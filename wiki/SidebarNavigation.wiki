@@ -1,5 +1,5 @@
   * [GettingStarted Getting started]
-  * [AutoWiring Autowiring]
+  * [Autowiring Autowiring]
   * [PositionalOptions Positional options]
   * [SupportedTypes Supported Types]
     * [SupportedTypes#Custom_types Custom types]
