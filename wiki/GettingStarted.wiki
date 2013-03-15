@@ -1,4 +1,5 @@
 #summary How to get started
+#labels Featured
 = Getting started =
 First download the latest package, unzip it, and add a reference to MiP.!ShellArgs.dll to your project.
 
