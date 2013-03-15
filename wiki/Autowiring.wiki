@@ -85,7 +85,7 @@ You can either let the parser create an instance of your container class or crea
 The other overloads let you specify an instance of [ParserSettings {{{ParserSettings}}}] which is used to change the parsers behavior.
 
 == Fluent api ==
-=== Adding the container
+=== Adding the container ===
 To add a container to the parser you can also use the fluent api:
 {{{
   Parser parser = new Parser()
