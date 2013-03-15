@@ -54,7 +54,7 @@ Aliases can be added to the option by adding {{{[Aliases("a1", "a2")]}}}
 
 The options name and aliases are all case insensitive.
 
-Make the option positional with {{{[Position(1)]}}}. The option can then be used as first argument without specifying the name of the option. Positional options have a few [PositionalOptionRestrictions restrictions], too.
+Make the option positional with {{{[Position(1)]}}}. The option can then be used as first argument without specifying the name of the option. Positional options have a few [PositionalOptions restrictions], too.
 
 {{{[Required]}}} makes the option required. The used must specify a value for it.
 
