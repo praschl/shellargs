@@ -15,12 +15,17 @@ This includes the following types
   * {{{System.Boolean}}}
   * {{{System.Single}}}
   * {{{System.Double}}}
+  * {{{System.DateTime}}}
+  * {{{System.TimeSpan}}}
 
 == Enums ==
 The parser can convert Enums from numbers or the Enum names (case insensitive). {{{[Flags]}}} enums are supported and can be parsed from comma separated strings.
 
 == Nullable`<T>` ==  
 All value types may be used with {{{Nullable<T>}}}, this does NOT affect if a generated option is required.
+
+== Collections ==
+Collections of any type are supported as long as ICollection<T> is implemented and {{{T}}} can be parsed. The type of the property may be a concrete type of a collection or just {{{ICollection<T>}}}. If the property has a setter and is not initialized to an instance of the collection, the parser will try to create an instance. The parser can not create an instance for abstract types or types which have no default constructor. In these cases, initialize the property in the constructor of the container.
 
 == Custom types ==
 To add support from custom types
@@ -30,4 +35,15 @@ To add support from custom types
 
 The easiest way is to derive from {{{StringParser<TTarget>}}}. There is only the {{{ValueDescription}}} property and the {{{TTarget Parse(string value)}}} method to override.
 
-{{{ValueDescription}}} may return null. If it does not, it's value will take precedence over the default value description. The description can still be overridden with the {{{[ValueDescriptionAttribute]}}} or the {{{ValueDescription(string)}}} method of the fluent api.
+{{{ValueDescription}}} default implementation does return null. If overridden the value it returns will take precedence over the default value description. The description can still be overridden with the {{{[ValueDescriptionAttribute]}}} or the {{{ValueDescription(string)}}} method of the fluent api.
+
+{{{TTarget Parse(string value)}}} is the method which does the actual work. Override it and parse the string to your custom type.
+
+== Predefined Stringparsers ==
+The following string parsers are predefined and always added to the parser:
+* StringToBoolParser
+  Adds the possibility to parse "+" to true and "-" to false.
+
+* StringToDateTimeParser
+* StringToTimeSpanParser
+  These two add the possibility to parse to {{{System.DateTime}}} and {{{System.TimeSpan}}}.

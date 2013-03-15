@@ -1,5 +1,5 @@
   * [GettingStarted Getting started]
-  * [CustomizeAutowireContainers Customizing autowired containers]
-  * [PositionalOptionRestrictions Positional options]
+  * [Autowiring]
+  * [PositionalOptions Positional options]
   * [SupportedTypes Supported Types]
     * [SupportedTypes#Custom_types Custom types]
