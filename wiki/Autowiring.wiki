@@ -118,7 +118,7 @@ In case your property is a collection, you need to use the extension method {{{I
 			   );
 }}}
 
-=== {{{ParsingContext}}} ===
+=== !ParsingContext ===
 The {{{class ParsingContext<TContainer, TArgument>}}} has the following properties
   || {{{TContainer Container}}} || Access to the container for which the handler is called ||
   || {{{string Option}}} || Name of the parsed option ||
