@@ -13,7 +13,8 @@ The prefixes are characters which start an option. To set the characters which m
 {{{
   settings.PrefixWith(params char[] prefixes);
 }}}
-At least one character must be passed, and you should make sure its some kind of special character. 
+At least one character must be passed, and you should make sure its some kind of special character.
+
 The default value is {{{char[] {'/', '-'} }}}.
 
 == Assignments ==
@@ -22,6 +23,7 @@ The assignment character is used to separate a passed argument when the user ent
   settings.AssignWith(params char[] prefixes);
 }}}
 Unlike {{{PrefixWith}}} it is allowed to pass an empty array, which effectively forbids using assignments like this.
+
 The default value is {{{char[] {'=', ':'} }}}
 
 == Short boolean assignment ==
