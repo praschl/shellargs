@@ -17,7 +17,7 @@ public class MyArgs
 }
 }}}
 
-The created options [CustomizeAutowireContainers can be customized] by adding Attributes to the properties.
+The created options [Autowiring can be customized] by adding Attributes to the properties.
 
 === Parse the arguments into the container ===
 To parse the {{{string[] args}}} from your Main() method to the container class, add a {{{using MiP.ShellArgs;}}} and call
@@ -44,7 +44,8 @@ If you just want to try it out from your tests, call it like this
   [TestMethod]
   public void ArgsTest()
   {
-    MyArgs p = Parser.Parse<MyArgs>("-gender", "Male", "-name", "Buddy", "-dayofbirth", "2007-5-16", "-weight", "16");
+    MyArgs p = Parser.Parse<MyArgs>(
+               "-gender", "Male", "-name", "Buddy", "-dayofbirth", "2007-5-16", "-weight", "16");
   }
 }}}
 
