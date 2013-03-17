@@ -1,4 +1,4 @@
-#summary How to get started
+#summary Creating a container class and parsing args into it
 #labels Featured
 = Getting started =
 First download the latest package, unzip it, and add a reference to MiP.!ShellArgs.dll to your project.
