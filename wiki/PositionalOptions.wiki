@@ -1,4 +1,5 @@
 #summary Restrictions to follow when defining positional options
+#labels Featured
 = Restrictions of positional options =
   * The first position is number 1
   * The following positions are adding 1 to the previous

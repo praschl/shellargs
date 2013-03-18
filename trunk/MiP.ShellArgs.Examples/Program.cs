@@ -14,7 +14,8 @@ namespace MiP.ShellArgs.Examples
             TwoInstancesGeneric();
             TwoExistingInstances();
             FluentWithOption();
-            GettingStartedMain();
+            Documentation_GettingStartedMain();
+            Documentation_WithOption();
         }
 
         private static void Simple()
@@ -41,7 +42,7 @@ namespace MiP.ShellArgs.Examples
                           .WithOption(x => x.Count).Do(pc => counter += pc.Value)
                           .WithOption(x => x.Variables.CurrentValue()).Do(pc => Console.WriteLine(pc.Container.Variables))
                 )
-                .WithOption(b => b.Named("AddInt") 
+                .WithOption(b => b.Named("AddInt")
                                   .Alias("add", "a")
                                   .AtPosition(1)
                                   .Required()
@@ -108,7 +109,7 @@ namespace MiP.ShellArgs.Examples
                 .Parse("-hello", "1");
         }
 
-        private static void GettingStartedMain(params string[] args)
+        private static void Documentation_GettingStartedMain(params string[] args)
         {
             var p = Parser.Parse<MyArgs>(args);
 
@@ -116,6 +117,27 @@ namespace MiP.ShellArgs.Examples
             Console.WriteLine("Name: {0}", p.Name);
             Console.WriteLine("Birthday: {0}", p.DayOfBirth);
             Console.WriteLine("Weight: {0}", p.Weight);
+        }
+
+        private static void Documentation_WithOption()
+        {
+            int sum = 0;
+
+            new Parser()
+                .WithOption(b => b.Named("add")
+                                  .Alias("a", "ad")
+                                  .ValueDescription("a number")
+                                  .AtPosition(1)
+                                  .Required()
+                                  .As<int>()
+                                  .Do(pc => sum += pc.Value))
+                .WithOption(b => b.Named("sub")
+                                  .Collection
+                                  .As<int>()
+                                  .Do(pc => sum -= pc.Value))
+                .Parse("-add", "10", "-sub", "1", "2");
+
+            Console.WriteLine("Sum: {0}", sum);
         }
     }
 

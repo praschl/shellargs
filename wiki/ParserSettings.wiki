@@ -1,4 +1,5 @@
 #summary How to customize the parser
+#labels Featured
 = Customizing the parser =
 There are some settings with which the parsers behavior can be changed. Here is a list of customizable settings:
   * Prefix for options
