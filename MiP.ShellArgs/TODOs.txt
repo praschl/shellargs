@@ -1,5 +1,4 @@
 ﻿Documentation:
-# Settings
 # Fluent Api
 # Result
 # Help
