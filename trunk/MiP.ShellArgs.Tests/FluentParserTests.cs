@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 using MiP.ShellArgs.AutoWireAttributes;
@@ -209,7 +208,22 @@ namespace MiP.ShellArgs.Tests
 
             Assert.IsNotNull(result);
         }
-        
+
+        [TestMethod]
+        public void WithOptionUnNamed()
+        {
+            var list = new List<int>();
+
+            new Parser()
+                .WithOption(b => b.Named("add")
+                                  .Collection
+                                  .As<int>()
+                                  .Do(context => list.Add(context.Value)))
+                .Parse("-add", "1", "2", "3");
+
+            CollectionAssert.AreEquivalent(new[] {1, 2, 3}, list.ToArray());
+        }
+
         #region Classes used by Test
 
         public class RequiredAndNonRequiredOption

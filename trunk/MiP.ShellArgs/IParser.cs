@@ -26,12 +26,20 @@ namespace MiP.ShellArgs
         IParser AutoWire<TContainer>(TContainer container, Action<IAutoWireOptionBuilder<TContainer>> builderDelegate) where TContainer : new();
 
         /// <summary>
-        /// Adds a stand alone option to the parser.
+        /// Adds a stand alone option to the parser and gives it a name.
         /// </summary>
         /// <param name="name">Name of the option.</param>
         /// <param name="builderDelegate">Used to customize the addded option.</param>
         /// <returns>The current instance of <see cref="IParser"/>.</returns>
         IParser WithOption(string name, Action<IOptionBuilder> builderDelegate);
+
+
+        /// <summary>
+        /// Adds a stand alone option to the parser.
+        /// </summary>
+        /// <param name="builderDelegate">Used to customize the addded option.</param>
+        /// <returns>The current instance of <see cref="IParser"/>.</returns>
+        IParser WithOption(Action<IOptionBuilder> builderDelegate);
 
         /// <summary>
         /// Used to add a callback which is called whenever an option was successfully parsed.

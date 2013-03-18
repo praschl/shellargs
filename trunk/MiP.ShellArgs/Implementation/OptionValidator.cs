@@ -23,17 +23,28 @@ namespace MiP.ShellArgs.Implementation
         private const string LastPositionalOptionCollectionMessage = 
             "Only the last positional option may be a collection, but '{0}' and '{1}' are positional collection options.";
 
+        private const string UnnamedOptionsMessage =
+            "There are options which have no name. Use the .Named() method to give a name to an option";
+
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public void Validate(ICollection<OptionDefinition> optionDefinitions)
         {
             if (optionDefinitions == null)
                 throw new ArgumentNullException("optionDefinitions");
 
+            ValidateAllOptionsHaveAName(optionDefinitions);
             ValidateNamesAndAliasesAreUnique(optionDefinitions);
             ValidatePositionsAreUnique(optionDefinitions);
             ValidateNoPositionIsMissing(optionDefinitions);
             ValidateNoRequiredFollowsOptional(optionDefinitions);
             ValidateOnlyLastPositionalIsCollection(optionDefinitions);
+        }
+
+        private static void ValidateAllOptionsHaveAName(IEnumerable<OptionDefinition> optionDefinitions)
+        {
+            var unnamedOptionsExist = optionDefinitions.Any(o => string.IsNullOrEmpty(o.Name));
+            if (unnamedOptionsExist)
+                throw new ParserInitializationException(UnnamedOptionsMessage);
         }
 
         private static void ValidateNamesAndAliasesAreUnique(ICollection<OptionDefinition> optionDefinitions)

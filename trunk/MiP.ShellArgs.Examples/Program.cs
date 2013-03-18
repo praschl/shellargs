@@ -41,12 +41,12 @@ namespace MiP.ShellArgs.Examples
                           .WithOption(x => x.Count).Do(pc => counter += pc.Value)
                           .WithOption(x => x.Variables.CurrentValue()).Do(pc => Console.WriteLine(pc.Container.Variables))
                 )
-                .WithOption("AddInt",
-                    b => b.Alias("add", "a")
-                          .AtPosition(1)
-                          .Required()
-                          .As<int>()
-                          .Do(i => counter += i.Value)
+                .WithOption(b => b.Named("AddInt") 
+                                  .Alias("add", "a")
+                                  .AtPosition(1)
+                                  .Required()
+                                  .As<int>()
+                                  .Do(i => counter += i.Value)
                 )
                 .OnOptionParsed(pc => Console.WriteLine(pc.Option, pc.Value))
                 //
@@ -110,7 +110,7 @@ namespace MiP.ShellArgs.Examples
 
         private static void GettingStartedMain(params string[] args)
         {
-            MyArgs p = Parser.Parse<MyArgs>(args);
+            var p = Parser.Parse<MyArgs>(args);
 
             Console.WriteLine("Gender: {0}", p.Gender);
             Console.WriteLine("Name: {0}", p.Name);
@@ -132,7 +132,12 @@ namespace MiP.ShellArgs.Examples
         public int Value { get; set; }
     }
 
-    public enum Gender { Female, Male }
+    public enum Gender
+    {
+        Female,
+        Male
+    }
+
     public class MyArgs
     {
         public Gender Gender { get; set; }
