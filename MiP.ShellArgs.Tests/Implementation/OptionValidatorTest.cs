@@ -158,6 +158,23 @@ namespace MiP.ShellArgs.Tests.Implementation
             CallValidate(options, expectedMessage);
         }
 
+        [TestMethod]
+        public void AllOptionsMustHaveAName()
+        {
+            var options = new List<OptionDefinition>
+                          {
+                              new OptionDefinition
+                              {
+                                  Name = "",
+                                  Aliases = "B|C".Split('|')
+                              }
+                          };
+
+            const string expectedMessage = "There are options which have no name. Use the .Named() method to give a name to an option";
+
+            CallValidate(options, expectedMessage);
+        }
+
         private void CallValidate(ICollection<OptionDefinition> options, string expectedMessage)
         {
             ExceptionAssert.Throws<ParserInitializationException>(

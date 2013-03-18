@@ -88,8 +88,8 @@ namespace MiP.ShellArgs
             if (builderDelegate == null)
                 builderDelegate = x => { };
 
-            if (_containerByType.ContainsKey(typeof(TContainer)))
-                throw new ParserInitializationException(string.Format(CultureInfo.InvariantCulture, ParserAlreadyKnowsContainerMessage, typeof(TContainer)));
+            if (_containerByType.ContainsKey(typeof (TContainer)))
+                throw new ParserInitializationException(string.Format(CultureInfo.InvariantCulture, ParserAlreadyKnowsContainerMessage, typeof (TContainer)));
 
             _containerByType.Add(typeof (TContainer), container);
             var builder = new AutoWireOptionBuilder<TContainer>(container, this, _propertyReflector);
@@ -126,10 +126,24 @@ namespace MiP.ShellArgs
             if (builderDelegate == null)
                 throw new ArgumentNullException("builderDelegate");
 
-            var newDefinition = new OptionDefinition
-                                {
-                                    Name = name
-                                };
+            return WithOption(b =>
+                              {
+                                  b.Named(name);
+                                  builderDelegate(b);
+                              });
+        }
+
+        /// <summary>
+        /// Adds a stand alone option to the parser.
+        /// </summary>
+        /// <param name="builderDelegate">Used to customize the addded option.</param>
+        /// <returns>The current instance of <see cref="IParser"/>.</returns>
+        public IParser WithOption(Action<IOptionBuilder> builderDelegate)
+        {
+            if (builderDelegate == null)
+                throw new ArgumentNullException("builderDelegate");
+
+            var newDefinition = new OptionDefinition();
 
             var builder = new OptionBuilder(this, newDefinition, _stringConverter);
 
