@@ -23,7 +23,7 @@ This includes the following types
 The parser can convert Enums from numbers or the Enum names (case insensitive). {{{[Flags]}}} enums are supported and can be parsed from comma separated strings.
 
 == Nullable`<T>` ==  
-All value types may be used with {{{Nullable<T>}}}, this does NOT affect if a generated option is required.
+All value types may be used with {{{Nullable<T>}}}. Note that this does mean, that the option is required. If the option is not passed by the user, the value will be {{{null}}} after parsing.
 
 == Collections ==
 Collections of any type are supported as long as {{{ICollection<T>}}} is implemented and {{{T}}} can be parsed. The type of the property may be a concrete type of a collection or just {{{ICollection<T>}}}. If the property has a setter and is not initialized to an instance of the collection, the parser will try to create an instance. The parser can not create an instance for abstract types or types which have no default constructor. In these cases, initialize the property in the constructor of the container.

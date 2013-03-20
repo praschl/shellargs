@@ -1,5 +1,5 @@
 = Introduction =
-Mip.!ShellArgs.Parser is a parser for command line / shell arguments which are usually passed to the {{{ static void Main(string[] args} }}} method in shell programs.
+Mip.!ShellArgs.Parser is a parser for command line / shell arguments which are usually passed to the {{{static void Main(string[] args)}}} method in shell programs.
 
 While being very [GettingStarted easy to use], it is also very flexible via its fluent API. Simple programs may require only a single line.
 
