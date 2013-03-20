@@ -9,7 +9,7 @@ Instead of setting up a handler for a specific options for autowired options or 
 Note that {{{ParsingContext.Value}}} for this handler is typed to object.
 
 == Parsing ==
-Once you have set up your parser with [Autowiring] and/ the fluent WithOption methods, you can pass the {{{string[] args}}} from your {{{static Main()}}} to the parsers {{{Parse(params string[] args)}}} method. While the arguments are parsed, your callbacks will be called for the options you configured.
+Once you have set up your parser with [Autowiring] and/or the fluent WithOption methods, you can pass the {{{string[] args}}} from your {{{static Main()}}} to the parsers {{{Parse(params string[] args)}}} method. While the arguments are parsed, your callbacks will be called for the options you configured.
 
 == Getting a result ==
 For all stand alone options, you have to remember the value somewhere, otherwise it is lost after {{{Parse()}}} returns. For autowired options, the values are stored an a container which is instantiated by the parser, if you didnt pass a default instance.
