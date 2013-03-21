@@ -1,19 +1,19 @@
-﻿Once only parsing of single options
+﻿Once only parsing of single use options
 {
-    normally, this is allowed even if not a collection
-        -set value1 -set value2 -set value3
-    make a [OnceOnlyAttribute] and .OnceOnly() method to make the option really accept only one value.
-
-    make this the default behaviour, name the method "AllowReuse" and negate the functionality
+    Provide attribute and method for specifying the behavior for repeated uses
+    
+        RepeatBehavior.KeepFirst
+        RepeatBehavior.KeepLast (default)
+        RepeatBehavior.Error
 }
 
 Allow collections to be cleared when parsing a collection option multiple times
 {
-   /add 1 2 3 /add 4 5 6
-   should yield only {4, 5, 6} when the ClearWhenReused() method is used
-   this is only relevant in AutoWiring
+    Provide attribute and method for specifying the behavior for repeated uses
 
-   make this the default behaviour, name the method "NoClearOnReuse" and negate the functionality
+        CollectionRepeatBehavior.Clear
+        CollectionRepeatBehavior.Append (default, append values from repeated uses to collection)
+        CollectionRepeatBehavior.Error
 }
 
 ### Release ###
