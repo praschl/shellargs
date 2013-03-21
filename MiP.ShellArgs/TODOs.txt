@@ -1,7 +1,22 @@
-﻿Documentation:
-# Fluent Api
-# Result
-# Help
+﻿Once only parsing of single options
+{
+    normally, this is allowed even if not a collection
+        -set value1 -set value2 -set value3
+    make a [OnceOnlyAttribute] and .OnceOnly() method to make the option really accept only one value.
+
+    make this the default behaviour, name the method "AllowReuse" and negate the functionality
+}
+
+Allow collections to be cleared when parsing a collection option multiple times
+{
+   /add 1 2 3 /add 4 5 6
+   should yield only {4, 5, 6} when the ClearWhenReused() method is used
+   this is only relevant in AutoWiring
+
+   make this the default behaviour, name the method "NoClearOnReuse" and negate the functionality
+}
+
+### Release ###
 
 {
     OverrideExistingOptions() 
@@ -22,29 +37,6 @@ Support for Dictionary <string, AnyType>
     This has to have full support for the string conversion
 }
 
-Strict Parsing of single options
-{
-    normally, this is allowed even if not a collection
-        -set value1 -set value2 -set value3
-    make a [StrictAttribute] and .Strict() method to make the option really accept only one value.
-}
-
-Help
-{	
-    better handling of 
-    - no arguments -> make an attribute how no parameters behave
-    - help
-    - hidden options which are not shown in help.
-
-    detail help per argument
-    - aliases, values, options, formatting options
-    - path [list of] value
-      Sets the value... some descriptive description
-      [Allowed values: enum, bool, +/-]
-      [Default: xyz]
-      This parameter is optional|required
-}
-
 Define individual options to be case sensitive
 {
     uniqueness changes:	case insensitive options must not have a sensitive match
@@ -54,6 +46,8 @@ Possibility to forbid positional options as named options
 {
     .AtPosition(1).DisableAsNamed()
 }
+
+### Release ###
 
 Dynamically make an option required based on a condition (conditional options)
 {
@@ -69,12 +63,32 @@ Dynamically add options on an event (when parsed)
             })
 }
 
+### Release ###
+
 Collect Errors into ParseResult
 {
     .CollectErrors()
 
     collection exceptions and errors into the parse result
     show the user all errors at once instead of making him fix one after the other
+}
+
+### Release ###
+
+Help
+{
+    better handling of 
+    - no arguments -> make an attribute how no parameters behave
+    - help
+    - hidden options which are not shown in help.
+
+    detail help per argument
+    - aliases, values, options, formatting options
+    - path [list of] value
+      Sets the value... some descriptive description
+      [Allowed values: enum, bool, +/-]
+      [Default: xyz]
+      This parameter is optional|required
 }
 
 internal options: 
