@@ -16,5 +16,5 @@ For all stand alone options, you have to remember the value somewhere, otherwise
 
 If you didnt pass a default instance for your auto wired options, you can get the containers from the result of the {{{Parse()}}} method.
 
-=== !IParsingResult ===
+=== IParsingResult ===
 {{{IParsingResult}}} contains two methods, {{{Result<TContainer>}}} returns the instance of the container which has the type {{{TContainer}}}. The other method, {{{ResultTo<TContainer>(out TContainer result)}}} writes the instance to the passed out variable. Note that the compiler can infer the type parameter for from the parameter.
