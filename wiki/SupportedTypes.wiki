@@ -4,6 +4,7 @@
 By default, the parser supports all types which have a {{{TypeConverter}}} configured or can be converted by {{{Convert.ChangeType(object value, Type conversionType)}}}.
 
 For help with creating a {{{TypeConverter}}} see http://msdn.microsoft.com/en-us/library/system.componentmodel.typeconverter.aspx
+
 For help with {{{Convert.ChangeType()}}} see http://msdn.microsoft.com/en-us/library/system.convert.changetype.aspx
 
 == System types ==
