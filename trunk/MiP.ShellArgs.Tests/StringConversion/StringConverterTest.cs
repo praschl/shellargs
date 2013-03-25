@@ -1,8 +1,10 @@
 using System;
-
-using MiP.ShellArgs.StringConversion;
+using System.ComponentModel;
+using System.Globalization;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using StringConverter = MiP.ShellArgs.StringConversion.StringConverter;
 
 namespace MiP.ShellArgs.Tests.StringConversion
 {
@@ -27,7 +29,7 @@ namespace MiP.ShellArgs.Tests.StringConversion
         [TestMethod]
         public void CanConvertToNullableInt32()
         {
-            object result = _converter.To(typeof(int?), "123");
+            object result = _converter.To(typeof (int?), "123");
             Assert.AreEqual(123, result);
         }
 
@@ -56,14 +58,14 @@ namespace MiP.ShellArgs.Tests.StringConversion
         [TestMethod]
         public void CanConvertToEnum()
         {
-            object result = _converter.To(typeof(TestEnum), "Zwei");
+            object result = _converter.To(typeof (TestEnum), "Zwei");
             Assert.AreEqual(TestEnum.Zwei, result);
         }
 
         [TestMethod]
         public void CanConvertToNullableEnum()
         {
-            object result = _converter.To(typeof(TestEnum?), "Drei");
+            object result = _converter.To(typeof (TestEnum?), "Drei");
             Assert.AreEqual(TestEnum.Drei, result);
         }
 
@@ -78,15 +80,46 @@ namespace MiP.ShellArgs.Tests.StringConversion
         [TestMethod]
         public void CanConvertToTimeSpanWithFormat()
         {
-            object result = _converter.To(typeof(TimeSpan), "2.12:23:34");
+            object result = _converter.To(typeof (TimeSpan), "2.12:23:34");
 
             Assert.AreEqual(new TimeSpan(2, 12, 23, 34), result);
         }
 
         [TestMethod]
-        public void FindsParserForDerivedType()
+        public void ConvertWithTypeDescriptor()
         {
+            object result = _converter.To(typeof (CustomTypeForTypeDescriptorTest), "Hello World");
 
+            Assert.IsNotNull(result);
+            Assert.AreEqual(typeof (CustomTypeForTypeDescriptorTest), result.GetType());
+
+            var custom = (CustomTypeForTypeDescriptorTest)result;
+            Assert.AreEqual("Hello World", custom.Value);
+
+            Assert.AreEqual("Hello World", CustomTypeConverter.LastConvertedValue);
+        }
+        
+        [TypeConverter(typeof (CustomTypeConverter))]
+        public class CustomTypeForTypeDescriptorTest
+        {
+            public string Value;
+        }
+
+        public class CustomTypeConverter : TypeConverter
+        {
+            public static string LastConvertedValue;
+
+            public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+            {
+                return sourceType == typeof (string);
+            }
+
+            public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+            {
+                LastConvertedValue = (string)value;
+
+                return new CustomTypeForTypeDescriptorTest {Value = (string)value};
+            }
         }
 
         private enum TestEnum
