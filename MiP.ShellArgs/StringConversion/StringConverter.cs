@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
 
 using MiP.ShellArgs.Implementation;
 
@@ -40,6 +40,11 @@ namespace MiP.ShellArgs.StringConversion
                 // handle enums
                 if (targetType.IsEnum)
                     return Enum.Parse(targetType, value, true);
+                
+                // try type descriptor
+                var converter = TypeDescriptor.GetConverter(targetType);
+                if (converter.IsValid(value))
+                    return converter.ConvertFromInvariantString(value);
 
                 // if no method worked, just Convert
                 return Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture); // last chance
