@@ -26,6 +26,7 @@ namespace MiP.ShellArgs
         private readonly PropertyReflector _propertyReflector;
         private readonly OptionValidator _optionValidator;
         private readonly TokenConverter _converter;
+        private readonly HelpGenerator _generator;
 
         internal event EventHandler<ParseEventArgs> ValueParsed;
 
@@ -45,10 +46,11 @@ namespace MiP.ShellArgs
                             .ParseTo<DateTime>().With<StringToDateTimeParser>()
                             .ParseTo<TimeSpan>().With<StringToTimeSpanParser>());
 
-            _stringConverter = new StringConverter(_settings.StringParsers);
+            _stringConverter = new StringConverter(_settings.ParserProvider);
             _propertyReflector = new PropertyReflector(_stringConverter);
             _converter = new TokenConverter(new ArgumentFactory(_settings));
             _optionValidator = new OptionValidator();
+            _generator = new HelpGenerator(_settings.ParserProvider);
         }
 
         /// <summary>
@@ -273,11 +275,9 @@ namespace MiP.ShellArgs
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
         public string GetShortHelp()
         {
-            var generator = new HelpGenerator(_stringConverter);
+            _generator.OptionPrefix = _settings.Prefixes.First()[0];
 
-            generator.OptionPrefix = _settings.Prefixes.First()[0];
-
-            return generator.GetParameterHelp(_optionDefinitions.ToArray());
+            return _generator.GetParameterHelp(_optionDefinitions.ToArray());
         }
 
         private void OnParse(ParseEventArgs e)

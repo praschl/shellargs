@@ -94,6 +94,7 @@
     <Compile Include="Implementation\OptionDefinition.cs" />
     <Compile Include="Implementation\Token.cs" />
     <Compile Include="Implementation\TokenConverter.cs" />
+    <Compile Include="StringConversion\StringParserProvider.cs" />
     <Compile Include="StringConversion\StringToBoolParser.cs" />
     <Compile Include="StringConversion\StringToDateTimeParser.cs" />
     <Compile Include="StringConversion\StringToTimeSpanParser.cs" />

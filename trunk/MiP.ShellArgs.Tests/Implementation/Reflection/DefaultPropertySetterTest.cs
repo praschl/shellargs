@@ -21,10 +21,10 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
             _instance = new TestProperties();
 
             PropertyInfo valuePropertyInfo = typeof (TestProperties).GetProperty("Value");
-            _valueSetter = new DefaultPropertySetter(new StringConverter(null), valuePropertyInfo, _instance);
+            _valueSetter = new DefaultPropertySetter(new StringConverter(new StringParserProvider()), valuePropertyInfo, _instance);
 
             PropertyInfo nullableValuePropertyInfo = typeof (TestProperties).GetProperty("NullableValue");
-            _nullableValueSetter = new DefaultPropertySetter(new StringConverter(null), nullableValuePropertyInfo, _instance);
+            _nullableValueSetter = new DefaultPropertySetter(new StringConverter(new StringParserProvider()), nullableValuePropertyInfo, _instance);
         }
 
         [TestMethod]

@@ -1,7 +1,5 @@
 ﻿using System.Linq;
 
-using MiP.ShellArgs.StringConversion;
-
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace MiP.ShellArgs.Tests
@@ -46,22 +44,6 @@ namespace MiP.ShellArgs.Tests
             Assert.IsTrue(_settings.ShortBooleansEnabled);
             CollectionAssert.AreEquivalent(new[] {"+", "-"}, _settings.ShortBooleans);
         }
-
-        [TestMethod]
-        public void AddsStringParser()
-        {
-            _settings.ParseTo<int>().With<MyParser>();
-
-            Assert.IsTrue(_settings.StringParsers.Any(p => p.Key == typeof (int)));
-            Assert.AreEqual(typeof(MyParser), _settings.StringParsers.First(p => p.Key == typeof (int)).Value.GetType());
-        }
-
-        private class MyParser : StringParser<int>
-        {
-            public override int Parse(string value)
-            {
-                return 4711;
-            }
-        }
+        
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
@@ -27,7 +26,7 @@ namespace MiP.ShellArgs
             Assignments = new[] {'=', ':'};
             ShortBooleans = _defaultShortBooleans;
             ShortBooleansEnabled = true;
-            StringParsers = new Dictionary<Type, IStringParser>();
+            ParserProvider = new StringParserProvider();
         }
 
         internal bool ShortBooleansEnabled { get; set; }
@@ -38,7 +37,7 @@ namespace MiP.ShellArgs
 
         internal string[] ShortBooleans { get; private set; }
 
-        internal IDictionary<Type, IStringParser> StringParsers { get; private set; }
+        internal IStringParserProvider ParserProvider { get; private set; }
 
         /// <summary>
         /// Enables or disable the short booleans.
@@ -94,7 +93,7 @@ namespace MiP.ShellArgs
 
         internal ParserSettings RegisterStringParser<TParser, TTarget>(TParser parser) where TParser : IStringParser<TTarget>
         {
-            StringParsers.Add(typeof (TTarget), parser);
+            ParserProvider.RegisterParser(parser);
 
             return this;
         }

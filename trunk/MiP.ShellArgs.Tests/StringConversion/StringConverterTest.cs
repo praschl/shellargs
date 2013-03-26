@@ -2,6 +2,8 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 
+using MiP.ShellArgs.StringConversion;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using StringConverter = MiP.ShellArgs.StringConversion.StringConverter;
@@ -16,7 +18,7 @@ namespace MiP.ShellArgs.Tests.StringConversion
         [TestInitialize]
         public void Initialize()
         {
-            _converter = new StringConverter(null);
+            _converter = new StringConverter(new StringParserProvider());
         }
 
         [TestMethod]
@@ -98,7 +100,7 @@ namespace MiP.ShellArgs.Tests.StringConversion
 
             Assert.AreEqual("Hello World", CustomTypeConverter.LastConvertedValue);
         }
-        
+
         [TypeConverter(typeof (CustomTypeConverter))]
         public class CustomTypeForTypeDescriptorTest
         {

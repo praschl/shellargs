@@ -1,3 +1,5 @@
+using System;
+
 namespace MiP.ShellArgs.StringConversion
 {
     /// <summary>
@@ -10,6 +12,18 @@ namespace MiP.ShellArgs.StringConversion
         /// Gets a text describing the intent of the value in help.
         /// </summary>
         public virtual string ValueDescription { get { return null; } }
+
+        /// <summary>
+        /// Determines whether this instance can parse to the specified target type.
+        /// </summary>
+        /// <param name="targetType">Type to parse a string to.</param>
+        /// <returns>
+        ///   <c>true</c> if a string can be parsed to the specified target type; otherwise, <c>false</c>.
+        /// </returns>
+        public virtual bool CanParseTo(Type targetType)
+        {
+            return targetType == typeof (TTarget);
+        }
 
         /// <summary>
         /// Parses the string to &lt;TTarget&gt;
