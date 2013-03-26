@@ -57,6 +57,7 @@
     <Compile Include="SimpleParserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringConversion\StringConverterTest.cs" />
+    <Compile Include="StringConversion\StringParserProviderTest.cs" />
     <Compile Include="StringConversion\StringToBoolParserTest.cs" />
     <Compile Include="StringConversion\StringToDateTimeParserTest.cs" />
     <Compile Include="StringConversion\StringToTimeSpanParserTest.cs" />

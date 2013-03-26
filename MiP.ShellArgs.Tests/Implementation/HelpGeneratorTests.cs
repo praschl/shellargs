@@ -16,16 +16,19 @@ namespace MiP.ShellArgs.Tests.Implementation
         private HelpGenerator _helpGenerator;
         private static PropertyReflector _reflector;
         private static object _optionsInstance;
+        private StringParserProvider _stringParserProvider;
 
         [TestInitialize]
         public void Initialize()
         {
             _optionsInstance = new StringOnlyOptions();
-            var stringConverter = new StringConverter(null);
+
+            _stringParserProvider = new StringParserProvider();
+            var stringConverter = new StringConverter(_stringParserProvider);
 
             _reflector = new PropertyReflector(stringConverter);
 
-            _helpGenerator = new HelpGenerator(stringConverter);
+            _helpGenerator = new HelpGenerator(_stringParserProvider);
             _helpGenerator.OptionPrefix = '-';
         }
 

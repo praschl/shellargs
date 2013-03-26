@@ -27,7 +27,7 @@ namespace MiP.ShellArgs.Tests.Fluent
 
             var parserMock = new Mock<IParser>();
 
-            var stringConverter = new StringConverter(null);
+            var stringConverter = new StringConverter(new StringParserProvider());
             var reflector = new PropertyReflector(stringConverter);
 
             _builder = new AutoWireOptionBuilder<TestContainer>(container, parserMock.Object, reflector);
@@ -122,7 +122,7 @@ namespace MiP.ShellArgs.Tests.Fluent
         public void WithOptionThrowsWhenOptionIsUnknown()
         {
             ExceptionAssert.Throws<ParserInitializationException>(() => _builder.WithOption<string>("nooption"),
-                ex => Assert.AreEqual(string.Format("The container {0} does not provide the option '{1}'.", typeof(TestContainer), "nooption"), ex.Message));
+                ex => Assert.AreEqual(string.Format("The container {0} does not provide the option '{1}'.", typeof (TestContainer), "nooption"), ex.Message));
         }
 
         public class TestContainer

@@ -18,13 +18,13 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
         [TestInitialize]
         public void Initialize()
         {
-            _reflector = new PropertyReflector(new StringConverter(null));
+            _reflector = new PropertyReflector(new StringConverter(new StringParserProvider()));
         }
 
         [TestMethod]
         public void FindsAllRelevantProperties()
         {
-            string[] options = _reflector.CreateOptionDefinitions(typeof(RelevantProperties), new RelevantProperties()).Select(o => o.Name).ToArray();
+            string[] options = _reflector.CreateOptionDefinitions(typeof (RelevantProperties), new RelevantProperties()).Select(o => o.Name).ToArray();
 
             var expected = new[] {"A", "B", "D", "E", "F", "G", "I"};
 
@@ -40,7 +40,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
         [TestMethod]
         public void GeneratesCorrectSetters()
         {
-            ICollection<OptionDefinition> options = _reflector.CreateOptionDefinitions(typeof(SetterProperties), new SetterProperties());
+            ICollection<OptionDefinition> options = _reflector.CreateOptionDefinitions(typeof (SetterProperties), new SetterProperties());
 
             Assert.AreEqual(typeof (DefaultPropertySetter), options.First(o => o.Name == "A").ValueSetter.GetType());
             Assert.AreEqual(typeof (CollectionPropertySetter), options.First(o => o.Name == "B").ValueSetter.GetType());
@@ -50,7 +50,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
         [TestMethod]
         public void ReadsOptionAttribute()
         {
-            OptionDefinition option = _reflector.CreateOptionDefinitions(typeof(AttributedProperties), new AttributedProperties()).First();
+            OptionDefinition option = _reflector.CreateOptionDefinitions(typeof (AttributedProperties), new AttributedProperties()).First();
 
             Assert.AreEqual("NewName", option.Name);
             CollectionAssert.AreEquivalent(new[] {"a", "b", "c"}, option.Aliases.ToArray());
@@ -61,7 +61,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
         [TestMethod]
         public void FlagsAreSetCorrectly()
         {
-            ICollection<OptionDefinition> options = _reflector.CreateOptionDefinitions(typeof(SetterProperties), new SetterProperties());
+            ICollection<OptionDefinition> options = _reflector.CreateOptionDefinitions(typeof (SetterProperties), new SetterProperties());
 
             OptionDefinition option = options.First(o => o.Name == "A");
             Assert.IsFalse(option.IsBoolean);
@@ -106,7 +106,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
         private class AttributedProperties
         {
             [Option("NewName")]
-            [Aliases("a","b","c")]
+            [Aliases("a", "b", "c")]
             [Required]
             [Position(1)]
             public string A { get; set; }

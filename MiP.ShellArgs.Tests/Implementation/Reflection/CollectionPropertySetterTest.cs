@@ -32,7 +32,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
             _icollectionPropertyInfo = typeof (CollectionProperties).GetProperty("ICollection");
             _readonlyPropertyInfo = typeof (ReadonlyCollectionProperties).GetProperty("ReadOnly");
 
-            _stringConverter = new StringConverter(null);
+            _stringConverter = new StringConverter(new StringParserProvider());
 
             _expected = new List<int>
                         {
@@ -100,7 +100,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
             Assert.AreEqual(1, _instance.ICollection.Count);
             Assert.AreEqual(1, _instance.ICollection.First());
         }
-        
+
         [TestMethod]
         public void CallsOnValueSet()
         {
