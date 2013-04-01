@@ -105,6 +105,11 @@ namespace MiP.ShellArgs.Implementation
             if (type == typeof (double))
                 return "double";
 
+            if (type == typeof (DateTime))
+                return "date";
+            if (type == typeof (TimeSpan))
+                return "time";
+
             return type.FullName;
         }
     }

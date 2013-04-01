@@ -18,7 +18,7 @@ namespace MiP.ShellArgs
         /// <returns>The current instance of <see cref="IParserConfigurator{TTarget}"/>.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "With")]
         [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
-        ParserSettings With<TParser>() where TParser : IStringParser<TTarget>, new();
+        ParserSettings With<TParser>() where TParser : IStringParser, new();
 
         /// <summary>
         /// Specifies that <paramref name="parser"/> should be used to parse strings to <typeparamref name="TTarget"/>.
@@ -27,6 +27,6 @@ namespace MiP.ShellArgs
         /// <param name="parser">An instance of the parser to use.</param>
         /// <returns>The current instance of <see cref="IParserConfigurator{TTarget}"/>.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "With")]
-        ParserSettings With<TParser>(TParser parser) where TParser : IStringParser<TTarget>;
+        ParserSettings With<TParser>(TParser parser) where TParser : IStringParser;
     }
 }

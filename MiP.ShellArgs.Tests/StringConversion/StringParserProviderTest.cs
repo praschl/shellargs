@@ -20,9 +20,9 @@ namespace MiP.ShellArgs.Tests.StringConversion
         [TestMethod]
         public void DefaultParsersAvailable()
         {
-            Assert.IsNotNull(_provider.GetParser(typeof (bool)));
-            Assert.IsNotNull(_provider.GetParser(typeof (DateTime)));
-            Assert.IsNotNull(_provider.GetParser(typeof (TimeSpan)));
+            Assert.AreEqual(typeof (StringToBoolParser), _provider.GetParser(typeof (bool)).GetType());
+            Assert.AreEqual(typeof (StringToObjectParser), _provider.GetParser(typeof (DateTime)).GetType());
+            Assert.AreEqual(typeof (StringToObjectParser), _provider.GetParser(typeof (TimeSpan)).GetType());
         }
 
         [TestMethod]
@@ -37,14 +37,42 @@ namespace MiP.ShellArgs.Tests.StringConversion
             Assert.AreSame(expected, result);
         }
 
-        private class MyParser : StringParser<DateTime>
+        private class MyParser : StringParser
         {
+            /// <summary>
+            /// Determines whether this instance can parse to the specified target type.
+            /// </summary>
+            /// <param name="targetType">Type to parse a string to.</param>
+            /// <returns>
+            ///   <c>true</c> if a string can be parsed to the specified target type; otherwise, <c>false</c>.
+            /// </returns>
+            public override bool CanParseTo(Type targetType)
+            {
+                return true;
+            }
+
+            /// <summary>
+            /// Determines whether the specified value is valid for the target type.
+            /// </summary>
+            /// <param name="targetType">Type to convert to.</param>
+            /// <param name="value">The value to be converted.</param>
+            /// <returns>
+            ///   <c>true</c> if the specified value is valid for the target type; otherwise, <c>false</c>.
+            /// </returns>
+            public override bool IsValid(Type targetType, string value)
+            {
+                return true;
+            }
+
             /// <summary>
             /// Parses the string to &lt;TTarget&gt;
             /// </summary>
+            /// <param name="targetType">Type to convert to.</param>
             /// <param name="value">The string to parse to &lt;TTarget&gt;.</param>
-            /// <returns>An instance of &lt;TTarget&gt; which was parsed from <paramref name="value"/>.</returns>
-            public override DateTime Parse(string value)
+            /// <returns>
+            /// An instance of &lt;TTarget&gt; which was parsed from <paramref name="value" />.
+            /// </returns>
+            public override object Parse(Type targetType, string value)
             {
                 return DateTime.Now;
             }

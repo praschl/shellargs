@@ -16,14 +16,14 @@ namespace MiP.ShellArgs.Fluent
             _settings = settings;
         }
 
-        public ParserSettings With<TParser>() where TParser : IStringParser<TTarget>, new()
+        public ParserSettings With<TParser>() where TParser : IStringParser, new()
         {
             _settings.RegisterStringParser<TParser, TTarget>(new TParser());
 
             return _settings;
         }
 
-        public ParserSettings With<TParser>(TParser parser) where TParser : IStringParser<TTarget>
+        public ParserSettings With<TParser>(TParser parser) where TParser : IStringParser
         {
             if (ReferenceEquals(parser, null))
                 throw new ArgumentNullException("parser");

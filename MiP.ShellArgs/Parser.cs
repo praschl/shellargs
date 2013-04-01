@@ -42,10 +42,6 @@ namespace MiP.ShellArgs
         {
             _settings = parserSettings ?? new ParserSettings();
 
-            Customize(c => c.ParseTo<bool>().With<StringToBoolParser>()
-                            .ParseTo<DateTime>().With<StringToDateTimeParser>()
-                            .ParseTo<TimeSpan>().With<StringToTimeSpanParser>());
-
             _stringConverter = new StringConverter(_settings.ParserProvider);
             _propertyReflector = new PropertyReflector(_stringConverter);
             _converter = new TokenConverter(new ArgumentFactory(_settings));

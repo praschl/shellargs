@@ -59,8 +59,7 @@
     <Compile Include="StringConversion\StringConverterTest.cs" />
     <Compile Include="StringConversion\StringParserProviderTest.cs" />
     <Compile Include="StringConversion\StringToBoolParserTest.cs" />
-    <Compile Include="StringConversion\StringToDateTimeParserTest.cs" />
-    <Compile Include="StringConversion\StringToTimeSpanParserTest.cs" />
+    <Compile Include="StringConversion\StringToObjectParserTest.cs" />
     <Compile Include="TestHelpers\ExceptionAssert.cs" />
     <Compile Include="Implementation\ArgumentFactoryTest.cs" />
     <Compile Include="Implementation\Reflection\BooleanPropertySetterTest.cs" />

@@ -30,9 +30,8 @@ namespace MiP.ShellArgs.Examples
 
             var user = new Parser()
                 .Customize(
-                    c => c.ParseTo<bool>().With<StringToBoolParser>()
-                          .ParseTo<DateTime>().With<StringToDateTimeParser>()
-                          .ParseTo<TimeSpan>().With<StringToTimeSpanParser>()
+                    c => c.ParseTo<object>().With<StringToObjectParser>()
+                          .ParseTo<bool>().With<StringToBoolParser>()
                           .PrefixWith('/', '-')
                           .AssignWith(':', '=')
                           .EnableShortBooleans(true)

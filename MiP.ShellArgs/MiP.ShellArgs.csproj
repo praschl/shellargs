@@ -96,8 +96,7 @@
     <Compile Include="Implementation\TokenConverter.cs" />
     <Compile Include="StringConversion\StringParserProvider.cs" />
     <Compile Include="StringConversion\StringToBoolParser.cs" />
-    <Compile Include="StringConversion\StringToDateTimeParser.cs" />
-    <Compile Include="StringConversion\StringToTimeSpanParser.cs" />
+    <Compile Include="StringConversion\StringToObjectParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="TODOs.txt" />

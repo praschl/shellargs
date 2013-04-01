@@ -292,7 +292,7 @@ namespace MiP.ShellArgs.Tests
         [TestMethod]
         public void StaticParseWithContainerAndSettings()
         {
-            Parser.Parse(new OptionalStringProperties(), new ParserSettings(), new [] {"-S1","1"});
+            Parser.Parse(new OptionalStringProperties(), new ParserSettings(), new[] {"-S1", "1"});
         }
 
         [TestMethod]
@@ -445,9 +445,19 @@ namespace MiP.ShellArgs.Tests
             public string TheString { get; set; }
         }
 
-        public class StringToMyStringParser : StringParser<MyString>
+        public class StringToMyStringParser : StringParser
         {
-            public override MyString Parse(string value)
+            public override bool CanParseTo(Type targetType)
+            {
+                return true;
+            }
+
+            public override bool IsValid(Type targetType, string value)
+            {
+                return true;
+            }
+
+            public override object Parse(Type targetType, string value)
             {
                 return new MyString
                        {

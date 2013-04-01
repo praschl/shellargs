@@ -22,24 +22,23 @@ namespace MiP.ShellArgs.StringConversion
         bool CanParseTo(Type targetType);
 
         /// <summary>
-        /// Parses the string.
+        /// Determines whether the specified value is valid for the target type.
         /// </summary>
-        /// <param name="value">The string to parse.</param>
-        /// <returns>An object which was parsed from <paramref name="value"/>.</returns>
-        object Parse(string value);
-    }
+        /// <param name="targetType">Type to convert to.</param>
+        /// <param name="value">The value to be converted.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified value is valid for the target type; otherwise, <c>false</c>.
+        /// </returns>
+        bool IsValid(Type targetType, string value);
 
-    /// <summary>
-    /// Used to parse a string to &lt;TTarget&gt;
-    /// </summary>
-    /// <typeparam name="TTarget">The type to parse the string to.</typeparam>
-    public interface IStringParser<out TTarget> : IStringParser
-    {
         /// <summary>
-        /// Parses the string to &lt;TTarget&gt;
+        /// Parses the string to the <paramref name="targetType"/>.
         /// </summary>
-        /// <param name="value">The string to parse to &lt;TTarget&gt;.</param>
-        /// <returns>An instance of &lt;TTarget&gt; which was parsed from <paramref name="value"/>.</returns>
-        new TTarget Parse(string value);
+        /// <param name="targetType">Type to convert to.</param>
+        /// <param name="value">The value to be converted.</param>
+        /// <returns>
+        /// An object which was parsed from <paramref name="value" /> to <paramref name="targetType"/>.
+        /// </returns>
+        object Parse(Type targetType, string value);
     }
 }
