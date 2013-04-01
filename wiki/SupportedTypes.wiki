@@ -38,14 +38,19 @@ To add support from custom types
   * implement {{{MiP.ShellArgs.StringConversion.IStringParser<out TTarget>}}}
   * add the type or an instance of it to the {{{MiP.ShellArgs.ParserSettings}}}
 
-The easiest way is to derive from {{{StringParser<TTarget>}}}. There is only the {{{ValueDescription}}} property and the {{{TTarget Parse(string value)}}} method to override.
+The easiest way is to derive from {{{StringParser<TTarget>}}}.
 
 {{{ValueDescription}}} default implementation does return null. If overridden the value it returns will take precedence over the default value description. The description can still be overridden with the {{{[ValueDescriptionAttribute]}}} or the {{{ValueDescription(string)}}} method of the fluent api.
+
+Override {{{CanParse(Type)}}} to decide if your parser can parse to the specified type.
+
+Override {{{IsValue(Type, string)}}} to decide if your parser can parse the value to the specified type.
 
 {{{TTarget Parse(string value)}}} is the method which does the actual work. Override it and parse the string to your custom type.
 
 == Predefined Stringparsers ==
 The following string parsers are predefined and always added to the parser:
-|| {{{StringToBoolParser}}} || Can also parse "+" to true and "-" to false) ||
-|| {{{StringToDateTimeParser}}} || Parses to !DateTime ||
-|| {{{StringToTimeSpanParser}}} || Parses to !TimeSpan ||
+
+{{{StringToBoolParser}}} can also parse "+" to true and "-" to false.
+
+{{{StringToObjectParser}}} is a fallback parser which tries to find a {{{TypeConverter}}} for the type, and uses this to parse the value. Enums can only be parsed case sensitive with the with the {{{TypeConverter}}}; if the value is not valid for the enum, the value is tried with {{{Enum.Parse()}}}.
