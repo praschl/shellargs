@@ -16,21 +16,16 @@ namespace MiP.ShellArgs.Tests.StringConversion
         }
 
         [TestMethod]
-        public void ReturnsValueAsObject()
-        {
-            var asObject = ((IStringParser)_parser).Parse("true");
-
-            Assert.AreEqual(true, asObject);
-        }
-
-        [TestMethod]
         public void ReturnsCorrectValue()
         {
-            Assert.IsTrue(_parser.Parse("true"));
-            Assert.IsFalse(_parser.Parse("false"));
+            Assert.IsTrue((bool)_parser.Parse(typeof(bool), "true"));
+            Assert.IsFalse((bool)_parser.Parse(typeof(bool), "false"));
 
-            Assert.IsTrue(_parser.Parse("+"));
-            Assert.IsFalse(_parser.Parse("-"));
+            Assert.IsTrue((bool)_parser.Parse(typeof(bool), "True"));
+            Assert.IsFalse((bool)_parser.Parse(typeof(bool), "False"));
+
+            Assert.IsTrue((bool)_parser.Parse(typeof(bool), "+"));
+            Assert.IsFalse((bool)_parser.Parse(typeof(bool), "-"));
         }
     }
 }

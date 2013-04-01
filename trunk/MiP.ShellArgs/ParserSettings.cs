@@ -91,7 +91,7 @@ namespace MiP.ShellArgs
             return this;
         }
 
-        internal ParserSettings RegisterStringParser<TParser, TTarget>(TParser parser) where TParser : IStringParser<TTarget>
+        internal ParserSettings RegisterStringParser<TParser, TTarget>(TParser parser) where TParser : IStringParser
         {
             ParserProvider.RegisterParser(parser);
 

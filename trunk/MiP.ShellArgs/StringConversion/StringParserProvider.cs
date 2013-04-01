@@ -10,21 +10,18 @@ namespace MiP.ShellArgs.StringConversion
 
         public StringParserProvider()
         {
+            RegisterParser(new StringToObjectParser());
             RegisterParser(new StringToBoolParser());
-            RegisterParser(new StringToDateTimeParser());
-            RegisterParser(new StringToTimeSpanParser());
         }
 
-        // TODO: test
         public IStringParser GetParser(Type targetType)
         {
             if (targetType == null)
                 throw new ArgumentNullException("targetType");
-            
+
             return _parsers.FirstOrDefault(p => p.CanParseTo(targetType));
         }
 
-        // TODO: test
         public void RegisterParser(IStringParser parser)
         {
             if (parser == null)
