@@ -17,7 +17,7 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestInitialize]
         public void Initialize()
         {
-            _stringConverter = new StringConverter(new StringParserProvider());
+            _stringConverter = new StringConverter(new ParserSettings().ParserProvider);
 
             _converter = new TokenConverter(new ArgumentFactory(new ParserSettings()));
         }

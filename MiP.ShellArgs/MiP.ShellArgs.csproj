@@ -97,6 +97,7 @@
     <Compile Include="StringConversion\StringParserProvider.cs" />
     <Compile Include="StringConversion\StringToBoolParser.cs" />
     <Compile Include="StringConversion\StringToEnumParser.cs" />
+    <Compile Include="StringConversion\StringToKeyValuePairParser.cs" />
     <Compile Include="StringConversion\StringToObjectParser.cs" />
   </ItemGroup>
   <ItemGroup>

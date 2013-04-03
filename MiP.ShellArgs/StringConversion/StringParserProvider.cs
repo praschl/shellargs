@@ -8,9 +8,14 @@ namespace MiP.ShellArgs.StringConversion
     {
         private readonly Stack<IStringParser> _parsers = new Stack<IStringParser>();
 
-        public StringParserProvider()
+        internal ParserSettings ParserSettings { get; private set; }
+
+        public StringParserProvider(ParserSettings parserSettings)
         {
+            ParserSettings = parserSettings;
             RegisterParser(new StringToObjectParser());
+            // TODO: register KeyValuePair parser
+            //RegisterParser(new StringToKeyValuePairParser(this, parserSettings));
             RegisterParser(new StringToEnumParser());
             RegisterParser(new StringToBoolParser());
         }

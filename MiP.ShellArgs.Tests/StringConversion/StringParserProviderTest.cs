@@ -9,12 +9,12 @@ namespace MiP.ShellArgs.Tests.StringConversion
     [TestClass]
     public class StringParserProviderTest
     {
-        private StringParserProvider _provider;
+        private IStringParserProvider _provider;
 
         [TestInitialize]
         public void Initialize()
         {
-            _provider = new StringParserProvider();
+            _provider = new ParserSettings().ParserProvider;
         }
 
         [TestMethod]
@@ -22,7 +22,7 @@ namespace MiP.ShellArgs.Tests.StringConversion
         {
             Assert.AreEqual(typeof (StringToBoolParser), _provider.GetParser(typeof (bool)).GetType());
             Assert.AreEqual(typeof (StringToEnumParser), _provider.GetParser(typeof (StringSplitOptions)).GetType());
-            Assert.AreEqual(typeof (StringToObjectParser), _provider.GetParser(typeof (TimeSpan)).GetType());
+            Assert.AreEqual(typeof(StringToObjectParser), _provider.GetParser(typeof(TimeSpan)).GetType());
         }
 
         [TestMethod]

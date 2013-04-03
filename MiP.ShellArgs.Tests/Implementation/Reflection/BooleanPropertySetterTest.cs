@@ -21,10 +21,10 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
             _instance = new BooleanProperties();
 
             PropertyInfo valuePropertyInfo = typeof (BooleanProperties).GetProperty("Value");
-            _valueSetter = new BooleanPropertySetter(new StringConverter(new StringParserProvider()), valuePropertyInfo, _instance);
+            _valueSetter = new BooleanPropertySetter(new StringConverter(new ParserSettings().ParserProvider), valuePropertyInfo, _instance);
 
             PropertyInfo nullableValuePropertyInfo = typeof (BooleanProperties).GetProperty("NullableValue");
-            _nullableValueSetter = new BooleanPropertySetter(new StringConverter(new StringParserProvider()), nullableValuePropertyInfo, _instance);
+            _nullableValueSetter = new BooleanPropertySetter(new StringConverter(new ParserSettings().ParserProvider), nullableValuePropertyInfo, _instance);
         }
 
         [TestMethod]

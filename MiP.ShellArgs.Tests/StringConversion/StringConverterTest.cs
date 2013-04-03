@@ -18,7 +18,7 @@ namespace MiP.ShellArgs.Tests.StringConversion
         [TestInitialize]
         public void Initialize()
         {
-            _converter = new StringConverter(new StringParserProvider());
+            _converter = new StringConverter(new ParserSettings().ParserProvider);
         }
 
         [TestMethod]

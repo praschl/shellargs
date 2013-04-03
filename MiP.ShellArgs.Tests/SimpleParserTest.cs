@@ -304,6 +304,26 @@ namespace MiP.ShellArgs.Tests
             Assert.AreEqual("Hello", container.GetValue());
         }
 
+        //[TestMethod]
+        public void CanParseToDictionary()
+        {
+            // TODO: activate test for Dictionary
+
+            var container = Parser.Parse<DictionaryContainer>("-Names","a=b","c:d", "-Numbers:e=5");
+
+            Assert.IsNotNull(container);
+            Assert.AreEqual(2, container.Names.Count);
+            Assert.AreEqual(1, container.Numbers.Count);
+
+            Assert.IsTrue(container.Names.ContainsKey("a"));
+            Assert.IsTrue(container.Names.ContainsKey("c"));
+            Assert.IsTrue(container.Numbers.ContainsKey("d"));
+
+            Assert.AreEqual("b", container.Names["a"]);
+            Assert.AreEqual("d", container.Names["c"]);
+            Assert.AreEqual(5, container.Numbers["e"]);
+        }
+
         #region Classes used by Test
 
         public class OptionalStringProperties
@@ -529,6 +549,12 @@ namespace MiP.ShellArgs.Tests
             {
                 return Value;
             }
+        }
+
+        public class DictionaryContainer
+        {
+            public Dictionary<string, string> Names { get; set; }
+            public Dictionary<string, int> Numbers { get; set; }
         }
 
         #endregion

@@ -34,6 +34,9 @@ namespace MiP.ShellArgs.Implementation
             if (!type.IsOrImplementsICollection())
                 return type;
 
+            // TODO: when type is a dictionary, return correct item type (KeyValuePair<,>)
+            //var collectionType = type.GetInterfaces().First(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof (ICollection<>));
+
             return type.GetGenericArguments().First();
         }
     }

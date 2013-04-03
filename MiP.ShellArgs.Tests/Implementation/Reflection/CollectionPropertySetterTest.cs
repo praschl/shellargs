@@ -32,7 +32,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
             _icollectionPropertyInfo = typeof (CollectionProperties).GetProperty("ICollection");
             _readonlyPropertyInfo = typeof (ReadonlyCollectionProperties).GetProperty("ReadOnly");
 
-            _stringConverter = new StringConverter(new StringParserProvider());
+            _stringConverter = new StringConverter(new ParserSettings().ParserProvider);
 
             _expected = new List<int>
                         {
