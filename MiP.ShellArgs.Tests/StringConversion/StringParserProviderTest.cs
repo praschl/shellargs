@@ -21,7 +21,7 @@ namespace MiP.ShellArgs.Tests.StringConversion
         public void DefaultParsersAvailable()
         {
             Assert.AreEqual(typeof (StringToBoolParser), _provider.GetParser(typeof (bool)).GetType());
-            Assert.AreEqual(typeof (StringToObjectParser), _provider.GetParser(typeof (DateTime)).GetType());
+            Assert.AreEqual(typeof (StringToEnumParser), _provider.GetParser(typeof (StringSplitOptions)).GetType());
             Assert.AreEqual(typeof (StringToObjectParser), _provider.GetParser(typeof (TimeSpan)).GetType());
         }
 
