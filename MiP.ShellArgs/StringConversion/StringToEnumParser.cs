@@ -5,8 +5,6 @@ using System.Linq;
 
 namespace MiP.ShellArgs.StringConversion
 {
-    // TODO: Test if enums type converter is used
-
     /// <summary>
     /// Used to parse strings to enums.
     /// </summary>
