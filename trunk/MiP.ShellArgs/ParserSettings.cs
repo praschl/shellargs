@@ -26,7 +26,7 @@ namespace MiP.ShellArgs
             Assignments = new[] {'=', ':'};
             ShortBooleans = _defaultShortBooleans;
             ShortBooleansEnabled = true;
-            ParserProvider = new StringParserProvider();
+            ParserProvider = new StringParserProvider(this);
         }
 
         internal bool ShortBooleansEnabled { get; set; }

@@ -16,14 +16,14 @@ namespace MiP.ShellArgs.Tests.Implementation
         private HelpGenerator _helpGenerator;
         private static PropertyReflector _reflector;
         private static object _optionsInstance;
-        private StringParserProvider _stringParserProvider;
+        private IStringParserProvider _stringParserProvider;
 
         [TestInitialize]
         public void Initialize()
         {
             _optionsInstance = new StringOnlyOptions();
 
-            _stringParserProvider = new StringParserProvider();
+            _stringParserProvider = new ParserSettings().ParserProvider;
             var stringConverter = new StringConverter(_stringParserProvider);
 
             _reflector = new PropertyReflector(stringConverter);

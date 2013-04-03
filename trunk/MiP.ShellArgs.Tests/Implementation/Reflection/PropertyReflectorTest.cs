@@ -18,7 +18,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
         [TestInitialize]
         public void Initialize()
         {
-            _reflector = new PropertyReflector(new StringConverter(new StringParserProvider()));
+            _reflector = new PropertyReflector(new StringConverter(new ParserSettings().ParserProvider));
         }
 
         [TestMethod]

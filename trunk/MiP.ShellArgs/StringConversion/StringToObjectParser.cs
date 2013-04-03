@@ -30,7 +30,12 @@ namespace MiP.ShellArgs.StringConversion
         /// </returns>
         public override bool IsValid(Type targetType, string value)
         {
-            return true;
+            if (targetType == null)
+                throw new ArgumentNullException("targetType");
+
+            TypeConverter converter = TypeDescriptor.GetConverter(targetType);
+
+            return converter.IsValid(value);
         }
 
         /// <summary>

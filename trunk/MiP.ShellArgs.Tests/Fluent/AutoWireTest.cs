@@ -27,7 +27,7 @@ namespace MiP.ShellArgs.Tests.Fluent
 
             var parserMock = new Mock<IParser>();
 
-            var stringConverter = new StringConverter(new StringParserProvider());
+            var stringConverter = new StringConverter(new ParserSettings().ParserProvider);
             var reflector = new PropertyReflector(stringConverter);
 
             _builder = new AutoWireOptionBuilder<TestContainer>(container, parserMock.Object, reflector);

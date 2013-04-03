@@ -29,6 +29,13 @@ namespace MiP.ShellArgs.Tests.StringConversion
             Assert.AreEqual(1234, result);
         }
 
+        [TestMethod]
+        public void CallsIsValid()
+        {
+            Assert.IsFalse(_parser.IsValid(typeof (int), "abc"));
+            Assert.IsTrue(_parser.IsValid(typeof (int), "123"));
+        }
+
         private enum Numbers
         {
             One = 1
