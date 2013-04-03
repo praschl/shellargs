@@ -1,12 +1,16 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace MiP.ShellArgs.StringConversion
 {
+    // TODO: Test if enums type converter is used
+
     /// <summary>
-    /// Used as a parser which tries to parse any string to the given type.
+    /// Used to parse strings to enums.
     /// </summary>
-    public class StringToObjectParser : StringParser
+    public class StringToEnumParser : StringParser
     {
         /// <summary>
         /// Determines whether this instance can parse to the specified target type.
@@ -17,7 +21,10 @@ namespace MiP.ShellArgs.StringConversion
         /// </returns>
         public override bool CanParseTo(Type targetType)
         {
-            return true;
+            if (targetType == null)
+                throw new ArgumentNullException("targetType");
+
+            return targetType.IsEnum;
         }
 
         /// <summary>
@@ -28,9 +35,10 @@ namespace MiP.ShellArgs.StringConversion
         /// <returns>
         ///   <c>true</c> if the specified value is valid for the target type; otherwise, <c>false</c>.
         /// </returns>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public override bool IsValid(Type targetType, string value)
         {
-            return true;
+            return Enum.GetNames(targetType).Any(v => v.Equals(value, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -43,11 +51,13 @@ namespace MiP.ShellArgs.StringConversion
         /// </returns>
         public override object Parse(Type targetType, string value)
         {
-            if (targetType == null)
-                throw new ArgumentNullException("targetType");
-
+            // try type descriptor before Enum.Parse
             TypeConverter converter = TypeDescriptor.GetConverter(targetType);
-            return converter.ConvertFromInvariantString(value);
+            if (converter.IsValid(value))
+                return converter.ConvertFromInvariantString(value);
+
+            // handle enums explicitly, because the type converter is not case insensitive
+            return Enum.Parse(targetType, value, true);
         }
     }
 }

@@ -11,6 +11,7 @@ namespace MiP.ShellArgs.StringConversion
         public StringParserProvider()
         {
             RegisterParser(new StringToObjectParser());
+            RegisterParser(new StringToEnumParser());
             RegisterParser(new StringToBoolParser());
         }
 

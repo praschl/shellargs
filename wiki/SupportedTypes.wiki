@@ -53,4 +53,8 @@ The following string parsers are predefined and always added to the parser:
 
 {{{StringToBoolParser}}} can also parse "+" to true and "-" to false.
 
-{{{StringToObjectParser}}} is a fallback parser which tries to find a {{{TypeConverter}}} for the type, and uses this to parse the value. Enums can only be parsed case sensitive with the with the {{{TypeConverter}}}; if the value is not valid for the enum, the value is tried with {{{Enum.Parse()}}}.
+{{{StringToEnumParser}}} can parse enums case insensitive, but will try with a {{{TypeConverter}}} before using {{{Enum.Parse()}}}.
+
+{{{StringToObjectParser}}} is a fallback parser which tries to find a {{{TypeConverter}}} for the type, and uses this to parse the value. This parser always returns true for {{{CanParse()}}} and {{{IsValid()}}}. This parser is the one which will be picked, when no other parser could be used. The {{{TypeConverter}}} used by this parser may raise an exception, if it can not parse the string.
+
+Enums can only be parsed case sensitive with the with the {{{TypeConverter}}}; if the value is not valid for the enum, the value is tried with {{{Enum.Parse()}}}.

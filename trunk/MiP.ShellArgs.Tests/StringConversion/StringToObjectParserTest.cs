@@ -18,7 +18,7 @@ namespace MiP.ShellArgs.Tests.StringConversion
         [TestMethod]
         public void ParsesEnums()
         {
-            var result = (Numbers)_parser.Parse(typeof (Numbers), "one");
+            var result = (Numbers)_parser.Parse(typeof (Numbers), "One");
             Assert.AreEqual(Numbers.One, result);
         }
 

@@ -45,4 +45,4 @@ To add a new string parser you wrote use
   // or
   settings.ParseTo<User>().With(new UserParser());
 }}}
-By default the {{{StringToBoolParser}}}, the {{{StringToDateTimeParser}}} and the {{{StringToTimeSpanParser}}} are already added to the instance.
+By default the {{{StringToObjectParser}}}, the {{{StringToEnumParser}}} and the {{{StringToBoolParser}}} are already added to the instance; see SupportedTypes for their description.
