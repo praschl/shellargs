@@ -224,6 +224,27 @@ namespace MiP.ShellArgs.Tests
             CollectionAssert.AreEquivalent(new[] {1, 2, 3}, list.ToArray());
         }
 
+        [TestMethod]
+        public void WithOptionCanParseKeyValuePairs()
+        {
+            var properties = new Dictionary<string, string>();
+
+            new Parser()
+                .WithOption(b => b.Named("p")
+                                  .Collection
+                                  .As<KeyValuePair<string, string>>()
+                                  .Do(context => properties[context.Value.Key] = context.Value.Value))
+                .Parse("/p:a=b", "/p:c=d", "/p:c=e");
+
+            Assert.AreEqual(2, properties.Count);
+            
+            Assert.IsTrue(properties.ContainsKey("a"));
+            Assert.IsTrue(properties.ContainsKey("c"));
+
+            Assert.AreEqual("b", properties["a"]);
+            Assert.AreEqual("e", properties["c"]);
+        }
+
         #region Classes used by Test
 
         public class RequiredAndNonRequiredOption
