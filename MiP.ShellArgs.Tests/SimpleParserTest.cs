@@ -304,11 +304,9 @@ namespace MiP.ShellArgs.Tests
             Assert.AreEqual("Hello", container.GetValue());
         }
 
-        //[TestMethod]
+        [TestMethod]
         public void CanParseToDictionary()
         {
-            // TODO: activate test for Dictionary
-
             var container = Parser.Parse<DictionaryContainer>("-Names","a=b","c:d", "-Numbers:e=5");
 
             Assert.IsNotNull(container);
@@ -317,11 +315,22 @@ namespace MiP.ShellArgs.Tests
 
             Assert.IsTrue(container.Names.ContainsKey("a"));
             Assert.IsTrue(container.Names.ContainsKey("c"));
-            Assert.IsTrue(container.Numbers.ContainsKey("d"));
+            Assert.IsTrue(container.Numbers.ContainsKey("e"));
 
             Assert.AreEqual("b", container.Names["a"]);
             Assert.AreEqual("d", container.Names["c"]);
             Assert.AreEqual(5, container.Numbers["e"]);
+        }
+
+        //[TestMethod]
+        public void ParseToDictionaryDoubleKey()
+        {
+            // TODO: activate test ParseToDictionaryDoubleKey
+            var container = Parser.Parse<DictionaryContainer>("-Names", "a=b", "a:c");
+
+            Assert.AreEqual(1, container.Names.Count);
+            Assert.IsTrue(container.Names.ContainsKey("a"));
+            Assert.AreEqual("c", container.Names["a"]);
         }
 
         #region Classes used by Test

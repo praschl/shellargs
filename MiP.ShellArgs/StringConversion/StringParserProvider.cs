@@ -14,8 +14,7 @@ namespace MiP.ShellArgs.StringConversion
         {
             ParserSettings = parserSettings;
             RegisterParser(new StringToObjectParser());
-            // TODO: register KeyValuePair parser
-            //RegisterParser(new StringToKeyValuePairParser(this, parserSettings));
+            RegisterParser(new StringToKeyValuePairParser(this, parserSettings));
             RegisterParser(new StringToEnumParser());
             RegisterParser(new StringToBoolParser());
         }
