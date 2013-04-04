@@ -73,5 +73,21 @@ namespace MiP.ShellArgs.Tests.Implementation
 
             Assert.AreEqual(typeof(int?), type.GetCollectionItemType());
         }
+
+        [TestMethod]
+        public void IsOrImplementsICollectionReturnsTrueForDictionary()
+        {
+            Type type = typeof (IDictionary<string, int>);
+
+            Assert.IsTrue(type.IsOrImplementsICollection());
+        }
+
+        [TestMethod]
+        public void GetCollectionItemTypeReturnsKeyValuePairForDictionary()
+        {
+            Type type = typeof (Dictionary<string, int>);
+
+            Assert.AreEqual(typeof (KeyValuePair<string, int>), type.GetCollectionItemType());
+        }
     }
 }

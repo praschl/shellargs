@@ -15,15 +15,27 @@ namespace MiP.ShellArgs.Implementation
             return innerType ?? type;
         }
 
+        private static bool IsICollection(Type type)
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ICollection<>);
+        }
+
+        private static Type GetICollectionType(Type type)
+        {
+            return type.GetInterfaces().FirstOrDefault(IsICollection);
+        }
+
+        private static bool ImplementsICollection(Type type)
+        {
+            return GetICollectionType(type) != null;
+        }
+
         public static bool IsOrImplementsICollection(this Type type)
         {
             if (type == null)
                 throw new ArgumentNullException("type");
 
-            bool implementsICollection = type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof (ICollection<>));
-            bool isICollection = type.IsGenericType && type.GetGenericTypeDefinition() == typeof (ICollection<>);
-
-            return isICollection || implementsICollection;
+            return ImplementsICollection(type) || IsICollection(type);
         }
 
         public static Type GetCollectionItemType(this Type type)
@@ -31,11 +43,11 @@ namespace MiP.ShellArgs.Implementation
             if (type == null)
                 throw new ArgumentNullException("type");
 
-            if (!type.IsOrImplementsICollection())
-                return type;
+            if (!IsICollection(type))
+                type = (GetICollectionType(type) ?? type);
 
-            // TODO: when type is a dictionary, return correct item type (KeyValuePair<,>)
-            //var collectionType = type.GetInterfaces().First(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof (ICollection<>));
+            if (!IsICollection(type))
+                return type;
 
             return type.GetGenericArguments().First();
         }
