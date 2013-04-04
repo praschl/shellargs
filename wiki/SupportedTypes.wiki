@@ -1,11 +1,9 @@
 #summary Types supported by the Parser, and how to add support for custom types.
 #labels Featured
 = Types supported by the parser =
-By default, the parser supports all types which have a {{{TypeConverter}}} configured or can be converted by {{{Convert.ChangeType(object value, Type conversionType)}}}.
+By default, the parser supports all types which can be parsed with a {{{TypeConverter}}}.
 
 For help with creating a {{{TypeConverter}}} see http://msdn.microsoft.com/en-us/library/system.componentmodel.typeconverter.aspx
-
-For help with {{{Convert.ChangeType()}}} see http://msdn.microsoft.com/en-us/library/system.convert.changetype.aspx
 
 == System types ==
 This includes the following types
@@ -32,6 +30,11 @@ All value types may be used with {{{Nullable<T>}}}. Note that this does mean, th
 == Collections ==
 Collections of any type are supported as long as {{{ICollection<T>}}} is implemented and {{{T}}} can be parsed. The type of the property may be a concrete type of a collection or just {{{ICollection<T>}}}. If the property has a setter and is not initialized to an instance of the collection, the parser will try to create an instance. The parser can not create an instance for abstract types or types which have no default constructor. In these cases, initialize the property in the constructor of the container.
 
+== KeyValuePair ==
+Dynamic properties are supported by adding a collection of {{{KeyValuePair<TKey, TValue>}}}. This may also be a dictionary. However, {{{TKey}}} has to be of the type {{{string}}}. This allows to support properties like msbuild has them: {{{/p:compile=true /p:config=Release /p:out=}}}. {{{TValue}}} may also be of any supported type, except collections (which does not make sense imo). 
+
+Be careful when using {{{Dictionary<string,T>}}}. If the user tries to use the same property multiple times an exception will be raised, telling that "An item with the same key has already been added". You can avoid that by using {{{Collection<KeyValuePair<string,TValue>>}}}.
+
 == Custom types ==
 To add support from custom types
   * derive from {{{MiP.ShellArgs.StringConversion.StringParser<TTarget>}}} (recommended) or 
@@ -50,6 +53,8 @@ Override {{{IsValue(Type, string)}}} to decide if your parser can parse the valu
 
 == Predefined Stringparsers ==
 The following string parsers are predefined and always added to the parser:
+
+{{{StringToKeyValuePairParser}}} used to parse arguments of the format "key=value" into a {{{KeyValuePair<string,TValue}}}.
 
 {{{StringToBoolParser}}} can also parse "+" to true and "-" to false.
 
