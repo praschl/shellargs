@@ -8,8 +8,8 @@ When you pass this array to the {{{Parse(params string[] args)}}} method of the 
 == Passing options ==
 Options can be started with the prefix "/" or "-" and are not case sensitive. The following arguments mean the same:
 {{{
-*.exe /user
-*.exe -User
+*.exe /user michael
+*.exe -User michael
 }}}
 Case sensitivity cannot be changed (yet), but you can override the default prefixes in the ParserSettings.
 
