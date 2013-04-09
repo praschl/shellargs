@@ -8,25 +8,25 @@ When you pass this array to the {{{Parse(params string[] args)}}} method of the 
 == Passing options ==
 Options can be started with the prefix "/" or "-" and are not case sensitive. The following arguments mean the same:
 {{{
-/user
--User
+*.exe /user
+*.exe -User
 }}}
 Case sensitivity cannot be changed (yet), but you can override the default prefixes in the ParserSettings.
 
 == Passing values ==
 Values can be passed to the option as a separate argument or by assinging it. The following arguments mean the same:
 {{{
-/user michael
-/user=michael
-/user:michael
+*.exe /user michael
+*.exe /user=michael
+*.exe /user:michael
 }}}
 
 Boolean options do not require a value to be passed, which negates the default value. Assuming the default value is false, it can be set to true in the following ways:
 {{{
-/enable
-/enable=true
-/enable true
-/enable+
+*.exe /enable
+*.exe /enable=true
+*.exe /enable true
+*.exe /enable+
 }}}
 The negative values are "false" or "-". Note that the short boolean values can not be passed as a separate argument, and they cannot be changed.
 
