@@ -1,0 +1,31 @@
+﻿Help
+{
+    better handling of 
+    - no arguments -> make an attribute how no parameters behave
+    - help
+    - hidden options which are not shown in help.
+
+    detail help per argument
+    - aliases, values, options, formatting options
+    - path [list of] value
+      Sets the value... some descriptive description
+      [Allowed values: enum, bool, +/-]
+      [Default: xyz]
+      This parameter is optional|required
+}
+
+internal options: 
+{
+    /Args.Debug+ debugging of argument parsing
+    /Args.Pattern="yyyy-MM-dd"
+    /Args.Culture="de-AT"    /Args.Culture="invariant"
+    /Args.Save="Filename" -> serialize args after parsing to file (Json?)
+    /Args.Load="Filename" -> deserialize args before parsing from file (Json?)
+
+    These must not influence positional options when they occure at beginning.
+    Example when "one" and "two" are used as positional, this must still work:
+
+    xxx.exe /Args.Debug+ one two
+
+    This turns on debugging but still uses "one" and "two" as positional options
+}

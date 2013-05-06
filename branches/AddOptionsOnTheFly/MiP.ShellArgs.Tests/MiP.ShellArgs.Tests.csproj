@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{07C92FDC-10F2-4C4B-AED7-DCD23E771580}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MiP.ShellArgs.Tests</RootNamespace>
+    <AssemblyName>MiP.ShellArgs.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Moq">
+      <HintPath>..\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
+      <Visible>False</Visible>
+    </CodeAnalysisDependentAssemblyPaths>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FluentParserTests.cs" />
+    <Compile Include="Fluent\AutoWireTest.cs" />
+    <Compile Include="Fluent\GenericOptionBuilderTest.cs" />
+    <Compile Include="Fluent\ParserResultTest.cs" />
+    <Compile Include="Fluent\OptionBuilderTest.cs" />
+    <Compile Include="ParserExtentionsTest.cs" />
+    <Compile Include="ParserSettingsTest.cs" />
+    <Compile Include="SimpleParserTest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StringConversion\StringConverterTest.cs" />
+    <Compile Include="StringConversion\StringParserProviderTest.cs" />
+    <Compile Include="StringConversion\StringToBoolParserTest.cs" />
+    <Compile Include="StringConversion\StringToEnumParserTest.cs" />
+    <Compile Include="StringConversion\StringToKeyValuePairParserTest.cs" />
+    <Compile Include="StringConversion\StringToObjectParserTest.cs" />
+    <Compile Include="TestHelpers\ExceptionAssert.cs" />
+    <Compile Include="Implementation\ArgumentFactoryTest.cs" />
+    <Compile Include="Implementation\Reflection\BooleanPropertySetterTest.cs" />
+    <Compile Include="Implementation\Reflection\CollectionPropertySetterTest.cs" />
+    <Compile Include="Implementation\Reflection\DefaultPropertySetterTest.cs" />
+    <Compile Include="Implementation\DelegatingPropertySetterTest.cs" />
+    <Compile Include="Implementation\HelpGeneratorTests.cs" />
+    <Compile Include="Implementation\OptionValidatorTest.cs" />
+    <Compile Include="Implementation\Reflection\PropertyReflectorTest.cs" />
+    <Compile Include="Implementation\TokenConverterTest_ConvertToTokens.cs" />
+    <Compile Include="Implementation\TokenConverterTest_MapToContainer.cs" />
+    <Compile Include="Implementation\TokenTest.cs" />
+    <Compile Include="Implementation\TypeExtensionsTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MiP.ShellArgs\MiP.ShellArgs.csproj">
+      <Project>{72442C72-19A6-4FF2-93F8-679A5139DC64}</Project>
+      <Name>MiP.ShellArgs</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
