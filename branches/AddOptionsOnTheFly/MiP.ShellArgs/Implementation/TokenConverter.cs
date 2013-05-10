@@ -35,18 +35,18 @@ namespace MiP.ShellArgs.Implementation
             _argumentFactory = argumentFactory;
         }
 
-        public Token[] ConvertToTokens(ICollection<OptionDefinition> optionDefinitions, IEnumerable<string> arguments)
+        public IEnumerable<Token> ConvertToTokens(ICollection<OptionDefinition> optionDefinitions, IEnumerable<string> arguments)
         {
             _arguments = new Queue<string>(arguments);
 
-            return ParseTokens(optionDefinitions).ToArray();
+            return ParseTokens(optionDefinitions);
         }
 
-        public Token[] ConvertToTokens(ICollection<OptionDefinition> optionDefinitions, params string[] arguments)
+        public IEnumerable<Token> ConvertToTokens(ICollection<OptionDefinition> optionDefinitions, params string[] arguments)
         {
             _arguments = new Queue<string>(arguments);
 
-            return ParseTokens(optionDefinitions).ToArray();
+            return ParseTokens(optionDefinitions);
         }
 
         private IEnumerable<Token> ParseTokens(ICollection<OptionDefinition> optionDefinitions)

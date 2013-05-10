@@ -191,7 +191,7 @@ namespace MiP.ShellArgs
 
             _optionValidator.Validate(_optionDefinitions);
 
-            Token[] tokens = _converter.ConvertToTokens(_optionDefinitions, args);
+            IEnumerable<Token> tokens = _converter.ConvertToTokens(_optionDefinitions, args);
 
             _converter.MapToContainer(tokens, _optionDefinitions);
 
