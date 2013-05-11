@@ -26,6 +26,7 @@ namespace MiP.ShellArgs.Implementation
         private List<Token> _resultTokens;
         private Queue<string> _arguments;
         private OptionDefinition _lastOption;
+        private string _lastCollectionOption;
 
         public TokenConverter(ArgumentFactory argumentFactory)
         {
@@ -55,10 +56,11 @@ namespace MiP.ShellArgs.Implementation
                                                                                 .OrderBy(o => o.Position);
 
             var positionalOptions = new Queue<OptionDefinition>(positionals);
-            List<OptionDefinition> namedOptions = optionDefinitions.ToList();
 
             _resultTokens = new List<Token>();
             _lastOption = null;
+
+            Token currentOptionToken = null;
 
             while (_arguments.Count > 0)
             {
@@ -66,38 +68,36 @@ namespace MiP.ShellArgs.Implementation
 
                 if (parsedArgument.HasName)
                 {
-                    FinalizePreviousOption();
+                    FinalizePreviousOption(currentOptionToken);
                     string name = parsedArgument.Name;
 
-                    OptionDefinition definition = optionDefinitions.FirstOrDefault(o => o.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-                    if (definition != null)
-                        name = definition.Name;
+                    OptionDefinition definition = optionDefinitions.FirstOrDefault(o => o.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                        ??
+                        optionDefinitions.FirstOrDefault(o => o.Aliases != null && o.Aliases.Contains(name, StringComparer.OrdinalIgnoreCase));
 
-                    // if it is an alias, get the correct name
-                    OptionDefinition aliasedOption = optionDefinitions.FirstOrDefault(o => o.Aliases != null && o.Aliases.Contains(name, StringComparer.OrdinalIgnoreCase));
-                    if (aliasedOption != null)
-                        name = aliasedOption.Name;
-
-                    if (definition == null && aliasedOption == null)
+                    if (definition == null)
                         throw new ParsingException(string.Format(CultureInfo.InvariantCulture, NotAValidOptionMessage, name));
 
-                    _resultTokens.Add(Token.CreateOption(name));
+                    name = definition.Name;
+
+                    _lastOption = definition;
+
                     positionalOptions.Clear(); // when a name was given, positionals are no longer allowed -> deactivate the remaining.
-                    _lastOption = namedOptions.FirstOrDefault(o => string.Equals(o.Name, name, StringComparison.OrdinalIgnoreCase));
+                    currentOptionToken = Token.CreateOption(name);
+                }
+
+                if (_lastOption == null)
+                {
+                    if (!positionalOptions.Any())
+                        throw new ParsingException(string.Format(CultureInfo.InvariantCulture, ExpectedAnOptionMessage, parsedArgument.Value));
+
+                    _lastOption = positionalOptions.Dequeue();
+                    currentOptionToken = Token.CreateOption(_lastOption.Name);
                 }
 
                 if (parsedArgument.HasValue)
                 {
-                    if (_lastOption == null)
-                    {
-                        if (!positionalOptions.Any())
-                            throw new ParsingException(string.Format(CultureInfo.InvariantCulture, ExpectedAnOptionMessage, parsedArgument.Value));
-
-                        _lastOption = positionalOptions.Dequeue();
-                        _resultTokens.Add(Token.CreateOption(_lastOption.Name));
-                    }
-
-                    _resultTokens.Add(Token.CreateValue(parsedArgument.Value));
+                    AddPair(currentOptionToken, Token.CreateValue(parsedArgument.Value));
 
                     // next value will require a new option unless the current option is a collection
                     if (!_lastOption.IsCollection)
@@ -105,28 +105,38 @@ namespace MiP.ShellArgs.Implementation
                 }
             }
 
-            FinalizePreviousOption();
+            FinalizePreviousOption(currentOptionToken);
 
             return _resultTokens;
         }
 
-        private void FinalizePreviousOption()
+        private void FinalizePreviousOption(Token currentOptionToken)
         {
             if (_lastOption == null)
                 return;
 
             if (_lastOption.IsBoolean)
             {
-                _resultTokens.Add(Token.CreateValue(ToggleBoolean));
+                AddPair(currentOptionToken, Token.CreateValue(ToggleBoolean));
                 return;
             }
 
             if (!_lastOption.IsCollection)
                 throw new ParsingException(string.Format(CultureInfo.InvariantCulture, NoValueAssignedMessage, _lastOption.Name));
+        }
 
-            // when we are here, its a collection, we can also remove the option token when no value was added
-            if (_resultTokens.Last().Value == null)
-                _resultTokens.RemoveAt(_resultTokens.Count - 1);
+        private void AddPair(Token option, Token value)
+        {
+            if (!_lastOption.IsCollection)
+                _lastCollectionOption = null;
+
+            if (_lastCollectionOption != option.Name)
+                _resultTokens.Add(option);
+
+            _resultTokens.Add(value);
+
+            if (_lastOption.IsCollection)
+                _lastCollectionOption = option.Name;
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
