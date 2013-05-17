@@ -39,17 +39,19 @@ namespace MiP.ShellArgs.Implementation
         {
             _arguments = new Queue<string>(arguments);
 
-            return ParseTokens(optionDefinitions);
+            return ParseTokens(optionDefinitions)
+                .SelectMany(tokens => tokens);
         }
 
         public IEnumerable<Token> ConvertToTokens(ICollection<OptionDefinition> optionDefinitions, params string[] arguments)
         {
             _arguments = new Queue<string>(arguments);
 
-            return ParseTokens(optionDefinitions);
+            return ParseTokens(optionDefinitions)
+                .SelectMany(tokens => tokens);
         }
 
-        private IEnumerable<Token> ParseTokens(ICollection<OptionDefinition> optionDefinitions)
+        private IEnumerable<IEnumerable<Token>> ParseTokens(ICollection<OptionDefinition> optionDefinitions)
         {
             IOrderedEnumerable<OptionDefinition> positionals = optionDefinitions.Where(o => o.IsPositional)
                                                                                 .OrderBy(o => o.Position);
@@ -66,8 +68,7 @@ namespace MiP.ShellArgs.Implementation
 
                 if (parsedArgument.HasName)
                 {
-                    foreach (var token in FinalizePreviousOption(currentOptionToken))
-                        yield return token;
+                    yield return FinalizePreviousOption(currentOptionToken);
 
                     string name = parsedArgument.Name;
 
@@ -97,8 +98,7 @@ namespace MiP.ShellArgs.Implementation
 
                 if (parsedArgument.HasValue)
                 {
-                    foreach (var token in AddPair(currentOptionToken, Token.CreateValue(parsedArgument.Value)))
-                        yield return token;
+                    yield return AddPair(currentOptionToken, Token.CreateValue(parsedArgument.Value));
 
                     // next value will require a new option unless the current option is a collection
                     if (!_lastOption.IsCollection)
@@ -106,25 +106,21 @@ namespace MiP.ShellArgs.Implementation
                 }
             }
 
-            foreach (var token in FinalizePreviousOption(currentOptionToken))
-                yield return token;
+            yield return FinalizePreviousOption(currentOptionToken);
         }
 
         private IEnumerable<Token> FinalizePreviousOption(Token currentOptionToken)
         {
             if (_lastOption == null)
-                yield break;
+                return Enumerable.Empty<Token>();
 
             if (_lastOption.IsBoolean)
-            {
-                foreach (var token in AddPair(currentOptionToken, Token.CreateValue(ToggleBoolean)))
-                    yield return token;
-
-                yield break;
-            }
+                return AddPair(currentOptionToken, Token.CreateValue(ToggleBoolean));
 
             if (!_lastOption.IsCollection)
                 throw new ParsingException(string.Format(CultureInfo.InvariantCulture, NoValueAssignedMessage, _lastOption.Name));
+
+            return Enumerable.Empty<Token>();
         }
 
         private IEnumerable<Token> AddPair(Token option, Token value)
@@ -132,13 +128,15 @@ namespace MiP.ShellArgs.Implementation
             if (!_lastOption.IsCollection)
                 _lastCollectionOption = null;
 
-            if (_lastCollectionOption != option.Name)
-                yield return option;
-
-            yield return value;
+            bool returnOption = _lastCollectionOption != option.Name;
 
             if (_lastOption.IsCollection)
                 _lastCollectionOption = option.Name;
+
+            if (returnOption)
+                yield return option;
+
+            yield return value;
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
