@@ -192,14 +192,18 @@ namespace MiP.ShellArgs.Tests.Implementation
                                        Name = "a"
                                    });
 
-            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x", "y"),
+            // ReSharper disable ReturnValueOfPureMethodIsNotUsed
+            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x", "y").ToArray(),
+                // ReSharper restore ReturnValueOfPureMethodIsNotUsed
                 ex => Assert.IsTrue(ex.Message == "Expected an option instead of value 'y'."));
         }
 
         [TestMethod]
         public void ValueWithoutOptionAtEnd()
         {
-            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "x"),
+            // ReSharper disable ReturnValueOfPureMethodIsNotUsed
+            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "x").ToArray(),
+                // ReSharper restore ReturnValueOfPureMethodIsNotUsed
                 ex => Assert.IsTrue(ex.Message == "Expected an option instead of value 'x'."));
         }
 
@@ -270,7 +274,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                        Name = "b"
                                    });
 
-            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "-b"),
+            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "-b").ToArray(),
                 ex => Assert.IsTrue(ex.Message == "Option 'a' has no value assigned."));
         }
 
@@ -286,7 +290,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                        Name = "b"
                                    });
 
-            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x", "-b"),
+            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x", "-b").ToArray(),
                 ex => Assert.IsTrue(ex.Message.StartsWith("Option 'b' has no value assigned.")));
         }
 

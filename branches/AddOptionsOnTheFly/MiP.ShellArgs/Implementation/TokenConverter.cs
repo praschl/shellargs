@@ -23,7 +23,6 @@ namespace MiP.ShellArgs.Implementation
             "The following option(s) are required, but were not given: [{0}].";
 
         private readonly ArgumentFactory _argumentFactory;
-        private List<Token> _resultTokens;
         private Queue<string> _arguments;
         private OptionDefinition _lastOption;
         private string _lastCollectionOption;
@@ -57,7 +56,6 @@ namespace MiP.ShellArgs.Implementation
 
             var positionalOptions = new Queue<OptionDefinition>(positionals);
 
-            _resultTokens = new List<Token>();
             _lastOption = null;
 
             Token currentOptionToken = null;
@@ -68,7 +66,9 @@ namespace MiP.ShellArgs.Implementation
 
                 if (parsedArgument.HasName)
                 {
-                    FinalizePreviousOption(currentOptionToken);
+                    foreach (var token in FinalizePreviousOption(currentOptionToken))
+                        yield return token;
+
                     string name = parsedArgument.Name;
 
                     OptionDefinition definition = optionDefinitions.FirstOrDefault(o => o.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
@@ -97,7 +97,8 @@ namespace MiP.ShellArgs.Implementation
 
                 if (parsedArgument.HasValue)
                 {
-                    AddPair(currentOptionToken, Token.CreateValue(parsedArgument.Value));
+                    foreach (var token in AddPair(currentOptionToken, Token.CreateValue(parsedArgument.Value)))
+                        yield return token;
 
                     // next value will require a new option unless the current option is a collection
                     if (!_lastOption.IsCollection)
@@ -105,35 +106,36 @@ namespace MiP.ShellArgs.Implementation
                 }
             }
 
-            FinalizePreviousOption(currentOptionToken);
-
-            return _resultTokens;
+            foreach (var token in FinalizePreviousOption(currentOptionToken))
+                yield return token;
         }
 
-        private void FinalizePreviousOption(Token currentOptionToken)
+        private IEnumerable<Token> FinalizePreviousOption(Token currentOptionToken)
         {
             if (_lastOption == null)
-                return;
+                yield break;
 
             if (_lastOption.IsBoolean)
             {
-                AddPair(currentOptionToken, Token.CreateValue(ToggleBoolean));
-                return;
+                foreach (var token in AddPair(currentOptionToken, Token.CreateValue(ToggleBoolean)))
+                    yield return token;
+
+                yield break;
             }
 
             if (!_lastOption.IsCollection)
                 throw new ParsingException(string.Format(CultureInfo.InvariantCulture, NoValueAssignedMessage, _lastOption.Name));
         }
 
-        private void AddPair(Token option, Token value)
+        private IEnumerable<Token> AddPair(Token option, Token value)
         {
             if (!_lastOption.IsCollection)
                 _lastCollectionOption = null;
 
             if (_lastCollectionOption != option.Name)
-                _resultTokens.Add(option);
+                yield return option;
 
-            _resultTokens.Add(value);
+            yield return value;
 
             if (_lastOption.IsCollection)
                 _lastCollectionOption = option.Name;
