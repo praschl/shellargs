@@ -14,7 +14,7 @@ namespace MiP.ShellArgs
     /// <summary>
     /// Used to parse shell arguments into pocos or call event handlers when parsed.
     /// </summary>
-    public class Parser : IParser
+    public class Parser : IParser, IParserBuilder
     {
         private const string ParserAlreadyKnowsContainerMessage = "Parser already knows a container of type {0}.";
 
@@ -77,7 +77,7 @@ namespace MiP.ShellArgs
         /// The current instance of <see cref="IParser" />.
         /// </returns>
         [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public IParser AutoWire<TContainer>(TContainer container, Action<IAutoWireOptionBuilder<TContainer>> builderDelegate) where TContainer : new()
+        public void AutoWire<TContainer>(TContainer container, Action<IAutoWireOptionBuilder<TContainer>> builderDelegate) where TContainer : new()
         {
             if (ReferenceEquals(container, null))
                 container = new TContainer();
@@ -102,8 +102,6 @@ namespace MiP.ShellArgs
             }
 
             _optionDefinitions.AddRange(newDefinitions);
-
-            return this;
         }
 
         /// <summary>
@@ -116,7 +114,7 @@ namespace MiP.ShellArgs
         /// </returns>
         /// <exception cref="System.ArgumentException">Parameter name must not be null or empty.</exception>
         /// <exception cref="System.ArgumentNullException">builderDelegate</exception>
-        public IParser WithOption(string name, Action<IOptionBuilder> builderDelegate)
+        public void WithOption(string name, Action<IOptionBuilder> builderDelegate)
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException("name must not be null or empty.", "name");
@@ -124,11 +122,11 @@ namespace MiP.ShellArgs
             if (builderDelegate == null)
                 throw new ArgumentNullException("builderDelegate");
 
-            return WithOption(b =>
-                              {
-                                  b.Named(name);
-                                  builderDelegate(b);
-                              });
+            WithOption(b =>
+                       {
+                           b.Named(name);
+                           builderDelegate(b);
+                       });
         }
 
         /// <summary>
@@ -136,7 +134,7 @@ namespace MiP.ShellArgs
         /// </summary>
         /// <param name="builderDelegate">Used to customize the addded option.</param>
         /// <returns>The current instance of <see cref="IParser"/>.</returns>
-        public IParser WithOption(Action<IOptionBuilder> builderDelegate)
+        public void WithOption(Action<IOptionBuilder> builderDelegate)
         {
             if (builderDelegate == null)
                 throw new ArgumentNullException("builderDelegate");
@@ -148,8 +146,6 @@ namespace MiP.ShellArgs
             builderDelegate(builder);
 
             _optionDefinitions.Add(newDefinition);
-
-            return this;
         }
 
         /// <summary>
@@ -160,14 +156,12 @@ namespace MiP.ShellArgs
         /// The current instance of <see cref="IParser" />.
         /// </returns>
         /// <exception cref="System.ArgumentNullException">handler</exception>
-        public IParser OnOptionParsed(Action<ParsingContext<object>> handler)
+        public void OnOptionParsed(Action<ParsingContext<object>> handler)
         {
             if (handler == null)
                 throw new ArgumentNullException("handler");
 
             ValueParsed += (o, e) => handler(new ParsingContext<object>(this, e.OptionName, e.Value));
-
-            return this;
         }
 
         /// <summary>
@@ -208,9 +202,10 @@ namespace MiP.ShellArgs
         /// <returns>The container with the parsed values.</returns>
         public static TContainer Parse<TContainer>(params string[] args) where TContainer : new()
         {
-            return new Parser()
-                .AutoWire<TContainer>()
-                .Parse(args)
+            var parser = new Parser();
+            parser.AutoWire<TContainer>();
+
+            return parser.Parse(args)
                 .Result<TContainer>();
         }
 
@@ -223,9 +218,10 @@ namespace MiP.ShellArgs
         /// <returns>The container with the parsed values.</returns>
         public static TContainer Parse<TContainer>(ParserSettings settings, params string[] args) where TContainer : new()
         {
-            return new Parser(settings)
-                .AutoWire<TContainer>()
-                .Parse(args)
+            var parser = new Parser(settings);
+            parser.AutoWire<TContainer>();
+
+            return parser.Parse(args)
                 .Result<TContainer>();
         }
 
@@ -238,10 +234,9 @@ namespace MiP.ShellArgs
         /// <returns>The container with the parsed values.</returns>
         public static void Parse<TContainer>(TContainer container, params string[] args) where TContainer : new()
         {
-            new Parser()
-                .AutoWire(container)
-                .Parse(args)
-                .Result<TContainer>();
+            var parser = new Parser();
+            parser.AutoWire(container);
+            parser.Parse(args);
         }
 
         /// <summary>
@@ -254,10 +249,9 @@ namespace MiP.ShellArgs
         /// <returns>The container with the parsed values.</returns>
         public static void Parse<TContainer>(TContainer container, ParserSettings settings, params string[] args) where TContainer : new()
         {
-            new Parser(settings)
-                .AutoWire(container)
-                .Parse(args)
-                .Result<TContainer>();
+            var parser = new Parser(settings);
+            parser.AutoWire(container);
+            parser.Parse(args);
         }
 
         #endregion

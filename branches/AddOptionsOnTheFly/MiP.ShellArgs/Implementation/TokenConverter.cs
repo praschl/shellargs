@@ -54,7 +54,7 @@ namespace MiP.ShellArgs.Implementation
         private IEnumerable<IEnumerable<Token>> ParseTokens(ICollection<OptionDefinition> optionDefinitions)
         {
             IOrderedEnumerable<OptionDefinition> positionals = optionDefinitions.Where(o => o.IsPositional)
-                                                                                .OrderBy(o => o.Position);
+                .OrderBy(o => o.Position);
 
             var positionalOptions = new Queue<OptionDefinition>(positionals);
 
@@ -73,8 +73,8 @@ namespace MiP.ShellArgs.Implementation
                     string name = parsedArgument.Name;
 
                     OptionDefinition definition = optionDefinitions.FirstOrDefault(o => o.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
-                        ??
-                        optionDefinitions.FirstOrDefault(o => o.Aliases != null && o.Aliases.Contains(name, StringComparer.OrdinalIgnoreCase));
+                                                  ??
+                                                  optionDefinitions.FirstOrDefault(o => o.Aliases != null && o.Aliases.Contains(name, StringComparer.OrdinalIgnoreCase));
 
                     if (definition == null)
                         throw new ParsingException(string.Format(CultureInfo.InvariantCulture, NotAValidOptionMessage, name));

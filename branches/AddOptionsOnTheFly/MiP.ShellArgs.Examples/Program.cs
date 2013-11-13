@@ -28,29 +28,34 @@ namespace MiP.ShellArgs.Examples
         {
             int counter = 0;
 
-            var user = new Parser()
-                .Customize(
-                    c => c.ParseTo<object>().With<StringToObjectParser>()
-                          .ParseTo<bool>().With<StringToBoolParser>()
-                          .PrefixWith('/', '-')
-                          .AssignWith(':', '=')
-                          .EnableShortBooleans(true)
-                )
-                .AutoWire<User>(
-                    u => u.WithOption(x => x.Name).Do(p => { })
-                          .WithOption(x => x.Count).Do(pc => counter += pc.Value)
-                          .WithOption(x => x.Variables.CurrentValue()).Do(pc => Console.WriteLine(pc.Container.Variables))
-                )
-                .WithOption(b => b.Named("AddInt")
-                                  .Alias("add", "a")
-                                  .AtPosition(1)
-                                  .Required()
-                                  .As<int>()
-                                  .Do(i => counter += i.Value)
-                )
-                .OnOptionParsed(pc => Console.WriteLine(pc.Option, pc.Value))
-                //
-                .Parse("-name", "me", "-add", "1")
+            var parser = new Parser();
+            parser.Customize(
+                c => c.ParseTo<object>().With<StringToObjectParser>()
+                    .ParseTo<bool>().With<StringToBoolParser>()
+                    .PrefixWith('/', '-')
+                    .AssignWith(':', '=')
+                    .EnableShortBooleans(true)
+                );
+
+            parser.AutoWire<User>(
+                u => u.WithOption(x => x.Name).Do(p => { })
+                    .WithOption(x => x.Count).Do(pc => counter += pc.Value)
+                    .WithOption(x => x.Variables.CurrentValue()).Do(pc => Console.WriteLine(pc.Container.Variables))
+                );
+
+            parser.WithOption(b => b.Named("AddInt")
+                .Alias("add", "a")
+                .AtPosition(1)
+                .Required()
+                .As<int>()
+                .Do(i => counter += i.Value)
+                );
+
+            parser.OnOptionParsed(pc => Console.WriteLine(pc.Option, pc.Value));
+
+            //
+
+            var user = parser.Parse("-name", "me", "-add", "1")
                 .Result<User>();
 
             Console.WriteLine(user);
@@ -61,10 +66,12 @@ namespace MiP.ShellArgs.Examples
             User user;
             ValueHolder holder;
 
-            new Parser()
-                .AutoWire<ValueHolder>()
-                .AutoWire<User>()
-                .Parse("name", "me", "-value", "1")
+            var parser = new Parser();
+
+            parser.AutoWire<ValueHolder>();
+            parser.AutoWire<User>();
+
+            parser.Parse("name", "me", "-value", "1")
                 .ResultTo(out user)
                 .ResultTo(out holder);
 
@@ -77,10 +84,12 @@ namespace MiP.ShellArgs.Examples
             var user = new User();
             var holder = new ValueHolder();
 
-            new Parser()
-                .AutoWire(user)
-                .AutoWire(holder)
-                .Parse("name", "me", "-value", "1");
+            var parser = new Parser();
+
+            parser.AutoWire(user);
+            parser.AutoWire(holder);
+
+            parser.Parse("name", "me", "-value", "1");
 
             Console.WriteLine(user);
             Console.WriteLine(holder);
@@ -88,24 +97,25 @@ namespace MiP.ShellArgs.Examples
 
         private static void FluentWithOption()
         {
-            new Parser()
-                .WithOption("demo1",
-                    b => b.AtPosition(1)
-                          .Required()
-                          .As<int>() // single value
-                          .Do(pc => Console.WriteLine(pc.Option, pc.Value)))
-                //
-                .WithOption("demoCollection",
-                    b => b.Collection.As<int>() // collections
-                          .Do(pc =>
-                              {
-                                  Console.WriteLine(pc.Option);
-                                  Console.WriteLine(pc.Value);
-                                  // NOTE: the following is planned, but not implemented yet
-                                  //pc.Parser.WithOption("dynamicNewOption", o => o.As<int>().Do(Console.WriteLine));
-                              }))
-                //
-                .Parse("-hello", "1");
+            var parser = new Parser();
+
+            parser.WithOption("demo1",
+                b => b.AtPosition(1)
+                    .Required()
+                    .As<int>() // single value
+                    .Do(pc => Console.WriteLine(pc.Option, pc.Value)));
+
+            parser.WithOption("demoCollection",
+                b => b.Collection.As<int>() // collections
+                    .Do(pc =>
+                        {
+                            Console.WriteLine(pc.Option);
+                            Console.WriteLine(pc.Value);
+                            // NOTE: the following is planned, but not implemented yet
+                            //pc.Parser.WithOption("dynamicNewOption", o => o.As<int>().Do(Console.WriteLine));
+                        }));
+            //
+            parser.Parse("-hello", "1");
         }
 
         private static void Documentation_GettingStartedMain(params string[] args)
@@ -122,19 +132,22 @@ namespace MiP.ShellArgs.Examples
         {
             int sum = 0;
 
-            new Parser()
-                .WithOption(b => b.Named("add")
-                                  .Alias("a", "ad")
-                                  .ValueDescription("a number")
-                                  .AtPosition(1)
-                                  .Required()
-                                  .As<int>()
-                                  .Do(pc => sum += pc.Value))
-                .WithOption(b => b.Named("sub")
-                                  .Collection
-                                  .As<int>()
-                                  .Do(pc => sum -= pc.Value))
-                .Parse("-add", "10", "-sub", "1", "2");
+            var parser = new Parser();
+
+            parser.WithOption(b => b.Named("add")
+                .Alias("a", "ad")
+                .ValueDescription("a number")
+                .AtPosition(1)
+                .Required()
+                .As<int>()
+                .Do(pc => sum += pc.Value));
+
+            parser.WithOption(b => b.Named("sub")
+                .Collection
+                .As<int>()
+                .Do(pc => sum -= pc.Value));
+
+            parser.Parse("-add", "10", "-sub", "1", "2");
 
             Console.WriteLine("Sum: {0}", sum);
         }
