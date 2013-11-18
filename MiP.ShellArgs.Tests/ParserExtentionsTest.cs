@@ -12,15 +12,15 @@ namespace MiP.ShellArgs.Tests
     public class ParserExtentionsTest
     {
         private TestContainer _container;
-        private Mock<IParser> _mock;
-        private IParser _parser;
+        private Mock<IParserBuilder> _mock;
+        private IParserBuilder _parser;
 
         [TestInitialize]
         public void Initialize()
         {
             _container = new TestContainer();
 
-            _mock = new Mock<IParser>();
+            _mock = new Mock<IParserBuilder>();
             _parser = _mock.Object;
         }
 

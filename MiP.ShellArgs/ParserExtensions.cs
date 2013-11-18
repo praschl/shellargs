@@ -18,12 +18,12 @@ namespace MiP.ShellArgs
         /// The current instance of <see cref="IParser" />.
         /// </returns>
         /// <exception cref="System.ArgumentNullException">parser</exception>
-        public static IParser AutoWire<TContainer>(this IParser parser, TContainer container) where TContainer : new()
+        public static void AutoWire<TContainer>(this IParserBuilder parser, TContainer container) where TContainer : new()
         {
             if (parser == null)
                 throw new ArgumentNullException("parser");
-            
-            return parser.AutoWire(container, x => { });
+
+            parser.AutoWire(container, x => { });
         }
 
         /// <summary>
@@ -36,12 +36,12 @@ namespace MiP.ShellArgs
         /// </returns>
         /// <exception cref="System.ArgumentNullException">parser</exception>
         [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
-        public static IParser AutoWire<TContainer>(this IParser parser) where TContainer : new()
+        public static void AutoWire<TContainer>(this IParserBuilder parser) where TContainer : new()
         {
             if (parser == null)
                 throw new ArgumentNullException("parser");
 
-            return parser.AutoWire(new TContainer(), x => { });
+            parser.AutoWire(new TContainer(), x => { });
         }
 
         /// <summary>
@@ -55,12 +55,12 @@ namespace MiP.ShellArgs
         /// </returns>
         /// <exception cref="System.ArgumentNullException">parser</exception>
         [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public static IParser AutoWire<TContainer>(this IParser parser, Action<IAutoWireOptionBuilder<TContainer>> configurationCallback) where TContainer : new()
+        public static void AutoWire<TContainer>(this IParserBuilder parser, Action<IAutoWireOptionBuilder<TContainer>> configurationCallback) where TContainer : new()
         {
             if (parser == null)
                 throw new ArgumentNullException("parser");
 
-            return parser.AutoWire(new TContainer(), configurationCallback);
+            parser.AutoWire(new TContainer(), configurationCallback);
         }
     }
 }

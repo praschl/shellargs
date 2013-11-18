@@ -48,6 +48,7 @@
     <Compile Include="AutoWireAttributes\AliasesAttribute.cs" />
     <Compile Include="Fluent\AutoWireOptionBuilder.cs" />
     <Compile Include="Fluent\AutoWireOptionCustomizer.cs" />
+    <Compile Include="IParserBuilder.cs" />
     <Compile Include="OptionCollectionExtensions.cs" />
     <Compile Include="ParsingContext.cs" />
     <Compile Include="IAutoWireOptionCustomizer.cs" />

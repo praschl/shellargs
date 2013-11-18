@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 using MiP.ShellArgs.Implementation;
 using MiP.ShellArgs.Tests.TestHelpers;
@@ -30,7 +31,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                        Position = 1
                                    });
 
-            Token[] tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "x");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "x");
 
             var expected = new List<Token>
                            {
@@ -38,7 +39,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                Token.CreateValue("x")
                            };
 
-            CollectionAssert.AreEqual(expected, tokens);
+            CollectionAssert.AreEqual(expected, tokens.ToArray());
         }
 
         [TestMethod]
@@ -55,7 +56,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                        Position = 2
                                    });
 
-            Token[] tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "x", "y");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "x", "y");
 
             var expected = new List<Token>
                            {
@@ -65,7 +66,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                Token.CreateValue("y")
                            };
 
-            CollectionAssert.AreEqual(expected, tokens);
+            CollectionAssert.AreEqual(expected, tokens.ToArray());
         }
 
         [TestMethod]
@@ -83,7 +84,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                        IsCollection = true
                                    });
 
-            Token[] tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "x", "y", "z");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "x", "y", "z");
 
             var expected = new List<Token>
                            {
@@ -94,7 +95,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                Token.CreateValue("z")
                            };
 
-            CollectionAssert.AreEqual(expected, tokens);
+            CollectionAssert.AreEqual(expected, tokens.ToArray());
         }
 
         [TestMethod]
@@ -105,7 +106,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                        Name = "a"
                                    });
 
-            Token[] tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x");
 
             var expected = new List<Token>
                            {
@@ -113,7 +114,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                Token.CreateValue("x")
                            };
 
-            CollectionAssert.AreEqual(expected, tokens);
+            CollectionAssert.AreEqual(expected, tokens.ToArray());
         }
 
         [TestMethod]
@@ -128,7 +129,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                        Name = "b"
                                    });
 
-            Token[] tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x", "-b", "y");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x", "-b", "y");
 
             var expected = new List<Token>
                            {
@@ -138,7 +139,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                Token.CreateValue("y")
                            };
 
-            CollectionAssert.AreEqual(expected, tokens);
+            CollectionAssert.AreEqual(expected, tokens.ToArray());
         }
 
         [TestMethod]
@@ -150,7 +151,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                        IsCollection = true
                                    });
 
-            Token[] tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x", "y", "z");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x", "y", "z");
 
             var expected = new List<Token>
                            {
@@ -160,7 +161,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                Token.CreateValue("z")
                            };
 
-            CollectionAssert.AreEqual(expected, tokens);
+            CollectionAssert.AreEqual(expected, tokens.ToArray());
         }
 
         [TestMethod]
@@ -172,7 +173,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                        IsBoolean = true
                                    });
 
-            Token[] tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-a");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-a");
 
             var expected = new List<Token>
                            {
@@ -180,7 +181,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                Token.CreateValue(TokenConverter.ToggleBoolean),
                            };
 
-            CollectionAssert.AreEqual(expected, tokens);
+            CollectionAssert.AreEqual(expected, tokens.ToArray());
         }
 
         [TestMethod]
@@ -191,14 +192,18 @@ namespace MiP.ShellArgs.Tests.Implementation
                                        Name = "a"
                                    });
 
-            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x", "y"),
+            // ReSharper disable ReturnValueOfPureMethodIsNotUsed
+            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x", "y").ToArray(),
+                // ReSharper restore ReturnValueOfPureMethodIsNotUsed
                 ex => Assert.IsTrue(ex.Message == "Expected an option instead of value 'y'."));
         }
 
         [TestMethod]
         public void ValueWithoutOptionAtEnd()
         {
-            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "x"),
+            // ReSharper disable ReturnValueOfPureMethodIsNotUsed
+            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "x").ToArray(),
+                // ReSharper restore ReturnValueOfPureMethodIsNotUsed
                 ex => Assert.IsTrue(ex.Message == "Expected an option instead of value 'x'."));
         }
 
@@ -216,7 +221,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                        IsCollection = true
                                    });
 
-            Token[] tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "-b", "x");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "-b", "x");
 
             var expected = new List<Token>
                            {
@@ -224,7 +229,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                Token.CreateValue("x"),
                            };
 
-            CollectionAssert.AreEqual(expected, tokens);
+            CollectionAssert.AreEqual(expected, tokens.ToArray());
         }
 
         [TestMethod]
@@ -241,7 +246,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                        IsCollection = true
                                    });
 
-            Token[] tokens = _tokenizer.ConvertToTokens(_optionDefinitions, new List<string>
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, new List<string>
                                                                             {
                                                                                 "-a",
                                                                                 "x",
@@ -254,7 +259,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                Token.CreateValue("x"),
                            };
 
-            CollectionAssert.AreEqual(expected, tokens);
+            CollectionAssert.AreEqual(expected, tokens.ToArray());
         }
 
         [TestMethod]
@@ -269,7 +274,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                        Name = "b"
                                    });
 
-            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "-b"),
+            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "-b").ToArray(),
                 ex => Assert.IsTrue(ex.Message == "Option 'a' has no value assigned."));
         }
 
@@ -285,7 +290,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                        Name = "b"
                                    });
 
-            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x", "-b"),
+            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x", "-b").ToArray(),
                 ex => Assert.IsTrue(ex.Message.StartsWith("Option 'b' has no value assigned.")));
         }
 
@@ -295,10 +300,10 @@ namespace MiP.ShellArgs.Tests.Implementation
             _optionDefinitions.Add(new OptionDefinition
                                    {
                                        Name = "Fullname",
-                                       Aliases = new[] {"F", "Fn"}
+                                       Aliases = new[] { "F", "Fn" }
                                    });
 
-            Token[] tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-F", "x", "-FN", "y", "-Fullname", "z");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-F", "x", "-FN", "y", "-Fullname", "z");
 
             var expected = new List<Token>
                            {
@@ -310,7 +315,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                Token.CreateValue("z")
                            };
 
-            CollectionAssert.AreEqual(expected, tokens);
+            CollectionAssert.AreEqual(expected, tokens.ToArray());
         }
 
         [TestMethod]
@@ -327,7 +332,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                        Position = 2
                                    });
 
-            Token[] tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-b", "x", "-a", "y");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-b", "x", "-a", "y");
 
             var expected = new List<Token>
                            {
@@ -337,7 +342,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                Token.CreateValue("y"),
                            };
 
-            CollectionAssert.AreEqual(expected, tokens);
+            CollectionAssert.AreEqual(expected, tokens.ToArray());
         }
 
         [TestMethod]
@@ -349,7 +354,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                        Position = 1
                                    });
 
-            Token[] tokens = _tokenizer.ConvertToTokens(_optionDefinitions, new []{ "-helloworLD", "x"});
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, new[] { "-helloworLD", "x" });
 
             var expected = new List<Token>
                            {
@@ -357,7 +362,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                Token.CreateValue("x"),
                            };
 
-            CollectionAssert.AreEqual(expected, tokens);
+            CollectionAssert.AreEqual(expected, tokens.ToArray());
         }
 
         [TestMethod]
@@ -369,7 +374,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                 Position = 1
             });
 
-            Token[] tokens = _tokenizer.ConvertToTokens(_optionDefinitions, new List<string> { "-helloworLD", "x" });
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, new List<string> { "-helloworLD", "x" });
 
             var expected = new List<Token>
                            {
@@ -377,7 +382,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                Token.CreateValue("x"),
                            };
 
-            CollectionAssert.AreEqual(expected, tokens);
+            CollectionAssert.AreEqual(expected, tokens.ToArray());
         }
     }
 }

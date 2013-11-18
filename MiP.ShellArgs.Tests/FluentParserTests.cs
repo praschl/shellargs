@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using MiP.ShellArgs.AutoWireAttributes;
 using MiP.ShellArgs.Tests.TestHelpers;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace MiP.ShellArgs.Tests
 {
@@ -15,9 +15,9 @@ namespace MiP.ShellArgs.Tests
         {
             var eventsByExtensionMethod = new List<ParsingContext<object>>();
 
-            IParser parser = new Parser()
-                .OnOptionParsed(eventsByExtensionMethod.Add)
-                .AutoWire<RequiredAndNonRequiredOption>();
+            var parser = new Parser();
+            parser.OnOptionParsed(eventsByExtensionMethod.Add);
+            parser.AutoWire<RequiredAndNonRequiredOption>();
 
             parser.Parse("-r:V1", "-n:V2");
 
@@ -39,9 +39,9 @@ namespace MiP.ShellArgs.Tests
         {
             var eventsRaised = new List<ParsingContext<RequiredAndNonRequiredOption, string>>();
 
-            new Parser()
-                .AutoWire<RequiredAndNonRequiredOption>(c => c.WithOption(x => x.NonRequired).Do(eventsRaised.Add))
-                .Parse("-r:V1", "-n:V2");
+            var parser = new Parser();
+            parser.AutoWire<RequiredAndNonRequiredOption>(c => c.WithOption(x => x.NonRequired).Do(eventsRaised.Add));
+            parser.Parse("-r:V1", "-n:V2");
 
             Assert.AreEqual(1, eventsRaised.Count);
             Assert.AreEqual("V2", eventsRaised[0].Value);
@@ -52,9 +52,9 @@ namespace MiP.ShellArgs.Tests
         {
             var eventsRaised = new List<ParsingContext<RenamedOption, string>>();
 
-            new Parser()
-                .AutoWire<RenamedOption>(c => c.WithOption(x => x.OriginalName).Do(eventsRaised.Add))
-                .Parse("-newName:Value");
+            var parser = new Parser();
+            parser.AutoWire<RenamedOption>(c => c.WithOption(x => x.OriginalName).Do(eventsRaised.Add));
+            parser.Parse("-newName:Value");
 
             Assert.AreEqual(1, eventsRaised.Count);
             Assert.AreEqual("Value", eventsRaised[0].Value);
@@ -65,10 +65,10 @@ namespace MiP.ShellArgs.Tests
         {
             var eventsRaised = new List<ParsingContext<object>>();
 
-            IParser parser = new Parser()
-                .Customize(c => c.PrefixWith('+'))
-                .WithOption("Hello", b => b.As<string>().Do(x => { }))
-                .OnOptionParsed(eventsRaised.Add);
+            var parser = new Parser();
+            parser.Customize(c => c.PrefixWith('+'));
+            parser.WithOption("Hello", b => b.As<string>().Do(x => { }));
+            parser.OnOptionParsed(eventsRaised.Add);
 
             parser.Parse("+Hello", "World");
 
@@ -82,10 +82,10 @@ namespace MiP.ShellArgs.Tests
         {
             var eventsRaised = new List<ParsingContext<object>>();
 
-            IParser parser = new Parser()
-                .Customize(c => c.AssignWith('+'))
-                .WithOption("Hello", b => b.As<string>().Do(x => { }))
-                .OnOptionParsed(eventsRaised.Add);
+            var parser = new Parser();
+            parser.Customize(c => c.AssignWith('+'));
+            parser.WithOption("Hello", b => b.As<string>().Do(x => { }));
+            parser.OnOptionParsed(eventsRaised.Add);
 
             parser.Parse("-Hello+World");
 
@@ -97,22 +97,22 @@ namespace MiP.ShellArgs.Tests
         [TestMethod]
         public void ShortHelpIsGenerated()
         {
-            string help = new Parser()
-                .Customize(c => c.PrefixWith('+'))
-                .WithOption("Hello", b => b.As<string>().Do(x => { }))
-                .GetShortHelp();
+            var parser = new Parser();
+            parser.Customize(c => c.PrefixWith('+'));
+            parser.WithOption("Hello", b => b.As<string>().Do(x => { }));
 
+            string help = parser.GetShortHelp();
             Assert.AreEqual("[+Hello string]", help);
         }
 
         [TestMethod]
         public void ShortHelpIsGeneratedWithRenamedOption()
         {
-            string help = new Parser()
-                .Customize(c => c.PrefixWith('+'))
-                .WithOption("Hello", b => b.ValueDescription("something").As<string>().Do(x => { }))
-                .GetShortHelp();
+            var parser = new Parser();
+            parser.Customize(c => c.PrefixWith('+'));
+            parser.WithOption("Hello", b => b.ValueDescription("something").As<string>().Do(x => { }));
 
+            string help = parser.GetShortHelp();
             Assert.AreEqual("[+Hello something]", help);
         }
 
@@ -126,14 +126,15 @@ namespace MiP.ShellArgs.Tests
 
             var parser = new Parser();
 
-            parser
-                .AutoWire<TestContainer1>(
-                    aw => aw.WithOption(c => c.AString1).Do(pc => stringContext1 = pc)
-                            .WithOption(c => c.ANumber1).Do(pc => intContext1 = pc))
-                .AutoWire<TestContainer2>(
-                    aw => aw.WithOption<string>("AString2").Do(pc => stringContext2 = pc)
-                            .WithOption<int>("ANumber2").Do(pc => intContext2 = pc))
-                .Parse("-AString1", "1", "-AString2", "2", "-ANumber1", "1", "-ANumber2", "2");
+            parser.AutoWire<TestContainer1>(
+                aw => aw.WithOption(c => c.AString1).Do(pc => stringContext1 = pc)
+                    .WithOption(c => c.ANumber1).Do(pc => intContext1 = pc));
+
+            parser.AutoWire<TestContainer2>(
+                aw => aw.WithOption<string>("AString2").Do(pc => stringContext2 = pc)
+                    .WithOption<int>("ANumber2").Do(pc => intContext2 = pc));
+
+            parser.Parse("-AString1", "1", "-AString2", "2", "-ANumber1", "1", "-ANumber2", "2");
 
             Assert.AreEqual("AString1", stringContext1.Option);
             Assert.AreEqual("1", stringContext1.Value);
@@ -153,14 +154,15 @@ namespace MiP.ShellArgs.Tests
         {
             int actual = 0;
 
-            IParser parser = new Parser()
-                .WithOption("add",
-                    b => b.As<int>()
-                          .Do(pc => actual += pc.Value))
-                .WithOption("sub",
-                    b => b.As<int>()
-                          .Do(pc => actual -= pc.Value));
+            var parser = new Parser();
 
+            parser.WithOption("add",
+                b => b.As<int>()
+                    .Do(pc => actual += pc.Value));
+
+            parser.WithOption("sub",
+                b => b.As<int>()
+                    .Do(pc => actual -= pc.Value));
 
             parser.Parse("-add", "1", "-add", "2", "-sub", "10", "-add", "4");
 
@@ -172,11 +174,13 @@ namespace MiP.ShellArgs.Tests
         {
             var values = new List<string>();
 
-            var result = new Parser()
-                .AutoWire<CollectionContainer>(
-                    b => b.WithOption(c => c.Values.CurrentValue())
-                          .Do(pc => values.Add(pc.Value)))
-                .Parse("-a", "1", "2", "3")
+            var parser = new Parser();
+
+            parser.AutoWire<CollectionContainer>(
+                b => b.WithOption(c => c.Values.CurrentValue())
+                    .Do(pc => values.Add(pc.Value)));
+
+            var result = parser.Parse("-a", "1", "2", "3")
                 .Result<CollectionContainer>();
 
             CollectionAssert.AreEquivalent(new[] {"1", "2", "3"}, result.Values.ToArray());
@@ -185,9 +189,12 @@ namespace MiP.ShellArgs.Tests
         [TestMethod]
         public void AutoWireAContainerTwice()
         {
-            ExceptionAssert.Throws<ParserInitializationException>(() => new Parser()
-                                                                            .AutoWire<TestContainer1>()
-                                                                            .AutoWire<TestContainer1>(),
+            ExceptionAssert.Throws<ParserInitializationException>(() =>
+                                                                  {
+                                                                      var parser = new Parser();
+                                                                      parser.AutoWire<TestContainer1>();
+                                                                      parser.AutoWire<TestContainer1>();
+                                                                  },
                 ex => Assert.AreEqual(string.Format("Parser already knows a container of type {0}.", typeof (TestContainer1)), ex.Message));
         }
 
@@ -195,17 +202,22 @@ namespace MiP.ShellArgs.Tests
         public void AutoWireAContainerTwiceInstance()
         {
             ExceptionAssert.Throws<ParserInitializationException>(
-                () => new Parser()
-                          .AutoWire<TestContainer1>()
-                          .AutoWire(new TestContainer1()),
+                () =>
+                {
+                    var parser = new Parser();
+                    parser.AutoWire<TestContainer1>();
+                    parser.AutoWire(new TestContainer1());
+                },
                 ex => Assert.AreEqual(string.Format("Parser already knows a container of type {0}.", typeof (TestContainer1)), ex.Message));
         }
 
         [TestMethod]
         public void AutoWireWithoutInstance()
         {
-            var result = new Parser().AutoWire<TestContainer1>(null, null).Parse().Result<TestContainer1>();
+            var parser = new Parser();
+            parser.AutoWire<TestContainer1>(null, null);
 
+            var result = parser.Parse().Result<TestContainer1>();
             Assert.IsNotNull(result);
         }
 
@@ -214,12 +226,14 @@ namespace MiP.ShellArgs.Tests
         {
             var list = new List<int>();
 
-            new Parser()
-                .WithOption(b => b.Named("add")
-                                  .Collection
-                                  .As<int>()
-                                  .Do(context => list.Add(context.Value)))
-                .Parse("-add", "1", "2", "3");
+            var parser = new Parser();
+
+            parser.WithOption(b => b.Named("add")
+                .Collection
+                .As<int>()
+                .Do(context => list.Add(context.Value)));
+
+            parser.Parse("-add", "1", "2", "3");
 
             CollectionAssert.AreEquivalent(new[] {1, 2, 3}, list.ToArray());
         }
@@ -229,15 +243,17 @@ namespace MiP.ShellArgs.Tests
         {
             var properties = new Dictionary<string, string>();
 
-            new Parser()
-                .WithOption(b => b.Named("p")
-                                  .Collection
-                                  .As<KeyValuePair<string, string>>()
-                                  .Do(context => properties[context.Value.Key] = context.Value.Value))
-                .Parse("/p:a=b", "/p:c=d", "/p:c=e");
+            var parser = new Parser();
+
+            parser.WithOption(b => b.Named("p")
+                .Collection
+                .As<KeyValuePair<string, string>>()
+                .Do(context => properties[context.Value.Key] = context.Value.Value));
+
+            parser.Parse("/p:a=b", "/p:c=d", "/p:c=e");
 
             Assert.AreEqual(2, properties.Count);
-            
+
             Assert.IsTrue(properties.ContainsKey("a"));
             Assert.IsTrue(properties.ContainsKey("c"));
 
