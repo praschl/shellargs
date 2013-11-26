@@ -13,13 +13,13 @@ namespace MiP.ShellArgs.Tests.Fluent
     {
         private OptionDefinition _optionDefinition;
         private OptionBuilder<string> _stringOptionBuilder;
-        private Mock<IParser> _parserMock;
+        private Mock<IParserBuilder> _parserMock;
         private Mock<IStringConverter> _stringConverterMock;
 
         [TestInitialize]
         public void Initialize()
         {
-            _parserMock = new Mock<IParser>();
+            _parserMock = new Mock<IParserBuilder>();
             _stringConverterMock = new Mock<IStringConverter>();
 
             _optionDefinition = new OptionDefinition();

@@ -23,10 +23,10 @@ namespace MiP.ShellArgs.Fluent
 
         internal IEnumerable<OptionDefinition> OptionDefinitions { get { return _optionDefinitions; } }
 
-        private readonly IParser _parser;
+        private readonly IParserBuilder _parser;
         private readonly PropertyReflector _reflector;
 
-        public ContainerBuilder(TContainer container, IParser parser, PropertyReflector reflector)
+        public ContainerBuilder(TContainer container, IParserBuilder parser, PropertyReflector reflector)
         {
             _parser = parser;
             _reflector = reflector;

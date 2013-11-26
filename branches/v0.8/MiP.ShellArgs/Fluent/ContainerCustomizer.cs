@@ -9,11 +9,11 @@ namespace MiP.ShellArgs.Fluent
     internal class ContainerCustomizer<TContainer, TArgument> : IContainerCustomizer<TContainer, TArgument>
     {
         private readonly string _name;
-        private readonly IParser _parser;
+        private readonly IParserBuilder _parser;
         private readonly ICollection<OptionDefinition> _optionDefinitions;
         private readonly IContainerBuilder<TContainer> _builder;
 
-        public ContainerCustomizer(string name, IParser parser, ICollection<OptionDefinition> optionDefinitions, IContainerBuilder<TContainer> builder)
+        public ContainerCustomizer(string name, IParserBuilder parser, ICollection<OptionDefinition> optionDefinitions, IContainerBuilder<TContainer> builder)
         {
             _name = name;
             _parser = parser;

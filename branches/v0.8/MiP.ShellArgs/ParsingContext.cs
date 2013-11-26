@@ -6,14 +6,17 @@
     /// <typeparam name="TArgument">The type of the argument.</typeparam>
     public class ParsingContext<TArgument>
     {
-        internal ParsingContext(IParser parser, string option, TArgument value)
+        internal ParsingContext(IParserBuilder parser, string option, TArgument value)
         {
             Parser = parser;
             Option = option;
             Value = value;
         }
 
-        internal IParser Parser { get; private set; }
+        /// <summary>
+        /// Gets the parser builder to add options on the fly.
+        /// </summary>
+        public IParserBuilder Parser { get; private set; }
 
         /// <summary>
         /// Gets the name of the option which was parsed.
@@ -33,7 +36,7 @@
     /// <typeparam name="TArgument">The type of the argument.</typeparam>
     public class ParsingContext<TContainer, TArgument> : ParsingContext<TArgument>
     {
-        internal ParsingContext(IParser parser, TContainer container, string option, TArgument value)
+        internal ParsingContext(IParserBuilder parser, TContainer container, string option, TArgument value)
             : base(parser, option, value)
         {
             Container = container;
