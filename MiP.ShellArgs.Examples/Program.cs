@@ -53,9 +53,7 @@ namespace MiP.ShellArgs.Examples
 
             parser.RegisterOption("SubInt", b => b.As<int>().Do(pc => Console.WriteLine(pc.Option)));
 
-            parser.OptionValueParsed += (o, e) => Console.WriteLine(e.ParsingContext.Option, e.ParsingContext.Value);
-
-            //
+            parser.OptionValueParsed += (o, e) => Console.WriteLine(e.Option, e.Value);
 
             var user = parser.Parse("-name", "me", "-add", "1")
                 .Result<User>();
@@ -113,10 +111,10 @@ namespace MiP.ShellArgs.Examples
                         {
                             Console.WriteLine(pc.Option);
                             Console.WriteLine(pc.Value);
-                            // NOTE: the following is planned, but not implemented yet
+                            // NOTE: the following is planned, but not implemented yet (but soon)
                             //pc.Parser.RegisterOption("dynamicNewOption", o => o.As<int>().Do(Console.WriteLine));
                         }));
-            //
+
             parser.Parse("-hello", "1");
         }
 

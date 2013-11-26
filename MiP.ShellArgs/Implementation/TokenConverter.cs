@@ -56,6 +56,8 @@ namespace MiP.ShellArgs.Implementation
             IOrderedEnumerable<OptionDefinition> positionals = optionDefinitions.Where(o => o.IsPositional)
                 .OrderBy(o => o.Position);
 
+            // TODO: when options are added on the fly, this queue needs to be updated.
+            // could be moved to the iparserbuilder implementation
             var positionalOptions = new Queue<OptionDefinition>(positionals);
 
             _lastOption = null;

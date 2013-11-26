@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using MiP.ShellArgs.ContainerAttributes;
+using MiP.ShellArgs.Implementation;
 using MiP.ShellArgs.Tests.TestHelpers;
 
 namespace MiP.ShellArgs.Tests
@@ -13,10 +14,10 @@ namespace MiP.ShellArgs.Tests
         [TestMethod]
         public void EventIsRaised()
         {
-            var eventsByExtensionMethod = new List<ParsingContext<object>>();
+            var eventsByExtensionMethod = new List<OptionValueParsedEventArgs>();
 
             var parser = new Parser();
-            parser.OptionValueParsed += (o, e) => eventsByExtensionMethod.Add(e.ParsingContext);
+            parser.OptionValueParsed += (o, e) => eventsByExtensionMethod.Add(e);
 
             parser.RegisterContainer<RequiredAndNonRequiredOption>();
 
@@ -25,7 +26,7 @@ namespace MiP.ShellArgs.Tests
             AssertEventsRaised(eventsByExtensionMethod, "extension");
         }
 
-        private static void AssertEventsRaised(IList<ParsingContext<object>> eventsRaised, string message)
+        private static void AssertEventsRaised(List<OptionValueParsedEventArgs> eventsRaised, string message)
         {
             Assert.AreEqual(2, eventsRaised.Count, message);
             Assert.AreEqual("Required", eventsRaised[0].Option, message);
@@ -64,13 +65,13 @@ namespace MiP.ShellArgs.Tests
         [TestMethod]
         public void OverriddenPrefixesAreUsed()
         {
-            var eventsRaised = new List<ParsingContext<object>>();
+            var eventsRaised = new List<OptionValueParsedEventArgs>();
 
             var settings = new ParserSettings();
             settings.PrefixWith('+');
 
             var parser = new Parser(settings);
-            parser.OptionValueParsed += (o, e) => eventsRaised.Add(e.ParsingContext);
+            parser.OptionValueParsed += (o, e) => eventsRaised.Add(e);
             parser.RegisterOption("Hello", b => b.As<string>().Do(x => { }));
 
             parser.Parse("+Hello", "World");
@@ -83,13 +84,13 @@ namespace MiP.ShellArgs.Tests
         [TestMethod]
         public void OverriddenAssignmentsAreUsed()
         {
-            var eventsRaised = new List<ParsingContext<object>>();
+            var eventsRaised = new List<OptionValueParsedEventArgs>();
 
             var settings = new ParserSettings();
             settings.AssignWith('+');
 
             var parser = new Parser(settings);
-            parser.OptionValueParsed += (o, e) => eventsRaised.Add(e.ParsingContext);
+            parser.OptionValueParsed += (o, e) => eventsRaised.Add(e);
             parser.RegisterOption("Hello", b => b.As<string>().Do(x => { }));
 
             parser.Parse("-Hello+World");
