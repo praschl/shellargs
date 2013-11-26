@@ -27,7 +27,7 @@
     }
 
     /// <summary>
-    /// Passed to handler methods when an option of an autowired container is parsed.
+    /// Passed to handler methods when an option of a registered container is parsed.
     /// </summary>
     /// <typeparam name="TContainer">The type of the container.</typeparam>
     /// <typeparam name="TArgument">The type of the argument.</typeparam>

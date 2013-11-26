@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
+using MiP.ShellArgs.Implementation;
+
 namespace MiP.ShellArgs
 {
     /// <summary>
@@ -25,8 +27,7 @@ namespace MiP.ShellArgs
         /// <param name="builderDelegate">Used to customize the addded option.</param>
         /// <returns>The current instance of <see cref="IParser"/>.</returns>
         void RegisterOption(string name, Action<IOptionBuilder> builderDelegate);
-
-
+        
         /// <summary>
         /// Adds a stand alone option to the parser.
         /// </summary>
@@ -35,11 +36,8 @@ namespace MiP.ShellArgs
         void RegisterOption(Action<IOptionBuilder> builderDelegate);
 
         /// <summary>
-        /// Used to add a callback which is called whenever an option was successfully parsed.
+        /// Occurs when a value of an option was successfully parsed.
         /// </summary>
-        /// <param name="handler">Called when any option is was successfully parsed.</param>
-        /// <returns>The current instance of <see cref="IParser"/>.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        void OnOptionParsed(Action<ParsingContext<object>> handler);
+        event EventHandler<OptionValueParsedEventArgs> OptionValueParsed;
     }
 }

@@ -16,6 +16,7 @@ namespace MiP.ShellArgs
         /// <typeparam name="TArgument">The type of the option argument.</typeparam>
         /// <param name="optionName">Name of the option to customize.</param>
         /// <returns>A typed customizer to continue with the customization.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "With")]
         IContainerCustomizer<TContainer, TArgument> With<TArgument>(string optionName);
 
         /// <summary>
@@ -28,6 +29,7 @@ namespace MiP.ShellArgs
         /// <example><c>x=>x.UserName</c></example>
         /// </param>
         /// <returns>A typed customizer to continue with the customization.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "With")]
         [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         IContainerCustomizer<TContainer, TArgument> With<TArgument>(Expression<Func<TContainer, TArgument>> optionExpression);
     }
