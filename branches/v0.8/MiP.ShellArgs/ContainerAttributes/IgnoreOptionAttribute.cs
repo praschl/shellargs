@@ -1,6 +1,6 @@
 using System;
 
-namespace MiP.ShellArgs.AutoWireAttributes
+namespace MiP.ShellArgs.ContainerAttributes
 {
     /// <summary>
     /// Used to ignore the property, and exclude it from autowiring.

@@ -8,7 +8,7 @@ namespace MiP.ShellArgs.Fluent
     internal class ParserResult : IParserResult
     {
         private const string UnknownArgumentContainerTypeMessage =
-            "Type {0} is not a known argument container type, add it with AutoWire<T>(), AutoWire<T>(T instance) or Parse<T>().";
+            "Type {0} is not a known argument container type, add it with RegisterContainer<T>(), RegisterContainer<T>(T instance) or Parse<T>().";
 
         private readonly IDictionary<Type, object> _instances;
 
@@ -20,7 +20,7 @@ namespace MiP.ShellArgs.Fluent
             _instances = instances;
         }
 
-        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "AutoWire", Justification = "Design time message")]
+        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "RegisterContainer", Justification = "Design time message")]
         public TContainer Result<TContainer>()
         {
             if (!_instances.ContainsKey(typeof (TContainer)))

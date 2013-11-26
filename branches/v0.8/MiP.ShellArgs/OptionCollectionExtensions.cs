@@ -10,7 +10,7 @@ namespace MiP.ShellArgs
     public static class OptionCollectionExtensions
     {
         /// <summary>
-        /// Used to specify the item in a call to <see cref="IAutoWireOptionBuilder{TContainer}.WithOption{TArgument}(string)"/>
+        /// Used to specify the item in a call to <see cref="IContainerBuilder{TContainer}.RegisterOption{TArgument}(string)"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="collection">The extended collection.</param>

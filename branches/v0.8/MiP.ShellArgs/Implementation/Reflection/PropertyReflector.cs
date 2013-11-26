@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
-using MiP.ShellArgs.AutoWireAttributes;
+using MiP.ShellArgs.ContainerAttributes;
 using MiP.ShellArgs.StringConversion;
 
 namespace MiP.ShellArgs.Implementation.Reflection

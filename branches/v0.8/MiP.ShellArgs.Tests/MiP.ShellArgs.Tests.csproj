@@ -48,7 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FluentParserTests.cs" />
-    <Compile Include="Fluent\AutoWireTest.cs" />
+    <Compile Include="Fluent\RegisterContainerTest.cs" />
     <Compile Include="Fluent\GenericOptionBuilderTest.cs" />
     <Compile Include="Fluent\ParserResultTest.cs" />
     <Compile Include="Fluent\OptionBuilderTest.cs" />

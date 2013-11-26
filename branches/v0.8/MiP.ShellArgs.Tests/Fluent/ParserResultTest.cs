@@ -55,7 +55,7 @@ namespace MiP.ShellArgs.Tests.Fluent
         public void FailsWhenTypeNotFound()
         {
             ExceptionAssert.Throws<KeyNotFoundException>(() => _result.Result<string>(),
-                ex => Assert.AreEqual("Type System.String is not a known argument container type, add it with AutoWire<T>(), AutoWire<T>(T instance) or Parse<T>().", ex.Message));
+                ex => Assert.AreEqual("Type System.String is not a known argument container type, add it with RegisterContainer<T>(), RegisterContainer<T>(T instance) or Parse<T>().", ex.Message));
         }
 
         #region Classes used by Test

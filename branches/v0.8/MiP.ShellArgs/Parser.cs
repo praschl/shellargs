@@ -63,7 +63,7 @@ namespace MiP.ShellArgs
         /// The current instance of <see cref="IParser" />.
         /// </returns>
         [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public void AutoWire<TContainer>(TContainer container, Action<IAutoWireOptionBuilder<TContainer>> builderDelegate) where TContainer : new()
+        public void RegisterContainer<TContainer>(TContainer container, Action<IContainerBuilder<TContainer>> builderDelegate) where TContainer : new()
         {
             if (ReferenceEquals(container, null))
                 container = new TContainer();
@@ -76,7 +76,7 @@ namespace MiP.ShellArgs
                 throw new ParserInitializationException(string.Format(CultureInfo.InvariantCulture, ParserAlreadyKnowsContainerMessage, typeof (TContainer)));
 
             _containerByType.Add(typeof (TContainer), container);
-            var builder = new AutoWireOptionBuilder<TContainer>(container, this, _propertyReflector);
+            var builder = new ContainerBuilder<TContainer>(container, this, _propertyReflector);
 
             builderDelegate(builder);
 
@@ -100,7 +100,7 @@ namespace MiP.ShellArgs
         /// </returns>
         /// <exception cref="System.ArgumentException">Parameter name must not be null or empty.</exception>
         /// <exception cref="System.ArgumentNullException">builderDelegate</exception>
-        public void WithOption(string name, Action<IOptionBuilder> builderDelegate)
+        public void RegisterOption(string name, Action<IOptionBuilder> builderDelegate)
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException("name must not be null or empty.", "name");
@@ -108,7 +108,7 @@ namespace MiP.ShellArgs
             if (builderDelegate == null)
                 throw new ArgumentNullException("builderDelegate");
 
-            WithOption(b =>
+            RegisterOption(b =>
                        {
                            b.Named(name);
                            builderDelegate(b);
@@ -120,7 +120,7 @@ namespace MiP.ShellArgs
         /// </summary>
         /// <param name="builderDelegate">Used to customize the addded option.</param>
         /// <returns>The current instance of <see cref="IParser"/>.</returns>
-        public void WithOption(Action<IOptionBuilder> builderDelegate)
+        public void RegisterOption(Action<IOptionBuilder> builderDelegate)
         {
             if (builderDelegate == null)
                 throw new ArgumentNullException("builderDelegate");
@@ -189,7 +189,7 @@ namespace MiP.ShellArgs
         public static TContainer Parse<TContainer>(params string[] args) where TContainer : new()
         {
             var parser = new Parser();
-            parser.AutoWire<TContainer>();
+            parser.RegisterContainer<TContainer>();
 
             return parser.Parse(args)
                 .Result<TContainer>();
@@ -205,7 +205,7 @@ namespace MiP.ShellArgs
         public static TContainer Parse<TContainer>(ParserSettings settings, params string[] args) where TContainer : new()
         {
             var parser = new Parser(settings);
-            parser.AutoWire<TContainer>();
+            parser.RegisterContainer<TContainer>();
 
             return parser.Parse(args)
                 .Result<TContainer>();
@@ -221,7 +221,7 @@ namespace MiP.ShellArgs
         public static void Parse<TContainer>(TContainer container, params string[] args) where TContainer : new()
         {
             var parser = new Parser();
-            parser.AutoWire(container);
+            parser.RegisterContainer(container);
             parser.Parse(args);
         }
 
@@ -236,7 +236,7 @@ namespace MiP.ShellArgs
         public static void Parse<TContainer>(TContainer container, ParserSettings settings, params string[] args) where TContainer : new()
         {
             var parser = new Parser(settings);
-            parser.AutoWire(container);
+            parser.RegisterContainer(container);
             parser.Parse(args);
         }
 

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-using MiP.ShellArgs.AutoWireAttributes;
+using MiP.ShellArgs.ContainerAttributes;
 using MiP.ShellArgs.StringConversion;
 using MiP.ShellArgs.Tests.TestHelpers;
 

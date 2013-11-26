@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using MiP.ShellArgs.AutoWireAttributes;
+using MiP.ShellArgs.ContainerAttributes;
 using MiP.ShellArgs.Fluent;
 using MiP.ShellArgs.Implementation;
 using MiP.ShellArgs.Implementation.Reflection;
@@ -16,9 +16,9 @@ using Moq;
 namespace MiP.ShellArgs.Tests.Fluent
 {
     [TestClass]
-    public class AutoWireTest
+    public class RegisterContainerTest
     {
-        private AutoWireOptionBuilder<TestContainer> _builder;
+        private ContainerBuilder<TestContainer> _builder;
 
         [TestInitialize]
         public void Initialize()
@@ -30,7 +30,7 @@ namespace MiP.ShellArgs.Tests.Fluent
             var stringConverter = new StringConverter(new ParserSettings().ParserProvider);
             var reflector = new PropertyReflector(stringConverter);
 
-            _builder = new AutoWireOptionBuilder<TestContainer>(container, parserMock.Object, reflector);
+            _builder = new ContainerBuilder<TestContainer>(container, parserMock.Object, reflector);
         }
 
         [TestMethod]
@@ -48,7 +48,7 @@ namespace MiP.ShellArgs.Tests.Fluent
         {
             ParsingContext<TestContainer, string> stringContainer = null;
 
-            _builder.WithOption(x => x.AString).Do(pc => stringContainer = pc);
+            _builder.With(x => x.AString).Do(pc => stringContainer = pc);
 
             _builder.OptionDefinitions.First(x => x.Name == "AString").ValueSetter.SetValue("Hurray");
 
@@ -63,7 +63,7 @@ namespace MiP.ShellArgs.Tests.Fluent
         {
             ParsingContext<TestContainer, string> stringContainer = null;
 
-            _builder.WithOption<string>("AString").Do(pc => stringContainer = pc);
+            _builder.With<string>("AString").Do(pc => stringContainer = pc);
 
             _builder.OptionDefinitions.First(x => x.Name == "AString").ValueSetter.SetValue("Hurray");
 
@@ -74,11 +74,11 @@ namespace MiP.ShellArgs.Tests.Fluent
         }
 
         [TestMethod]
-        public void WithOptionAcceptsExtensionMethodCurrentValue()
+        public void RegisterOptionAcceptsExtensionMethodCurrentValue()
         {
             var values = new List<string>();
 
-            _builder.WithOption(c => c.Collection.CurrentValue())
+            _builder.With(c => c.Collection.CurrentValue())
                     .Do(pc => values.Add(pc.Value));
 
             IPropertySetter setter = _builder.OptionDefinitions.First(d => d.Name == "Collection").ValueSetter;
@@ -89,39 +89,39 @@ namespace MiP.ShellArgs.Tests.Fluent
         }
 
         [TestMethod]
-        public void WithOptionDoesNotAcceptPropertyOfCollection()
+        public void RegisterOptionDoesNotAcceptPropertyOfCollection()
         {
             ExceptionAssert.Throws<NotSupportedException>(
-                () => _builder.WithOption(c => c.Collection.Count), Assert.IsNotNull);
+                () => _builder.With(c => c.Collection.Count), Assert.IsNotNull);
         }
 
         [TestMethod]
-        public void WithOptionDoesNotAcceptPropertyOfProperty()
+        public void RegisterOptionDoesNotAcceptPropertyOfProperty()
         {
             ExceptionAssert.Throws<NotSupportedException>(
-                () => _builder.WithOption(c => c.Child.AString), Assert.IsNotNull);
+                () => _builder.With(c => c.Child.AString), Assert.IsNotNull);
         }
 
         [TestMethod]
-        public void WithOptionCollectionDoesNotAcceptAnythingButCurrentValue()
+        public void RegisterOptionCollectionDoesNotAcceptAnythingButCurrentValue()
         {
             ExceptionAssert.Throws<NotSupportedException>(
-                () => _builder.WithOption(c => c.Collection.Last()), Assert.IsNotNull);
+                () => _builder.With(c => c.Collection.Last()), Assert.IsNotNull);
         }
 
         [TestMethod]
-        public void WithOptionCollectionDoesNotAcceptAccessToExternalInstances()
+        public void RegisterOptionCollectionDoesNotAcceptAccessToExternalInstances()
         {
             var cont = new TestContainer();
 
             ExceptionAssert.Throws<NotSupportedException>(
-                () => _builder.WithOption(c => cont.Collection.CurrentValue()), Assert.IsNotNull);
+                () => _builder.With(c => cont.Collection.CurrentValue()), Assert.IsNotNull);
         }
 
         [TestMethod]
-        public void WithOptionThrowsWhenOptionIsUnknown()
+        public void RegisterOptionThrowsWhenOptionIsUnknown()
         {
-            ExceptionAssert.Throws<ParserInitializationException>(() => _builder.WithOption<string>("nooption"),
+            ExceptionAssert.Throws<ParserInitializationException>(() => _builder.With<string>("nooption"),
                 ex => Assert.AreEqual(string.Format("The container {0} does not provide the option '{1}'.", typeof (TestContainer), "nooption"), ex.Message));
         }
 

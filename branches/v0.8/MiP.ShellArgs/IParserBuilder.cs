@@ -16,7 +16,7 @@ namespace MiP.ShellArgs
         /// <param name="builderDelegate">Used to customize the added container and its options.</param>
         /// <returns>The current instance of <see cref="IParser"/>.</returns>
         [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        void AutoWire<TContainer>(TContainer container, Action<IAutoWireOptionBuilder<TContainer>> builderDelegate) where TContainer : new();
+        void RegisterContainer<TContainer>(TContainer container, Action<IContainerBuilder<TContainer>> builderDelegate) where TContainer : new();
 
         /// <summary>
         /// Adds a stand alone option to the parser and gives it a name.
@@ -24,7 +24,7 @@ namespace MiP.ShellArgs
         /// <param name="name">Name of the option.</param>
         /// <param name="builderDelegate">Used to customize the addded option.</param>
         /// <returns>The current instance of <see cref="IParser"/>.</returns>
-        void WithOption(string name, Action<IOptionBuilder> builderDelegate);
+        void RegisterOption(string name, Action<IOptionBuilder> builderDelegate);
 
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace MiP.ShellArgs
         /// </summary>
         /// <param name="builderDelegate">Used to customize the addded option.</param>
         /// <returns>The current instance of <see cref="IParser"/>.</returns>
-        void WithOption(Action<IOptionBuilder> builderDelegate);
+        void RegisterOption(Action<IOptionBuilder> builderDelegate);
 
         /// <summary>
         /// Used to add a callback which is called whenever an option was successfully parsed.
