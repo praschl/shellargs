@@ -9,13 +9,6 @@ namespace MiP.ShellArgs
     public interface IParser
     {
         /// <summary>
-        /// Customizes the parser by changing default settings.
-        /// </summary>
-        /// <param name="customizer">An action which changes the <see cref="ParserSettings"/>.</param>
-        /// <returns>The current instance of <see cref="IParser"/>.</returns>
-        IParser Customize(Action<ParserSettings> customizer);
-
-        /// <summary>
         /// Gets a short help description of the options.
         /// </summary>
         /// <returns>The current instance of <see cref="IParser"/>.</returns>

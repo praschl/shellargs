@@ -38,7 +38,11 @@ namespace MiP.ShellArgs
         {
         }
 
-        private Parser(ParserSettings parserSettings)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Parser"/> class.
+        /// </summary>
+        /// <param name="parserSettings">The parser settings.</param>
+        public Parser(ParserSettings parserSettings)
         {
             _settings = parserSettings ?? new ParserSettings();
 
@@ -47,24 +51,6 @@ namespace MiP.ShellArgs
             _converter = new TokenConverter(new ArgumentFactory(_settings));
             _optionValidator = new OptionValidator();
             _generator = new HelpGenerator(_settings.ParserProvider);
-        }
-
-        /// <summary>
-        /// Customizes the parser by changing default settings.
-        /// </summary>
-        /// <param name="customizer">An action which changes the <see cref="ParserSettings" />.</param>
-        /// <returns>
-        /// The current instance of <see cref="IParser" />.
-        /// </returns>
-        /// <exception cref="System.ArgumentNullException">customizer</exception>
-        public IParser Customize(Action<ParserSettings> customizer)
-        {
-            if (customizer == null)
-                throw new ArgumentNullException("customizer");
-
-            customizer(_settings);
-
-            return this;
         }
 
         /// <summary>

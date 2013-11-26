@@ -28,14 +28,14 @@ namespace MiP.ShellArgs.Examples
         {
             int counter = 0;
 
-            var parser = new Parser();
-            parser.Customize(
-                c => c.ParseTo<object>().With<StringToObjectParser>()
-                    .ParseTo<bool>().With<StringToBoolParser>()
-                    .PrefixWith('/', '-')
-                    .AssignWith(':', '=')
-                    .EnableShortBooleans(true)
-                );
+            var settings = new ParserSettings();
+            settings.ParseTo<object>().With<StringToObjectParser>();
+            settings.ParseTo<bool>().With<StringToObjectParser>();
+            settings.PrefixWith('/', '-');
+            settings.AssignWith(':', '=');
+            settings.EnableShortBooleans(true);
+
+            var parser = new Parser(settings);
 
             parser.AutoWire<User>(
                 u => u.WithOption(x => x.Name).Do(p => { })

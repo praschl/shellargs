@@ -120,8 +120,8 @@ namespace MiP.ShellArgs.Tests
         [TestMethod]
         public void UsesRegisteredParsers()
         {
-            ParserSettings settings = new ParserSettings()
-                .ParseTo<MyString>().With<StringToMyStringParser>();
+            ParserSettings settings = new ParserSettings();
+            settings.ParseTo<MyString>().With<StringToMyStringParser>();
 
             var result = Parser
                 .Parse<MyStringOptions>(settings, "IExpectThis");
@@ -133,8 +133,8 @@ namespace MiP.ShellArgs.Tests
         [TestMethod]
         public void UsesRegisteredParserInstance()
         {
-            ParserSettings settings = new ParserSettings()
-                .ParseTo<MyString>().With(new StringToMyStringParser());
+            ParserSettings settings = new ParserSettings();
+            settings.ParseTo<MyString>().With(new StringToMyStringParser());
 
             var result = Parser
                 .Parse<MyStringOptions>(settings, "IExpectThis");

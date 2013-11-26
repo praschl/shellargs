@@ -65,8 +65,10 @@ namespace MiP.ShellArgs.Tests
         {
             var eventsRaised = new List<ParsingContext<object>>();
 
-            var parser = new Parser();
-            parser.Customize(c => c.PrefixWith('+'));
+            var settings = new ParserSettings();
+            settings.PrefixWith('+');
+
+            var parser = new Parser(settings);
             parser.WithOption("Hello", b => b.As<string>().Do(x => { }));
             parser.OnOptionParsed(eventsRaised.Add);
 
@@ -82,8 +84,10 @@ namespace MiP.ShellArgs.Tests
         {
             var eventsRaised = new List<ParsingContext<object>>();
 
-            var parser = new Parser();
-            parser.Customize(c => c.AssignWith('+'));
+            var settings = new ParserSettings();
+            settings.AssignWith('+');
+
+            var parser = new Parser(settings);
             parser.WithOption("Hello", b => b.As<string>().Do(x => { }));
             parser.OnOptionParsed(eventsRaised.Add);
 
@@ -97,8 +101,10 @@ namespace MiP.ShellArgs.Tests
         [TestMethod]
         public void ShortHelpIsGenerated()
         {
-            var parser = new Parser();
-            parser.Customize(c => c.PrefixWith('+'));
+            var settings = new ParserSettings();
+            settings.PrefixWith('+');
+
+            var parser = new Parser(settings);
             parser.WithOption("Hello", b => b.As<string>().Do(x => { }));
 
             string help = parser.GetShortHelp();
@@ -108,8 +114,10 @@ namespace MiP.ShellArgs.Tests
         [TestMethod]
         public void ShortHelpIsGeneratedWithRenamedOption()
         {
-            var parser = new Parser();
-            parser.Customize(c => c.PrefixWith('+'));
+            var settings = new ParserSettings();
+            settings.PrefixWith('+');
+
+            var parser = new Parser(settings);
             parser.WithOption("Hello", b => b.ValueDescription("something").As<string>().Do(x => { }));
 
             string help = parser.GetShortHelp();
