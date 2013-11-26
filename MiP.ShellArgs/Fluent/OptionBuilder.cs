@@ -11,11 +11,11 @@ namespace MiP.ShellArgs.Fluent
         private const string ActionsOfICollectionNotSupportedMessage =
             "Actions of type ICollection<T> are not supported, use ParseAsCollection<T> instead.";
 
-        private readonly IParser _parser;
+        private readonly IParserBuilder _parser;
         private readonly OptionDefinition _optionDefinition;
         private readonly IStringConverter _stringConverter;
 
-        internal OptionBuilder(IParser parser, OptionDefinition optionDefinition, IStringConverter stringConverter)
+        internal OptionBuilder(IParserBuilder parser, OptionDefinition optionDefinition, IStringConverter stringConverter)
         {
             _parser = parser;
             _optionDefinition = optionDefinition;
@@ -77,11 +77,11 @@ namespace MiP.ShellArgs.Fluent
 
     internal class OptionBuilder<TArgument> : IOptionBuilder<TArgument>
     {
-        private readonly IParser _parser;
+        private readonly IParserBuilder _parser;
         private readonly OptionDefinition _optionDefinition;
         private readonly IStringConverter _stringConverter;
 
-        internal OptionBuilder(IParser parser, OptionDefinition optionDefinition, IStringConverter stringConverter)
+        internal OptionBuilder(IParserBuilder parser, OptionDefinition optionDefinition, IStringConverter stringConverter)
         {
             _parser = parser;
             _optionDefinition = optionDefinition;

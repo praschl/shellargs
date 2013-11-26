@@ -25,7 +25,7 @@ namespace MiP.ShellArgs.Tests.Fluent
         {
             var container = new TestContainer();
 
-            var parserMock = new Mock<IParser>();
+            var parserMock = new Mock<IParserBuilder>();
 
             var stringConverter = new StringConverter(new ParserSettings().ParserProvider);
             var reflector = new PropertyReflector(stringConverter);

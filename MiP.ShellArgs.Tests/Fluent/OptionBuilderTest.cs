@@ -19,7 +19,7 @@ namespace MiP.ShellArgs.Tests.Fluent
         [TestInitialize]
         public void Initialize()
         {
-            var parserMock = new Mock<IParser>();
+            var parserMock = new Mock<IParserBuilder>();
             var stringConverterMock = new Mock<IStringConverter>();
 
             _optionDefinition = new OptionDefinition();

@@ -149,6 +149,7 @@ namespace MiP.ShellArgs
             if (args == null)
                 args = new string[0];
 
+            // TODO: when options are added on the fly, add this event handler to them
             foreach (OptionDefinition optionDefinition in _optionDefinitions)
             {
                 OptionDefinition innerDefinition = optionDefinition;
@@ -156,6 +157,7 @@ namespace MiP.ShellArgs
                     optionDefinition.ValueSetter.ValueSet += (o, e) => OnParse(new OptionValueParsedEventArgs(new ParsingContext<object>(this, innerDefinition.Name, e.Value)));
             }
 
+            // TODO: when options are added on the fly, revalidate them
             _optionValidator.Validate(_optionDefinitions);
 
             IEnumerable<Token> tokens = _converter.ConvertToTokens(_optionDefinitions, args);
