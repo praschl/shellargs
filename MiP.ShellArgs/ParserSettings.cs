@@ -47,12 +47,10 @@ namespace MiP.ShellArgs
         /// </remarks>
         /// <param name="allow">if set to <c>true</c> allows short boolean syntax.</param>
         /// <returns>The current instance of <see cref="ParserSettings"/>.</returns>
-        public ParserSettings EnableShortBooleans(bool allow)
+        public void EnableShortBooleans(bool allow)
         {
             ShortBooleansEnabled = allow;
             ShortBooleans = allow ? _defaultShortBooleans : new string[0];
-
-            return this;
         }
 
         /// <summary>
@@ -64,13 +62,12 @@ namespace MiP.ShellArgs
         /// <param name="prefixes">The prefixes the parser should use.</param>
         /// <returns>The current instance of <see cref="ParserSettings"/>.</returns>
         /// <exception cref="System.ArgumentException">prefixes</exception>
-        public ParserSettings PrefixWith(params char[] prefixes)
+        public void PrefixWith(params char[] prefixes)
         {
             if (prefixes == null || prefixes.Length == 0)
                 throw new ArgumentException(AllowAtLeastOnePrefixMessage, "prefixes");
 
             Prefixes = prefixes.Distinct().Select(x => x.ToString(CultureInfo.InvariantCulture)).ToArray();
-            return this;
         }
 
         /// <summary>
@@ -81,21 +78,18 @@ namespace MiP.ShellArgs
         /// </remarks>
         /// <param name="assignmentOperators">The assignment operators the parser should use.</param>
         /// <returns>The current instance of <see cref="ParserSettings"/>.</returns>
-        public ParserSettings AssignWith(params char[] assignmentOperators)
+        public void AssignWith(params char[] assignmentOperators)
         {
             // assignment with empty array is allowed
             if (assignmentOperators == null)
                 assignmentOperators = new char[0];
 
             Assignments = assignmentOperators;
-            return this;
         }
 
-        internal ParserSettings RegisterStringParser<TParser, TTarget>(TParser parser) where TParser : IStringParser
+        internal void RegisterStringParser<TParser>(TParser parser) where TParser : IStringParser
         {
             ParserProvider.RegisterParser(parser);
-
-            return this;
         }
 
         /// <summary>
