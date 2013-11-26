@@ -7,14 +7,27 @@ namespace MiP.ShellArgs.Implementation
     /// </summary>
     public class OptionValueParsedEventArgs : EventArgs
     {
-        internal OptionValueParsedEventArgs(ParsingContext<object> parsingContext)
-        {
-            ParsingContext = parsingContext;
-        }
+        /// <summary>
+        /// Gets the name of the parsed option.
+        /// </summary>
+        public string Option { get; private set; }
 
         /// <summary>
-        /// Gets the parsing context.
+        /// Gets the parsed value of the option.
         /// </summary>
-        public ParsingContext<object> ParsingContext { get; private set; }
+        public object Value { get; private set; }
+
+        /// <summary>
+        /// Gets the parser builder.
+        /// This allowes adding of options during the parse process.
+        /// </summary>
+        public IParserBuilder ParserBuilder { get; private set; }
+        
+        internal OptionValueParsedEventArgs(IParserBuilder parserBuilder, string option, object value)
+        {
+            ParserBuilder = parserBuilder;
+            Option = option;
+            Value = value;
+        }
     }
 }

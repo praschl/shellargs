@@ -154,7 +154,7 @@ namespace MiP.ShellArgs
             {
                 OptionDefinition innerDefinition = optionDefinition;
                 if (optionDefinition.ValueSetter != null)
-                    optionDefinition.ValueSetter.ValueSet += (o, e) => OnParse(new OptionValueParsedEventArgs(new ParsingContext<object>(this, innerDefinition.Name, e.Value)));
+                    optionDefinition.ValueSetter.ValueSet += (o, e) => OnParse(new OptionValueParsedEventArgs(this, innerDefinition.Name, e.Value));
             }
 
             // TODO: when options are added on the fly, revalidate them
