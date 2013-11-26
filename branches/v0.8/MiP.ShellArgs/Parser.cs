@@ -28,7 +28,10 @@ namespace MiP.ShellArgs
         private readonly TokenConverter _converter;
         private readonly HelpGenerator _generator;
 
-        internal event EventHandler<ParseEventArgs> ValueParsed;
+        /// <summary>
+        /// Occurs when a value of an option was successfully parsed.
+        /// </summary>
+        public event EventHandler<OptionValueParsedEventArgs> OptionValueParsed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Parser"/> class.
@@ -135,22 +138,6 @@ namespace MiP.ShellArgs
         }
 
         /// <summary>
-        /// Used to add a callback which is called whenever an option was successfully parsed.
-        /// </summary>
-        /// <param name="handler">Called when any option is was successfully parsed.</param>
-        /// <returns>
-        /// The current instance of <see cref="IParser" />.
-        /// </returns>
-        /// <exception cref="System.ArgumentNullException">handler</exception>
-        public void OnOptionParsed(Action<ParsingContext<object>> handler)
-        {
-            if (handler == null)
-                throw new ArgumentNullException("handler");
-
-            ValueParsed += (o, e) => handler(new ParsingContext<object>(this, e.OptionName, e.Value));
-        }
-
-        /// <summary>
         /// Parses the specified args. Values are set on the properties of the containers or passed to the callback handlers.
         /// </summary>
         /// <param name="args">The shell args to parse.</param>
@@ -166,7 +153,7 @@ namespace MiP.ShellArgs
             {
                 OptionDefinition innerDefinition = optionDefinition;
                 if (optionDefinition.ValueSetter != null)
-                    optionDefinition.ValueSetter.ValueSet += (o, e) => OnParse(new ParseEventArgs(innerDefinition.Name, e.Value));
+                    optionDefinition.ValueSetter.ValueSet += (o, e) => OnParse(new OptionValueParsedEventArgs(new ParsingContext<object>(this, innerDefinition.Name, e.Value)));
             }
 
             _optionValidator.Validate(_optionDefinitions);
@@ -256,9 +243,9 @@ namespace MiP.ShellArgs
             return _generator.GetParameterHelp(_optionDefinitions.ToArray());
         }
 
-        private void OnParse(ParseEventArgs e)
+        private void OnParse(OptionValueParsedEventArgs e)
         {
-            EventHandler<ParseEventArgs> raiseMe = ValueParsed;
+            EventHandler<OptionValueParsedEventArgs> raiseMe = OptionValueParsed;
             if (raiseMe != null)
                 raiseMe(this, e);
         }

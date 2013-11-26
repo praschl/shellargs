@@ -64,7 +64,7 @@
     <Compile Include="Fluent\OptionBuilder.cs" />
     <Compile Include="ContainerAttributes\OptionAttribute.cs" />
     <Compile Include="ContainerAttributes\ValueDescriptionAttribute.cs" />
-    <Compile Include="Implementation\ParseEventArgs.cs" />
+    <Compile Include="Implementation\OptionValueParsedEventArgs.cs" />
     <Compile Include="Fluent\ParserConfigurator.cs" />
     <Compile Include="ParserExtensions.cs" />
     <Compile Include="Fluent\ParserResult.cs" />

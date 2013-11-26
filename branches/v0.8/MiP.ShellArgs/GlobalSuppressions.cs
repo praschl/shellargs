@@ -15,9 +15,10 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Mi", Scope = "namespace", Target = "MiP.ShellArgs.StringConversion")]
 [assembly: SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Mi", Scope = "namespace", Target = "MiP.ShellArgs.Implementation")]
 [assembly: SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Mi", Scope = "namespace", Target = "MiP.ShellArgs.Fluent")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Mi", Scope = "namespace", Target = "MiP.ShellArgs.AutoWireAttributes")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Mi", Scope = "namespace", Target = "MiP.ShellArgs.ContainerAttributes")]
 
 [assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Mi")]
 [assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Mi", Scope = "namespace", Target = "MiP.ShellArgs.StringConversion")]
 [assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Mi", Scope = "namespace", Target = "MiP.ShellArgs")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Mi", Scope = "namespace", Target = "MiP.ShellArgs.AutoWireAttributes")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Mi", Scope = "namespace", Target = "MiP.ShellArgs.ContainerAttributes")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Mi", Scope = "namespace", Target = "MiP.ShellArgs.Implementation")]

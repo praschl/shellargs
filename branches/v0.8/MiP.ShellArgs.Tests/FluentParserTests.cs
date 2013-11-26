@@ -16,7 +16,8 @@ namespace MiP.ShellArgs.Tests
             var eventsByExtensionMethod = new List<ParsingContext<object>>();
 
             var parser = new Parser();
-            parser.OnOptionParsed(eventsByExtensionMethod.Add);
+            parser.OptionValueParsed += (o, e) => eventsByExtensionMethod.Add(e.ParsingContext);
+
             parser.RegisterContainer<RequiredAndNonRequiredOption>();
 
             parser.Parse("-r:V1", "-n:V2");
@@ -69,8 +70,8 @@ namespace MiP.ShellArgs.Tests
             settings.PrefixWith('+');
 
             var parser = new Parser(settings);
+            parser.OptionValueParsed += (o, e) => eventsRaised.Add(e.ParsingContext);
             parser.RegisterOption("Hello", b => b.As<string>().Do(x => { }));
-            parser.OnOptionParsed(eventsRaised.Add);
 
             parser.Parse("+Hello", "World");
 
@@ -88,8 +89,8 @@ namespace MiP.ShellArgs.Tests
             settings.AssignWith('+');
 
             var parser = new Parser(settings);
+            parser.OptionValueParsed += (o, e) => eventsRaised.Add(e.ParsingContext);
             parser.RegisterOption("Hello", b => b.As<string>().Do(x => { }));
-            parser.OnOptionParsed(eventsRaised.Add);
 
             parser.Parse("-Hello+World");
 

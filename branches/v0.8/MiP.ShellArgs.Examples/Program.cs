@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 
 using MiP.ShellArgs.StringConversion;
 
@@ -54,7 +53,7 @@ namespace MiP.ShellArgs.Examples
 
             parser.RegisterOption("SubInt", b => b.As<int>().Do(pc => Console.WriteLine(pc.Option)));
 
-            parser.OnOptionParsed(pc => Console.WriteLine(pc.Option, pc.Value));
+            parser.OptionValueParsed += (o, e) => Console.WriteLine(e.ParsingContext.Option, e.ParsingContext.Value);
 
             //
 
