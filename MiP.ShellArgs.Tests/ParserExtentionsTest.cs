@@ -25,27 +25,27 @@ namespace MiP.ShellArgs.Tests
         }
 
         [TestMethod]
-        public void AutoWireInstance()
+        public void RegisterContainerInstance()
         {
-            _parser.AutoWire(_container);
+            _parser.RegisterContainer(_container);
 
-            _mock.Verify(x => x.AutoWire(_container, It.IsAny<Action<IAutoWireOptionBuilder<TestContainer>>>()));
+            _mock.Verify(x => x.RegisterContainer(_container, It.IsAny<Action<IContainerBuilder<TestContainer>>>()));
         }
 
         [TestMethod]
-        public void AutoWireDelegate()
+        public void RegisterContainerDelegate()
         {
-            _parser.AutoWire<TestContainer>(b => { });
+            _parser.RegisterContainer<TestContainer>(b => { });
 
-            _mock.Verify(x => x.AutoWire(It.IsAny<TestContainer>(), It.IsAny<Action<IAutoWireOptionBuilder<TestContainer>>>()));
+            _mock.Verify(x => x.RegisterContainer(It.IsAny<TestContainer>(), It.IsAny<Action<IContainerBuilder<TestContainer>>>()));
         }
 
         [TestMethod]
-        public void AutoWireInstanceAndDelegate()
+        public void RegisterContainerInstanceAndDelegate()
         {
-            _parser.AutoWire(_container, b => { });
+            _parser.RegisterContainer(_container, b => { });
 
-            _mock.Verify(x => x.AutoWire(_container, It.IsAny<Action<IAutoWireOptionBuilder<TestContainer>>>()));
+            _mock.Verify(x => x.RegisterContainer(_container, It.IsAny<Action<IContainerBuilder<TestContainer>>>()));
         }
 
         public class TestContainer

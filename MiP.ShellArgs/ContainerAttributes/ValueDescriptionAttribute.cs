@@ -1,6 +1,6 @@
 using System;
 
-namespace MiP.ShellArgs.AutoWireAttributes
+namespace MiP.ShellArgs.ContainerAttributes
 {
     /// <summary>
     /// Used to specify a description for an option.

@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace MiP.ShellArgs.AutoWireAttributes
+namespace MiP.ShellArgs.ContainerAttributes
 {
     /// <summary>
     /// Used to specify aliases for an option.

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using MiP.ShellArgs.AutoWireAttributes;
+using MiP.ShellArgs.ContainerAttributes;
 using MiP.ShellArgs.Implementation;
 using MiP.ShellArgs.Implementation.Reflection;
 using MiP.ShellArgs.StringConversion;

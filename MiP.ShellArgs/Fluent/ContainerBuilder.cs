@@ -11,7 +11,7 @@ using MiP.ShellArgs.Implementation.Reflection;
 
 namespace MiP.ShellArgs.Fluent
 {
-    internal class AutoWireOptionBuilder<TContainer> : IAutoWireOptionBuilder<TContainer>
+    internal class ContainerBuilder<TContainer> : IContainerBuilder<TContainer>
     {
         private const string ExpressionMustBeLikeMessage = 
             "The expression must be either [container => container.Property] or [container => container.Collection.Current()].";
@@ -26,7 +26,7 @@ namespace MiP.ShellArgs.Fluent
         private readonly IParser _parser;
         private readonly PropertyReflector _reflector;
 
-        public AutoWireOptionBuilder(TContainer container, IParser parser, PropertyReflector reflector)
+        public ContainerBuilder(TContainer container, IParser parser, PropertyReflector reflector)
         {
             _parser = parser;
             _reflector = reflector;
@@ -41,7 +41,7 @@ namespace MiP.ShellArgs.Fluent
             _optionDefinitions.AddRange(currentDefinitions);
         }
 
-        public IAutoWireOptionCustomizer<TContainer, TArgument> WithOption<TArgument>(string optionName)
+        public IContainerCustomizer<TContainer, TArgument> With<TArgument>(string optionName)
         {
             if (optionName == null)
                 throw new ArgumentNullException("optionName");
@@ -49,12 +49,12 @@ namespace MiP.ShellArgs.Fluent
             if (!_optionDefinitions.Any(definition => definition.Name.Equals(optionName, StringComparison.OrdinalIgnoreCase)))
                 throw new ParserInitializationException(string.Format(CultureInfo.InvariantCulture, ContainerDoesNotProvideOptionMessage, typeof(TContainer), optionName));
 
-            return new AutoWireOptionCustomizer<TContainer, TArgument>(optionName, _parser, _optionDefinitions, this);
+            return new ContainerCustomizer<TContainer, TArgument>(optionName, _parser, _optionDefinitions, this);
         }
 
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "propertyExpressions")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "MemberExpressions")]
-        public IAutoWireOptionCustomizer<TContainer, TArgument> WithOption<TArgument>(Expression<Func<TContainer, TArgument>> optionExpression)
+        public IContainerCustomizer<TContainer, TArgument> With<TArgument>(Expression<Func<TContainer, TArgument>> optionExpression)
         {
             if (optionExpression == null)
                 throw new ArgumentNullException("optionExpression");
@@ -63,7 +63,7 @@ namespace MiP.ShellArgs.Fluent
 
             string optionName = _reflector.GetOptionName(member);
 
-            return new AutoWireOptionCustomizer<TContainer, TArgument>(optionName, _parser, _optionDefinitions, this);
+            return new ContainerCustomizer<TContainer, TArgument>(optionName, _parser, _optionDefinitions, this);
         }
 
         private static MemberInfo GetProperty<TArgument>(Expression<Func<TContainer, TArgument>> optionExpression)

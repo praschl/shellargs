@@ -45,16 +45,16 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AutoWireAttributes\AliasesAttribute.cs" />
-    <Compile Include="Fluent\AutoWireOptionBuilder.cs" />
-    <Compile Include="Fluent\AutoWireOptionCustomizer.cs" />
+    <Compile Include="ContainerAttributes\AliasesAttribute.cs" />
+    <Compile Include="Fluent\ContainerBuilder.cs" />
+    <Compile Include="Fluent\ContainerCustomizer.cs" />
     <Compile Include="IParserBuilder.cs" />
     <Compile Include="OptionCollectionExtensions.cs" />
     <Compile Include="ParsingContext.cs" />
-    <Compile Include="IAutoWireOptionCustomizer.cs" />
+    <Compile Include="IContainerCustomizer.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="IAutoWireOptionBuilder.cs" />
-    <Compile Include="AutoWireAttributes\IgnoreOptionAttribute.cs" />
+    <Compile Include="IContainerBuilder.cs" />
+    <Compile Include="ContainerAttributes\IgnoreOptionAttribute.cs" />
     <Compile Include="Implementation\PropertySetter.cs" />
     <Compile Include="Implementation\ValueSetEventArgs.cs" />
     <Compile Include="IOptionBuilder.cs" />
@@ -62,19 +62,19 @@
     <Compile Include="IParserConfigurator.cs" />
     <Compile Include="IParserResult.cs" />
     <Compile Include="Fluent\OptionBuilder.cs" />
-    <Compile Include="AutoWireAttributes\OptionAttribute.cs" />
-    <Compile Include="AutoWireAttributes\ValueDescriptionAttribute.cs" />
+    <Compile Include="ContainerAttributes\OptionAttribute.cs" />
+    <Compile Include="ContainerAttributes\ValueDescriptionAttribute.cs" />
     <Compile Include="Implementation\ParseEventArgs.cs" />
     <Compile Include="Fluent\ParserConfigurator.cs" />
     <Compile Include="ParserExtensions.cs" />
     <Compile Include="Fluent\ParserResult.cs" />
-    <Compile Include="AutoWireAttributes\PositionAttribute.cs" />
+    <Compile Include="ContainerAttributes\PositionAttribute.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="ParserInitializationException.cs" />
     <Compile Include="ParserSettings.cs" />
     <Compile Include="ParsingException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="AutoWireAttributes\RequiredAttribute.cs" />
+    <Compile Include="ContainerAttributes\RequiredAttribute.cs" />
     <Compile Include="StringConversion\IStringConverter.cs" />
     <Compile Include="StringConversion\IStringParser.cs" />
     <Compile Include="StringConversion\IStringParserProvider.cs" />

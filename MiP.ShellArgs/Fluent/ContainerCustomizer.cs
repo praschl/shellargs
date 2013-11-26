@@ -6,14 +6,14 @@ using MiP.ShellArgs.Implementation;
 
 namespace MiP.ShellArgs.Fluent
 {
-    internal class AutoWireOptionCustomizer<TContainer, TArgument> : IAutoWireOptionCustomizer<TContainer, TArgument>
+    internal class ContainerCustomizer<TContainer, TArgument> : IContainerCustomizer<TContainer, TArgument>
     {
         private readonly string _name;
         private readonly IParser _parser;
         private readonly ICollection<OptionDefinition> _optionDefinitions;
-        private readonly IAutoWireOptionBuilder<TContainer> _builder;
+        private readonly IContainerBuilder<TContainer> _builder;
 
-        public AutoWireOptionCustomizer(string name, IParser parser, ICollection<OptionDefinition> optionDefinitions, IAutoWireOptionBuilder<TContainer> builder)
+        public ContainerCustomizer(string name, IParser parser, ICollection<OptionDefinition> optionDefinitions, IContainerBuilder<TContainer> builder)
         {
             _name = name;
             _parser = parser;
@@ -21,7 +21,7 @@ namespace MiP.ShellArgs.Fluent
             _builder = builder;
         }
 
-        public IAutoWireOptionBuilder<TContainer> Do(Action<ParsingContext<TContainer, TArgument>> handler)
+        public IContainerBuilder<TContainer> Do(Action<ParsingContext<TContainer, TArgument>> handler)
         {
             if (handler == null)
                 throw new ArgumentNullException("handler");
@@ -29,7 +29,7 @@ namespace MiP.ShellArgs.Fluent
             return Do(_name, handler);
         }
 
-        private IAutoWireOptionBuilder<TContainer> Do(string optionName, Action<ParsingContext<TContainer, TArgument>> handler)
+        private IContainerBuilder<TContainer> Do(string optionName, Action<ParsingContext<TContainer, TArgument>> handler)
         {
             if (string.IsNullOrEmpty(optionName))
                 throw new ArgumentException("must not be null or empty", "optionName");
