@@ -75,6 +75,7 @@
     <Compile Include="Implementation\TokenConverterTest_MapToContainer.cs" />
     <Compile Include="Implementation\TokenTest.cs" />
     <Compile Include="Implementation\TypeExtensionsTest.cs" />
+    <Compile Include="AddOptionsOnTheFlyTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiP.ShellArgs\MiP.ShellArgs.csproj">
