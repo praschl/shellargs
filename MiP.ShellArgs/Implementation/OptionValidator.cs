@@ -49,8 +49,15 @@ namespace MiP.ShellArgs.Implementation
 
         private static void ValidateNamesAndAliasesAreUnique(ICollection<OptionDefinition> optionDefinitions)
         {
-            IEnumerable<IGrouping<string, string>> aliasesGroups = optionDefinitions.Select(o => o.Name).Concat(optionDefinitions.SelectMany(o => o.Aliases)).GroupBy(o => o);
-            string[] nonUniqueAliases = aliasesGroups.Where(g => g.Count() > 1).Select(g => g.Key).ToArray();
+            IEnumerable<IGrouping<string, string>> aliasesGroups = optionDefinitions
+                .Select(o => o.Name)
+                .Concat(optionDefinitions.SelectMany(o => o.Aliases))
+                .GroupBy(o => o, StringComparer.OrdinalIgnoreCase);
+
+            string[] nonUniqueAliases = aliasesGroups
+                .Where(g => g.Count() > 1)
+                .Select(g => g.Key)
+                .ToArray();
 
             if (nonUniqueAliases.Any())
                 throw new ParserInitializationException(string.Format(CultureInfo.InvariantCulture, OptionNamesNotUniqueMessage, string.Join(", ", nonUniqueAliases)));
@@ -75,7 +82,9 @@ namespace MiP.ShellArgs.Implementation
 
         private static void ValidateNoPositionIsMissing(IEnumerable<OptionDefinition> optionDefinitions)
         {
-            IEnumerable<OptionDefinition> positionalOptions = optionDefinitions.Where(o => o.IsPositional).OrderBy(o => o.Position);
+            IEnumerable<OptionDefinition> positionalOptions = optionDefinitions
+                .Where(o => o.IsPositional)
+                .OrderBy(o => o.Position);
 
             int expected = 1;
             foreach (OptionDefinition positionalOption in positionalOptions)
@@ -89,7 +98,9 @@ namespace MiP.ShellArgs.Implementation
 
         private static void ValidateNoRequiredFollowsOptional(IEnumerable<OptionDefinition> optionDefinitions)
         {
-            IEnumerable<OptionDefinition> positionalOptions = optionDefinitions.Where(o => o.Position > 0).OrderBy(o => o.Position);
+            IEnumerable<OptionDefinition> positionalOptions = optionDefinitions
+                .Where(o => o.Position > 0)
+                .OrderBy(o => o.Position);
 
             bool lastWasRequired = true;
             OptionDefinition lastOption = null;
@@ -106,7 +117,9 @@ namespace MiP.ShellArgs.Implementation
 
         private static void ValidateOnlyLastPositionalIsCollection(IEnumerable<OptionDefinition> optionDefinitions)
         {
-            IEnumerable<OptionDefinition> positionalOptions = optionDefinitions.Where(o => o.Position > 0).OrderBy(o => o.Position);
+            IEnumerable<OptionDefinition> positionalOptions = optionDefinitions
+                .Where(o => o.Position > 0)
+                .OrderBy(o => o.Position);
 
             bool foundICollection = false;
             string lastOptionName = null;

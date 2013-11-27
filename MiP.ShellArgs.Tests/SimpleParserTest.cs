@@ -322,6 +322,17 @@ namespace MiP.ShellArgs.Tests
             Assert.AreEqual(5, container.Numbers["e"]);
         }
 
+        [TestMethod]
+        public void CanNotAddSameOptionTwiceIsCaseInsensitive()
+        {
+            var parser = new Parser();
+            parser.RegisterOption("add", b => b.As<int>().Do(delegate { }));
+
+            ExceptionAssert.Throws<ParserInitializationException>(() =>
+                parser.RegisterOption("Add", b => b.As<int>().Do(delegate { })),
+                ex => Assert.AreEqual("The following names or aliases are not unique: [add].", ex.Message));
+        }
+
         //[TestMethod]
         public void ParseToDictionaryDoubleKey()
         {

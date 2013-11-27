@@ -7,6 +7,9 @@ using MiP.ShellArgs.StringConversion;
 
 namespace MiP.ShellArgs
 {
+    // TODO: make ParserSettings immutable / freeze while parsing, maybe even directly after adding it to parser.
+    // throw an exception when it should be changed while parsing.
+
     /// <summary>
     /// Used to customize the parser.
     /// </summary>
@@ -15,7 +18,7 @@ namespace MiP.ShellArgs
         private const string AllowAtLeastOnePrefixMessage =
             "Allow at least one prefix for options or you would not be able to use any options.";
 
-        private static readonly string[] _defaultShortBooleans = new[] {"+", "-"};
+        private static readonly string[] _defaultShortBooleans = {"+", "-"};
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ParserSettings"/> class.
