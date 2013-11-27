@@ -7,10 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiP.ShellArgs.Tests", "MiP.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{18A672C1-36B3-485F-8D7F-D6EAB46BCE81}"
 	ProjectSection(SolutionItems) = preProject
-		Local.testsettings = Local.testsettings
 		Parser.ruleset = Parser.ruleset
 		ShellArgs.vsmdi = ShellArgs.vsmdi
-		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiP.ShellArgs.Examples", "MiP.ShellArgs.Examples\MiP.ShellArgs.Examples.csproj", "{B561A08D-EA6A-4ECE-9E3F-AE48F6E057F6}"
