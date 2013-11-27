@@ -44,7 +44,7 @@ namespace MiP.ShellArgs
         /// <summary>
         /// Initializes a new instance of the <see cref="Parser"/> class.
         /// </summary>
-        /// <param name="parserSettings">The parser settings.</param>
+        /// <param name="parserSettings">Configures the parser.</param>
         public Parser(ParserSettings parserSettings)
         {
             _settings = parserSettings ?? new ParserSettings();
@@ -87,6 +87,7 @@ namespace MiP.ShellArgs
 
             foreach (OptionDefinition currentDefinition in newDefinitions)
             {
+                HookToValueSetter(currentDefinition);
                 _containerByOption.Add(currentDefinition.Name, container);
             }
 
@@ -134,6 +135,8 @@ namespace MiP.ShellArgs
 
             builderDelegate(builder);
 
+            HookToValueSetter(newDefinition);
+         
             _optionDefinitions.Add(newDefinition);
         }
 
@@ -148,15 +151,7 @@ namespace MiP.ShellArgs
         {
             if (args == null)
                 args = new string[0];
-
-            // TODO: when options are added on the fly, add this event handler to them
-            foreach (OptionDefinition optionDefinition in _optionDefinitions)
-            {
-                OptionDefinition innerDefinition = optionDefinition;
-                if (optionDefinition.ValueSetter != null)
-                    optionDefinition.ValueSetter.ValueSet += (o, e) => OnParse(new OptionValueParsedEventArgs(this, innerDefinition.Name, e.Value));
-            }
-
+            
             // TODO: when options are added on the fly, revalidate them
             _optionValidator.Validate(_optionDefinitions);
 
@@ -245,11 +240,18 @@ namespace MiP.ShellArgs
             return _generator.GetParameterHelp(_optionDefinitions.ToArray());
         }
 
+        private void HookToValueSetter(OptionDefinition definition)
+        {
+            if (definition.ValueSetter != null)
+                definition.ValueSetter.ValueSet += (o, e) => OnParse(new OptionValueParsedEventArgs(this, definition.Name, e.Value));
+        }
+
         private void OnParse(OptionValueParsedEventArgs e)
         {
             EventHandler<OptionValueParsedEventArgs> raiseMe = OptionValueParsed;
             if (raiseMe != null)
                 raiseMe(this, e);
         }
+
     }
 }
