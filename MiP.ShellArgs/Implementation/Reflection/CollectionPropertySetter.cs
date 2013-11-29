@@ -16,7 +16,6 @@ namespace MiP.ShellArgs.Implementation.Reflection
         private readonly IStringConverter _stringConverter;
         private readonly PropertyInfo _propertyInfo;
         private readonly object _instance;
-        private MethodInfo _addMethod;
         private Type _itemType;
         private object _collectionInstance;
 
@@ -59,17 +58,25 @@ namespace MiP.ShellArgs.Implementation.Reflection
                 _collectionInstance = Activator.CreateInstance(collectionType);
                 _propertyInfo.SetValue(_instance, _collectionInstance, null);
             }
-
-            _addMethod = typeof (ICollection<>).MakeGenericType(collectionItemType).GetMethod("Add");
         }
 
         public override void SetValue(string value)
         {
             object realValue = _stringConverter.To(_itemType, value);
 
-            _addMethod.Invoke(_collectionInstance, new[] {realValue});
+            Add((dynamic)_collectionInstance, (dynamic)realValue);
 
             OnValueSet(new ValueSetEventArgs(_instance, _itemType, realValue));
+        }
+
+        private static void Add<T>(ICollection<T> collection, T value)
+        {
+            collection.Add(value);
+        }
+
+        private static void Add<TKey, TValue>(IDictionary<TKey, TValue> collection, KeyValuePair<TKey, TValue> value)
+        {
+            collection.Add(value);
         }
 
         public override Type ItemType { get { return _itemType; } }
