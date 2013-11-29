@@ -50,6 +50,7 @@
     <Compile Include="Fluent\ContainerCustomizer.cs" />
     <Compile Include="IParserBuilder.cs" />
     <Compile Include="OptionCollectionExtensions.cs" />
+    <Compile Include="Implementation\OptionContext.cs" />
     <Compile Include="ParsingContext.cs" />
     <Compile Include="IContainerCustomizer.cs" />
     <Compile Include="GlobalSuppressions.cs" />

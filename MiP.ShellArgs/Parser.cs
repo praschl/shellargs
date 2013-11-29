@@ -20,11 +20,11 @@ namespace MiP.ShellArgs
 
         private readonly Dictionary<string, object> _containerByOption = new Dictionary<string, object>();
         private readonly Dictionary<Type, object> _containerByType = new Dictionary<Type, object>();
-        private readonly List<OptionDefinition> _optionDefinitions = new List<OptionDefinition>();
+        private readonly OptionContext _optionContext = new OptionContext();
         private readonly ParserSettings _settings;
+        
         private readonly StringConverter _stringConverter;
         private readonly PropertyReflector _propertyReflector;
-        private readonly OptionValidator _optionValidator;
         private readonly TokenConverter _converter;
         private readonly HelpGenerator _generator;
 
@@ -47,12 +47,17 @@ namespace MiP.ShellArgs
         /// <param name="parserSettings">Configures the parser.</param>
         public Parser(ParserSettings parserSettings)
         {
+            _optionContext.OptionAdded += definition =>
+                                          {
+                                              if (definition.ValueSetter != null)
+                                                  definition.ValueSetter.ValueSet += (o, e) => OnParse(new OptionValueParsedEventArgs(this, definition.Name, e.Value));
+                                          };
+
             _settings = parserSettings ?? new ParserSettings();
 
             _stringConverter = new StringConverter(_settings.ParserProvider);
             _propertyReflector = new PropertyReflector(_stringConverter);
             _converter = new TokenConverter(new ArgumentFactory(_settings));
-            _optionValidator = new OptionValidator();
             _generator = new HelpGenerator(_settings.ParserProvider);
         }
 
@@ -87,13 +92,10 @@ namespace MiP.ShellArgs
 
             foreach (OptionDefinition currentDefinition in newDefinitions)
             {
-                HookToValueSetter(currentDefinition);
                 _containerByOption.Add(currentDefinition.Name, container);
             }
 
-            _optionDefinitions.AddRange(newDefinitions);
-
-            _optionValidator.Validate(_optionDefinitions);
+            _optionContext.AddRange(newDefinitions);
         }
 
         /// <summary>
@@ -115,10 +117,10 @@ namespace MiP.ShellArgs
                 throw new ArgumentNullException("builderDelegate");
 
             RegisterOption(b =>
-                       {
-                           b.Named(name);
-                           builderDelegate(b);
-                       });
+                           {
+                               b.Named(name);
+                               builderDelegate(b);
+                           });
         }
 
         /// <summary>
@@ -137,11 +139,7 @@ namespace MiP.ShellArgs
 
             builderDelegate(builder);
 
-            HookToValueSetter(newDefinition);
-         
-            _optionDefinitions.Add(newDefinition);
-
-            _optionValidator.Validate(_optionDefinitions);
+            _optionContext.Add(newDefinition);
         }
 
         /// <summary>
@@ -155,10 +153,10 @@ namespace MiP.ShellArgs
         {
             if (args == null)
                 args = new string[0];
-            
-            IEnumerable<Token> tokens = _converter.ConvertToTokens(_optionDefinitions, args);
 
-            _converter.MapToContainer(tokens, _optionDefinitions);
+            IEnumerable<Token> tokens = _converter.ConvertToTokens(_optionContext, args);
+
+            _converter.MapToContainer(tokens, _optionContext);
 
             return new ParserResult(_containerByType);
         }
@@ -238,13 +236,7 @@ namespace MiP.ShellArgs
         {
             _generator.OptionPrefix = _settings.Prefixes.First()[0];
 
-            return _generator.GetParameterHelp(_optionDefinitions.ToArray());
-        }
-
-        private void HookToValueSetter(OptionDefinition definition)
-        {
-            if (definition.ValueSetter != null)
-                definition.ValueSetter.ValueSet += (o, e) => OnParse(new OptionValueParsedEventArgs(this, definition.Name, e.Value));
+            return _generator.GetParameterHelp(_optionContext.Definitions);
         }
 
         private void OnParse(OptionValueParsedEventArgs e)
@@ -253,6 +245,5 @@ namespace MiP.ShellArgs
             if (raiseMe != null)
                 raiseMe(this, e);
         }
-
     }
 }

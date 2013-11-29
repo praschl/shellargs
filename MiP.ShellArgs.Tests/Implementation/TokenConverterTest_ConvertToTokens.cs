@@ -12,12 +12,12 @@ namespace MiP.ShellArgs.Tests.Implementation
     public class TokenConverterTest_ConvertToTokens
     {
         private TokenConverter _tokenizer;
-        private List<OptionDefinition> _optionDefinitions;
+        private OptionContext _optionContext;
 
         [TestInitialize]
         public void Initialize()
         {
-            _optionDefinitions = new List<OptionDefinition>();
+            _optionContext = new OptionContext();
 
             _tokenizer = new TokenConverter(new ArgumentFactory(new ParserSettings()));
         }
@@ -25,13 +25,13 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void FirstPositional()
         {
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "a",
                                        Position = 1
                                    });
 
-            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "x");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionContext, "x");
 
             var expected = new List<Token>
                            {
@@ -45,18 +45,18 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void SecondPositional()
         {
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "a",
                                        Position = 1
                                    });
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "b",
                                        Position = 2
                                    });
 
-            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "x", "y");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionContext, "x", "y");
 
             var expected = new List<Token>
                            {
@@ -72,19 +72,19 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void CollectionPositional()
         {
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "a",
                                        Position = 1
                                    });
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "b",
                                        Position = 2,
                                        IsCollection = true
                                    });
 
-            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "x", "y", "z");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionContext, "x", "y", "z");
 
             var expected = new List<Token>
                            {
@@ -101,12 +101,12 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void FirstNamed()
         {
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "a"
                                    });
 
-            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionContext, "-a", "x");
 
             var expected = new List<Token>
                            {
@@ -120,16 +120,16 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void SecondNamed()
         {
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "a"
                                    });
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "b"
                                    });
 
-            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x", "-b", "y");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionContext, "-a", "x", "-b", "y");
 
             var expected = new List<Token>
                            {
@@ -145,13 +145,13 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void CollectionNamed()
         {
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "a",
                                        IsCollection = true
                                    });
 
-            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x", "y", "z");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionContext, "-a", "x", "y", "z");
 
             var expected = new List<Token>
                            {
@@ -167,13 +167,13 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void NamedBooleanToggle()
         {
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "a",
                                        IsBoolean = true
                                    });
 
-            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-a");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionContext, "-a");
 
             var expected = new List<Token>
                            {
@@ -187,13 +187,13 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void ValueWithoutOptionInMiddle()
         {
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "a"
                                    });
 
             // ReSharper disable ReturnValueOfPureMethodIsNotUsed
-            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x", "y").ToArray(),
+            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionContext, "-a", "x", "y").ToArray(),
                 // ReSharper restore ReturnValueOfPureMethodIsNotUsed
                 ex => Assert.IsTrue(ex.Message == "Expected an option instead of value 'y'."));
         }
@@ -202,7 +202,7 @@ namespace MiP.ShellArgs.Tests.Implementation
         public void ValueWithoutOptionAtEnd()
         {
             // ReSharper disable ReturnValueOfPureMethodIsNotUsed
-            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "x").ToArray(),
+            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionContext, "x").ToArray(),
                 // ReSharper restore ReturnValueOfPureMethodIsNotUsed
                 ex => Assert.IsTrue(ex.Message == "Expected an option instead of value 'x'."));
         }
@@ -210,18 +210,18 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void CollectionOptionWithoutValueIsRemoved()
         {
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "a",
                                        IsCollection = true
                                    });
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "b",
                                        IsCollection = true
                                    });
 
-            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "-b", "x");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionContext, "-a", "-b", "x");
 
             var expected = new List<Token>
                            {
@@ -235,18 +235,18 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void CollectionOptionWithoutValueAtEndIsRemoved()
         {
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "a",
                                        IsCollection = true
                                    });
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "b",
                                        IsCollection = true
                                    });
 
-            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, new List<string>
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionContext, new List<string>
                                                                             {
                                                                                 "-a",
                                                                                 "x",
@@ -265,45 +265,45 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void OptionWithoutValue()
         {
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "a"
                                    });
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "b"
                                    });
 
-            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "-b").ToArray(),
+            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionContext, "-a", "-b").ToArray(),
                 ex => Assert.IsTrue(ex.Message == "Option 'a' has no value assigned."));
         }
 
         [TestMethod]
         public void OptionWithoutValueAtEnd()
         {
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "a"
                                    });
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "b"
                                    });
 
-            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionDefinitions, "-a", "x", "-b").ToArray(),
+            ExceptionAssert.Throws<ParsingException>(() => _tokenizer.ConvertToTokens(_optionContext, "-a", "x", "-b").ToArray(),
                 ex => Assert.IsTrue(ex.Message.StartsWith("Option 'b' has no value assigned.")));
         }
 
         [TestMethod]
         public void AliasesAreTranslatedToOriginalName()
         {
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "Fullname",
                                        Aliases = new[] { "F", "Fn" }
                                    });
 
-            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-F", "x", "-FN", "y", "-Fullname", "z");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionContext, "-F", "x", "-FN", "y", "-Fullname", "z");
 
             var expected = new List<Token>
                            {
@@ -321,18 +321,18 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void PositionalsMustBeUsableAsNamed()
         {
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "a",
                                        Position = 1
                                    });
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "b",
                                        Position = 2
                                    });
 
-            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, "-b", "x", "-a", "y");
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionContext, "-b", "x", "-a", "y");
 
             var expected = new List<Token>
                            {
@@ -348,13 +348,13 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void NameIsCasedCorrectly()
         {
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
                                    {
                                        Name = "HelloWorld",
                                        Position = 1
                                    });
 
-            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, new[] { "-helloworLD", "x" });
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionContext, new[] { "-helloworLD", "x" });
 
             var expected = new List<Token>
                            {
@@ -368,13 +368,13 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void OverloadIEnumerable()
         {
-            _optionDefinitions.Add(new OptionDefinition
+            _optionContext.Add(new OptionDefinition
             {
                 Name = "HelloWorld",
                 Position = 1
             });
 
-            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionDefinitions, new List<string> { "-helloworLD", "x" });
+            IEnumerable<Token> tokens = _tokenizer.ConvertToTokens(_optionContext, new List<string> { "-helloworLD", "x" });
 
             var expected = new List<Token>
                            {

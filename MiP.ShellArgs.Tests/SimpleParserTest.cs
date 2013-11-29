@@ -333,6 +333,14 @@ namespace MiP.ShellArgs.Tests
                 ex => Assert.AreEqual("The following names or aliases are not unique: [add].", ex.Message));
         }
 
+        [TestMethod]
+        public void PositionalPropertiesOutOfOrderDoesNotFail()
+        {
+            var parser = new Parser();
+
+            parser.RegisterContainer<PositionalPropertiesOutOfOrder>();
+        }
+
         //[TestMethod]
         public void ParseToDictionaryDoubleKey()
         {
@@ -343,7 +351,7 @@ namespace MiP.ShellArgs.Tests
             Assert.IsTrue(container.Names.ContainsKey("a"));
             Assert.AreEqual("c", container.Names["a"]);
         }
-
+        
         #region Classes used by Test
 
         public class OptionalStringProperties
@@ -563,6 +571,15 @@ namespace MiP.ShellArgs.Tests
 
         internal class PrivatePropertyContainer
         {
+            public PrivatePropertyContainer()
+            {
+            }
+
+            public PrivatePropertyContainer(string value)
+            {
+                Value = value;
+            }
+
             private string Value { get; set; }
 
             public string GetValue()
@@ -575,6 +592,21 @@ namespace MiP.ShellArgs.Tests
         {
             public Dictionary<string, string> Names { get; set; }
             public Dictionary<string, int> Numbers { get; set; }
+        }
+
+        public class PositionalPropertiesOutOfOrder
+        {
+            // Important:
+            // DO NOT change the order of the properties, this is important for the test.
+
+            [Position(3)]
+            public string S1 { get; set; }
+
+            [Position(2)]
+            public string S2 { get; set; }
+
+            [Position(1)]
+            public string S3 { get; set; }
         }
 
         #endregion
