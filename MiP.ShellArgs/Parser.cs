@@ -156,9 +156,6 @@ namespace MiP.ShellArgs
             if (args == null)
                 args = new string[0];
             
-            // TODO: when options are added on the fly, revalidate them
-            //_optionValidator.Validate(_optionDefinitions);
-
             IEnumerable<Token> tokens = _converter.ConvertToTokens(_optionDefinitions, args);
 
             _converter.MapToContainer(tokens, _optionDefinitions);
