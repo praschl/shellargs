@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using MiP.ShellArgs.ContainerAttributes;
 using MiP.ShellArgs.Implementation;
 using MiP.ShellArgs.Implementation.Reflection;
 using MiP.ShellArgs.StringConversion;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace MiP.ShellArgs.Tests.Implementation
 {
@@ -17,6 +17,7 @@ namespace MiP.ShellArgs.Tests.Implementation
         private static PropertyReflector _reflector;
         private static object _optionsInstance;
         private IStringParserProvider _stringParserProvider;
+        private OptionContext _context;
 
         [TestInitialize]
         public void Initialize()
@@ -30,14 +31,16 @@ namespace MiP.ShellArgs.Tests.Implementation
 
             _helpGenerator = new HelpGenerator(_stringParserProvider);
             _helpGenerator.OptionPrefix = '-';
+
+            _context = new OptionContext();
         }
 
         [TestMethod]
         public void OptionalNonPositional()
         {
-            OptionDefinition info = GetPropertyInfo("J");
+            _context.Add(GetPropertyInfo("J"));
 
-            string help = _helpGenerator.GetParameterHelp(info);
+            string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
             Assert.AreEqual("[-J string]", help);
         }
@@ -45,9 +48,11 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void OptionalPositional()
         {
-            OptionDefinition info = GetPropertyInfo("C");
+            var info = GetPropertyInfo("C");
+            info.Position = 1;
+            _context.Add(info);
 
-            string help = _helpGenerator.GetParameterHelp(info);
+            string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
             Assert.AreEqual("[[-C] string]", help);
         }
@@ -55,9 +60,9 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void RequiredPositional()
         {
-            OptionDefinition info = GetPropertyInfo("A");
+            _context.Add(GetPropertyInfo("A"));
 
-            string help = _helpGenerator.GetParameterHelp(info);
+            string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
             Assert.AreEqual("[-A] string", help);
         }
@@ -65,9 +70,9 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void RequiredNonPositional()
         {
-            OptionDefinition info = GetPropertyInfo("H");
+            _context.Add(GetPropertyInfo("H"));
 
-            string help = _helpGenerator.GetParameterHelp(info);
+            string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
             Assert.AreEqual("-H string", help);
         }
@@ -75,30 +80,29 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void OrderingManyOptions()
         {
-            string help = _helpGenerator.GetParameterHelp(
-                GetPropertyInfo("C"),
-                GetPropertyInfo("H"),
-                GetPropertyInfo("J"),
-                GetPropertyInfo("B"),
-                GetPropertyInfo("D"),
-                GetPropertyInfo("A"),
-                GetPropertyInfo("K"),
-                GetPropertyInfo("I")
-                );
+            _context.Add(GetPropertyInfo("J"));
+            _context.Add(GetPropertyInfo("A"));
+            _context.Add(GetPropertyInfo("H"));
+            _context.Add(GetPropertyInfo("B"));
+            _context.Add(GetPropertyInfo("C"));
+            _context.Add(GetPropertyInfo("D"));
+            _context.Add(GetPropertyInfo("K"));
+            _context.Add(GetPropertyInfo("I"));
 
-            var helps = new List<string>
-                        {
-                            _helpGenerator.GetParameterHelp(GetPropertyInfo("A")),
-                            _helpGenerator.GetParameterHelp(GetPropertyInfo("B")),
-                            _helpGenerator.GetParameterHelp(GetPropertyInfo("C")),
-                            _helpGenerator.GetParameterHelp(GetPropertyInfo("D")),
-                            _helpGenerator.GetParameterHelp(GetPropertyInfo("H")),
-                            _helpGenerator.GetParameterHelp(GetPropertyInfo("I")),
-                            _helpGenerator.GetParameterHelp(GetPropertyInfo("J")),
-                            _helpGenerator.GetParameterHelp(GetPropertyInfo("K"))
-                        };
+            string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
-            string fullHelp = string.Join(" ", helps);
+            var orderedContext = new OptionContext();
+
+            orderedContext.Add(GetPropertyInfo("A"));
+            orderedContext.Add(GetPropertyInfo("B"));
+            orderedContext.Add(GetPropertyInfo("C"));
+            orderedContext.Add(GetPropertyInfo("D"));
+            orderedContext.Add(GetPropertyInfo("H"));
+            orderedContext.Add(GetPropertyInfo("I"));
+            orderedContext.Add(GetPropertyInfo("J"));
+            orderedContext.Add(GetPropertyInfo("K"));
+
+            string fullHelp = _helpGenerator.GetParameterHelp(orderedContext.Definitions);
 
             Assert.AreEqual(fullHelp, help);
         }
@@ -106,9 +110,9 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void EnumHelp()
         {
-            OptionDefinition info = GetPropertyInfo("Enum");
+            _context.Add(GetPropertyInfo("Enum"));
 
-            string help = _helpGenerator.GetParameterHelp(info);
+            string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
             Assert.AreEqual("-Enum (Eins|Zwei|Drei)", help);
         }
@@ -116,9 +120,9 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void FlagsEnumHelp()
         {
-            OptionDefinition info = GetPropertyInfo("FlagsEnum");
+            _context.Add(GetPropertyInfo("FlagsEnum"));
 
-            string help = _helpGenerator.GetParameterHelp(info);
+            string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
             Assert.AreEqual("-FlagsEnum (Eins,Zwei,Vier,Acht)", help);
         }
@@ -126,9 +130,9 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void StringParserHelp()
         {
-            OptionDefinition info = GetPropertyInfo("Date");
+            _context.Add(GetPropertyInfo("Date"));
 
-            string help = _helpGenerator.GetParameterHelp(info);
+            string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
             Assert.AreEqual("-Date date", help);
         }
@@ -136,9 +140,9 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void OptionAttributeHelp()
         {
-            OptionDefinition info = GetPropertyInfo("DateRenamed");
+            _context.Add(GetPropertyInfo("DateRenamed"));
 
-            string help = _helpGenerator.GetParameterHelp(info);
+            string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
             Assert.AreEqual("-DateRenamed renamed", help);
         }
@@ -146,9 +150,9 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void CollectionHelp()
         {
-            OptionDefinition info = GetPropertyInfo("Numbers");
+            _context.Add(GetPropertyInfo("Numbers"));
 
-            string help = _helpGenerator.GetParameterHelp(info);
+            string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
             Assert.AreEqual("-Numbers int [...]", help);
         }

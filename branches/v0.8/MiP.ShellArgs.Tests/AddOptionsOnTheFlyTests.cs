@@ -125,7 +125,7 @@ namespace MiP.ShellArgs.Tests
             _i2 = 0;
             _i3 = 0;
 
-            var parser = CreateParserWithThreeAddOptions();
+            Parser parser = CreateParserWithThreeAddOptions();
 
             parser.Parse("-add1", "2", "-add2", "3", "-add3", "4");
             Assert.AreEqual(9, _i1 + _i2 + _i3);
@@ -138,20 +138,38 @@ namespace MiP.ShellArgs.Tests
             _i2 = 0;
             _i3 = 0;
 
-            var parser = CreateParserWithThreeAddOptions();
+            Parser parser = CreateParserWithThreeAddOptions();
 
             parser.Parse("2", "3", "4");
             Assert.AreEqual(9, _i1 + _i2 + _i3);
         }
 
-        // TODO: Test required options were all parsed.
+        [TestMethod]
+        public void MissingRequiredOptionsFails()
+        {
+            var parser = new Parser();
+
+            parser.RegisterOption(_ => _
+                .Named("Add1")
+                .Required()
+                .As<int>()
+                .Do(c1 => c1.Parser.RegisterOption(__ => __
+                    .Named("add2")
+                    .Required()
+                    .As<int>()
+                    .Do(c2 => { }))));
+
+            ExceptionAssert.Throws<ParsingException>(() =>
+                parser.Parse("-add1", "1"),
+                ex => Assert.AreEqual("The following option(s) are required, but were not given: [add2].", ex.Message));
+        }
 
         private Parser CreateParserWithThreeAddOptions()
         {
             // TODO: this looks ugly with fluent interface, maybe provide overloads which 
             // - allow to create the OptionDefinition
             // - have lots of parameters with default values.
-            
+
             var parser = new Parser();
             parser.RegisterOption(_ => _
                 .Named("add1")

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using MiP.ShellArgs.Implementation;
 using MiP.ShellArgs.StringConversion;
 using MiP.ShellArgs.Tests.TestHelpers;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace MiP.ShellArgs.Tests.Implementation
 {
@@ -13,6 +13,7 @@ namespace MiP.ShellArgs.Tests.Implementation
     {
         private TokenConverter _converter;
         private StringConverter _stringConverter;
+        private OptionContext _context;
 
         [TestInitialize]
         public void Initialize()
@@ -20,13 +21,15 @@ namespace MiP.ShellArgs.Tests.Implementation
             _stringConverter = new StringConverter(new ParserSettings().ParserProvider);
 
             _converter = new TokenConverter(new ArgumentFactory(new ParserSettings()));
+
+            _context = new OptionContext();
         }
 
         [TestMethod]
         public void ThrowsWhenOptionNotFound()
         {
             ExceptionAssert.Throws<ParsingException>(
-                () => _converter.MapToContainer(new[] {Token.CreateOption("xyz")}, new OptionDefinition[0]),
+                () => _converter.MapToContainer(new[] {Token.CreateOption("xyz")}, _context),
                 ex => Assert.AreEqual("'xyz' is not a valid option.", ex.Message));
         }
 
@@ -34,7 +37,7 @@ namespace MiP.ShellArgs.Tests.Implementation
         public void ThrowsWhenValueBeforeOption()
         {
             ExceptionAssert.Throws<ParsingException>(
-                () => _converter.MapToContainer(new[] {Token.CreateValue("xyz")}, new OptionDefinition[0]),
+                () => _converter.MapToContainer(new[] {Token.CreateValue("xyz")}, _context),
                 ex => Assert.AreEqual("Expected an option instead of value 'xyz'.", ex.Message));
         }
 
@@ -56,19 +59,16 @@ namespace MiP.ShellArgs.Tests.Implementation
             var values1 = new List<int>();
             var values2 = new List<int>();
 
-            var options = new List<OptionDefinition>
-                          {
-                              new OptionDefinition
-                              {
-                                  Name = "set1",
-                                  ValueSetter = new DelegatingPropertySetter<int>(_stringConverter, values1.Add)
-                              },
-                              new OptionDefinition
-                              {
-                                  Name = "set2",
-                                  ValueSetter = new DelegatingPropertySetter<int>(_stringConverter, values2.Add)
-                              }
-                          };
+            _context.Add(new OptionDefinition
+                         {
+                             Name = "set1",
+                             ValueSetter = new DelegatingPropertySetter<int>(_stringConverter, values1.Add)
+                         });
+            _context.Add(new OptionDefinition
+                         {
+                             Name = "set2",
+                             ValueSetter = new DelegatingPropertySetter<int>(_stringConverter, values2.Add)
+                         });
 
             var expected1 = new List<int>
                             {
@@ -82,7 +82,7 @@ namespace MiP.ShellArgs.Tests.Implementation
                                 4
                             };
 
-            _converter.MapToContainer(tokens, options);
+            _converter.MapToContainer(tokens, _context);
 
             CollectionAssert.AreEqual(expected1, values1);
             CollectionAssert.AreEqual(expected2, values2);
@@ -93,18 +93,15 @@ namespace MiP.ShellArgs.Tests.Implementation
         {
             var tokens = new List<Token>();
 
-            var options = new List<OptionDefinition>
-                          {
-                              new OptionDefinition
-                              {
-                                  Name = "set",
-                                  IsRequired = true,
-                                  ValueSetter = new DelegatingPropertySetter<int>(_stringConverter, x => { })
-                              }
-                          };
+            _context.Add(new OptionDefinition
+                         {
+                             Name = "set",
+                             IsRequired = true,
+                             ValueSetter = new DelegatingPropertySetter<int>(_stringConverter, x => { })
+                         });
 
             ExceptionAssert.Throws<ParsingException>(
-                () => _converter.MapToContainer(tokens, options),
+                () => _converter.MapToContainer(tokens, _context),
                 ex => Assert.AreEqual("The following option(s) are required, but were not given: [set].", ex.Message));
         }
     }

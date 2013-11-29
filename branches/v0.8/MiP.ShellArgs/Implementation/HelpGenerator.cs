@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using MiP.ShellArgs.StringConversion;
@@ -20,7 +21,7 @@ namespace MiP.ShellArgs.Implementation
 
         public char OptionPrefix { get; set; }
 
-        public string GetParameterHelp(params OptionDefinition[] optionInfos)
+        public string GetParameterHelp(IEnumerable<OptionDefinition> optionInfos)
         {
             string result = string.Join(" ", optionInfos
                 .OrderBy(o => o.IsPositional ? o.Position : int.MaxValue)

@@ -35,30 +35,27 @@ namespace MiP.ShellArgs.Implementation
             _argumentFactory = argumentFactory;
         }
 
-        public IEnumerable<Token> ConvertToTokens(ICollection<OptionDefinition> optionDefinitions, IEnumerable<string> arguments)
+        public IEnumerable<Token> ConvertToTokens(OptionContext optionContext, IEnumerable<string> arguments)
         {
             _arguments = new Queue<string>(arguments);
 
-            return ParseTokens(optionDefinitions)
+            return ParseTokens(optionContext)
                 .SelectMany(tokens => tokens);
         }
 
-        public IEnumerable<Token> ConvertToTokens(ICollection<OptionDefinition> optionDefinitions, params string[] arguments)
+        public IEnumerable<Token> ConvertToTokens(OptionContext optionContext, params string[] arguments)
         {
             _arguments = new Queue<string>(arguments);
 
-            return ParseTokens(optionDefinitions)
+            return ParseTokens(optionContext)
                 .SelectMany(tokens => tokens);
         }
 
-        private IEnumerable<IEnumerable<Token>> ParseTokens(ICollection<OptionDefinition> optionDefinitions)
+        private IEnumerable<IEnumerable<Token>> ParseTokens(OptionContext optionContext)
         {
-            IOrderedEnumerable<OptionDefinition> positionals = optionDefinitions.Where(o => o.IsPositional)
-                .OrderBy(o => o.Position);
+            ICollection<OptionDefinition> optionDefinitions = optionContext.Definitions;
 
-            // TODO: when options are added on the fly, this queue needs to be updated.
-            // could be moved to the iparserbuilder implementation
-            var positionalOptions = new Queue<OptionDefinition>(positionals);
+            Queue<OptionDefinition> positionalOptions = optionContext.Positionals;
 
             _lastOption = null;
 
@@ -142,10 +139,13 @@ namespace MiP.ShellArgs.Implementation
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public void MapToContainer(IEnumerable<Token> tokens, ICollection<OptionDefinition> optionDefinitions)
+        public void MapToContainer(IEnumerable<Token> tokens, OptionContext optionContext)
         {
+            ICollection<OptionDefinition> optionDefinitions = optionContext.Definitions;
+
+            var parsedOptions = new List<string>();
+
             IPropertySetter setter = null;
-            List<string> requiredOptions = optionDefinitions.Where(o => o.IsRequired).Select(o => o.Name).ToList();
 
             string lastOptionName = null;
             foreach (Token currentToken in tokens)
@@ -166,12 +166,14 @@ namespace MiP.ShellArgs.Implementation
 
                     setter.SetValue(currentToken.Value);
 
-                    requiredOptions.Remove(lastOptionName);
+                    parsedOptions.Add(lastOptionName);
                 }
             }
 
-            if (requiredOptions.Count > 0)
-                throw new ParsingException(string.Format(CultureInfo.InvariantCulture, MissingRequiredOptionsMessage, string.Join(",", requiredOptions)));
+            string[] missingRequiredOptions = optionContext.Required.Select(o => o.Name).Except(parsedOptions).ToArray();
+
+            if (missingRequiredOptions.Length > 0)
+                throw new ParsingException(string.Format(CultureInfo.InvariantCulture, MissingRequiredOptionsMessage, string.Join(",", missingRequiredOptions)));
         }
     }
 }
