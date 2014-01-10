@@ -19,7 +19,7 @@ namespace MiP.ShellArgs
         /// <returns>The current instance of <see cref="IParser"/>.</returns>
         [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         void RegisterContainer<TContainer>(TContainer container, Action<IContainerBuilder<TContainer>> builderDelegate) where TContainer : new();
-
+        
         /// <summary>
         /// Adds a stand alone option to the parser and gives it a name.
         /// </summary>
