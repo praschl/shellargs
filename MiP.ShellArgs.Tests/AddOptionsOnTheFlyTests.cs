@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Runtime.InteropServices;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using MiP.ShellArgs.ContainerAttributes;
 using MiP.ShellArgs.Tests.TestHelpers;
@@ -48,6 +50,7 @@ namespace MiP.ShellArgs.Tests
             Assert.AreEqual(5, result.Add);
         }
 
+        // TODO: tests for registering option+container when a option from a container was parsed.
 
         [TestMethod]
         public void RegisterOptionFailsWhenAlreadyExists()
@@ -158,7 +161,7 @@ namespace MiP.ShellArgs.Tests
                     .Required()
                     .As<int>()
                     .Do(c2 => { }))));
-
+            
             ExceptionAssert.Throws<ParsingException>(() =>
                 parser.Parse("-add1", "1"),
                 ex => Assert.AreEqual("The following option(s) are required, but were not given: [add2].", ex.Message));
@@ -166,35 +169,61 @@ namespace MiP.ShellArgs.Tests
 
         private Parser CreateParserWithThreeAddOptions()
         {
-            // TODO: this looks ugly with fluent interface, maybe provide overloads which 
-            // - allow to create the OptionDefinition
-            // - have lots of parameters with default values.
+            var add3 = new Option<int>
+                       {
+                           Name = "add3",
+                           Position = 3,
+                           Callback = _ => _i3 = _.Value
+                       };
+
+            var add2 = new Option<int>
+                       {
+                           Name = "add2",
+                           Position = 2,
+                           Callback = _ =>
+                                      {
+                                          _i2 = _.Value;
+                                          _.Parser.RegisterOption(add3);
+                                      }
+                       };
+
+            var add1 = new Option<int>
+                       {
+                           Name = "add1",
+                           Position = 1,
+                           Callback = _ =>
+                                      {
+                                          _i1 = _.Value;
+                                          _.Parser.RegisterOption(add2);
+                                      }
+                       };
 
             var parser = new Parser();
-            parser.RegisterOption(_ => _
-                .Named("add1")
-                .AtPosition(1)
-                .As<int>()
-                .Do(c1 =>
-                    {
-                        _i1 = c1.Value;
-                        c1.Parser.RegisterOption(__ => __
-                            .Named("add2")
-                            .AtPosition(2)
-                            .As<int>()
-                            .Do(c2 =>
-                                {
-                                    _i2 = c2.Value;
-                                    c2.Parser.RegisterOption(___ => ___
-                                        .Named("add3")
-                                        .AtPosition(3)
-                                        .As<int>()
-                                        .Do(c3 => _i3 = c3.Value));
-                                }));
-                    }));
+
+            parser.RegisterOption(add1);
 
             return parser;
         }
+
+        //private Parser CreateParserWithThreeAddOptions()
+        //{
+        //    var parser = new Parser();
+        //    parser.RegisterOption<int>("add1", position: 1, callback: ParsedAdd1);
+
+        //    return parser;
+        //}
+
+        //private void ParsedAdd1(ParsingContext<int> c1)
+        //{
+        //    _i1 = c1.Value;
+        //    c1.Parser.RegisterOption<int>("add2", position: 2, callback: ParsedAdd2);
+        //}
+
+        //private void ParsedAdd2(ParsingContext<int> c2)
+        //{
+        //    _i2 = c2.Value;
+        //    c2.Parser.RegisterOption<int>("add3", position: 3, callback: c3 => _i3 = c3.Value);
+        //}
 
         #region Classes used by test
 

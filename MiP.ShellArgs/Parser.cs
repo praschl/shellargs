@@ -141,7 +141,7 @@ namespace MiP.ShellArgs
 
             _optionContext.Add(newDefinition);
         }
-
+        
         /// <summary>
         /// Parses the specified args. Values are set on the properties of the containers or passed to the callback handlers.
         /// </summary>
@@ -245,5 +245,73 @@ namespace MiP.ShellArgs
             if (raiseMe != null)
                 raiseMe(this, e);
         }
+    }
+
+    public static class ParserBuilderExtensions
+    {
+        public static void RegisterOption<T>(this IParserBuilder parserBuilder, string name, string[] aliases = null, int position = 0, bool collection = false, bool required = false, string valueDescription = null, Action<ParsingContext<T>> callback = null)
+        {
+            if (parserBuilder == null)
+                throw new ArgumentNullException("parserBuilder");
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentException("name must not be null or empty.", "name");
+            if (callback == null)
+                throw new ArgumentNullException("callback");
+
+            parserBuilder.RegisterOption(builder =>
+                                         {
+                                             builder.Named(name);
+                                             builder.Alias(aliases);
+
+                                             if (position > 0)
+                                                 builder.AtPosition(position);
+                                             if (collection)
+                                                 builder = builder.Collection;
+
+                                             builder.Required();
+                                             builder.ValueDescription(valueDescription);
+
+                                             builder.As<T>().Do(callback);
+                                         });
+        }
+
+        public static void RegisterOption<T>(this IParserBuilder parserBuilder, Option<T> option)
+        {
+            if (parserBuilder == null)
+                throw new ArgumentNullException("parserBuilder");
+            if (option == null)
+                throw new ArgumentNullException("option");
+            if (option.Callback == null)
+                throw new InvalidOperationException("Parameter option does not have a callback. This makes the option useless.");
+
+            if (string.IsNullOrEmpty(option.Name))
+                throw new InvalidOperationException("Parameter option must have a name.");
+
+            parserBuilder.RegisterOption(builder =>
+                                         {
+                                             builder.Named(option.Name);
+                                             builder.Alias(option.Aliases);
+
+                                             if (option.Position > 0)
+                                                 builder.AtPosition(option.Position);
+                                             if (option.IsCollection)
+                                                 builder = builder.Collection;
+
+                                             builder.Required();
+                                             builder.ValueDescription(option.ValueDescription);
+
+                                             builder.As<T>().Do(option.Callback);
+                                         });
+        }
+    }
+
+    public class Option<T>
+    {
+        public string Name { get; set; }
+        public string[] Aliases { get; set; }
+        public int Position { get; set; }
+        public bool IsCollection { get; set; }
+        public Action<ParsingContext<T>> Callback { get; set; }
+        public string ValueDescription { get; set; }
     }
 }
