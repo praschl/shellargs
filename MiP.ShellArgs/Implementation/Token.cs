@@ -6,28 +6,24 @@ namespace MiP.ShellArgs.Implementation
     {
         public static Token CreateOption(string name)
         {
-            return new Token
-                   {
-                       Name = name
-                   };
+            return new Token(name);
         }
 
         public static Token CreateValue(string value)
         {
-            return new Token
-                   {
-                       Value = value
-                   };
+            return new Token(value: value);
         }
 
-        private Token()
+        private Token(string name = null, string value = null)
         {
+            Name = name;
+            Value = value;
         }
 
-        public string Name { get; private set; }
-        public string Value { get; private set; }
+        public string Name { get; }
+        public string Value { get; }
 
-        public bool IsOption { get { return !string.IsNullOrEmpty(Name); } }
+        public bool IsOption => !string.IsNullOrEmpty(Name);
 
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
@@ -73,7 +69,7 @@ namespace MiP.ShellArgs.Implementation
         {
             unchecked
             {
-                return ((Name != null ? StringComparer.OrdinalIgnoreCase.GetHashCode(Name) : 0) * 397) ^ (Value != null ? Value.GetHashCode() : 0);
+                return ((Name != null ? StringComparer.OrdinalIgnoreCase.GetHashCode(Name) : 0) * 397) ^ (Value?.GetHashCode() ?? 0);
             }
         }
 
@@ -86,8 +82,8 @@ namespace MiP.ShellArgs.Implementation
         public override string ToString()
         {
             if (Name != null)
-                return "Name: " + Name;
-            return "Value: " + Value;
+                return $"{nameof(Name)}: " + Name;
+            return $"{nameof(Value)}: " + Value;
         }
     }
 }

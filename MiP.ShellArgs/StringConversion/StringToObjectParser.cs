@@ -31,7 +31,7 @@ namespace MiP.ShellArgs.StringConversion
         public override bool IsValid(Type targetType, string value)
         {
             if (targetType == null)
-                throw new ArgumentNullException("targetType");
+                throw new ArgumentNullException(nameof(targetType));
 
             TypeConverter converter = TypeDescriptor.GetConverter(targetType);
 
@@ -49,7 +49,7 @@ namespace MiP.ShellArgs.StringConversion
         public override object Parse(Type targetType, string value)
         {
             if (targetType == null)
-                throw new ArgumentNullException("targetType");
+                throw new ArgumentNullException(nameof(targetType));
 
             TypeConverter converter = TypeDescriptor.GetConverter(targetType);
             return converter.ConvertFromInvariantString(value);

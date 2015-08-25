@@ -11,7 +11,7 @@ namespace MiP.ShellArgs.Fluent
         public ParserConfigurator(ParserSettings settings)
         {
             if (settings == null)
-                throw new ArgumentNullException("settings");
+                throw new ArgumentNullException(nameof(settings));
 
             _settings = settings;
         }
@@ -26,7 +26,7 @@ namespace MiP.ShellArgs.Fluent
         public void With<TParser>(TParser parser) where TParser : IStringParser
         {
             if (ReferenceEquals(parser, null))
-                throw new ArgumentNullException("parser");
+                throw new ArgumentNullException(nameof(parser));
 
             _settings.RegisterStringParser(parser);
         }

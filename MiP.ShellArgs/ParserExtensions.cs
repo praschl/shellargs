@@ -21,7 +21,7 @@ namespace MiP.ShellArgs
         public static void RegisterContainer<TContainer>(this IParserBuilder parser, TContainer container) where TContainer : new()
         {
             if (parser == null)
-                throw new ArgumentNullException("parser");
+                throw new ArgumentNullException(nameof(parser));
 
             parser.RegisterContainer(container, x => { });
         }
@@ -39,7 +39,7 @@ namespace MiP.ShellArgs
         public static void RegisterContainer<TContainer>(this IParserBuilder parser) where TContainer : new()
         {
             if (parser == null)
-                throw new ArgumentNullException("parser");
+                throw new ArgumentNullException(nameof(parser));
 
             parser.RegisterContainer(new TContainer(), x => { });
         }
@@ -58,7 +58,7 @@ namespace MiP.ShellArgs
         public static void RegisterContainer<TContainer>(this IParserBuilder parser, Action<IContainerBuilder<TContainer>> configurationCallback) where TContainer : new()
         {
             if (parser == null)
-                throw new ArgumentNullException("parser");
+                throw new ArgumentNullException(nameof(parser));
 
             parser.RegisterContainer(new TContainer(), configurationCallback);
         }

@@ -11,8 +11,7 @@ namespace MiP.ShellArgs.Implementation
         protected void OnValueSet(ValueSetEventArgs e)
         {
             EventHandler<ValueSetEventArgs> temp = ValueSet;
-            if (temp != null)
-                temp(this, e);
+            temp?.Invoke(this, e);
         }
     }
 }

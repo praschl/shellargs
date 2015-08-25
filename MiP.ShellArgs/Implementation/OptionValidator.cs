@@ -30,7 +30,7 @@ namespace MiP.ShellArgs.Implementation
         public void Validate(ICollection<OptionDefinition> optionDefinitions)
         {
             if (optionDefinitions == null)
-                throw new ArgumentNullException("optionDefinitions");
+                throw new ArgumentNullException(nameof(optionDefinitions));
 
             ValidateAllOptionsHaveAName(optionDefinitions);
             ValidateNamesAndAliasesAreUnique(optionDefinitions);

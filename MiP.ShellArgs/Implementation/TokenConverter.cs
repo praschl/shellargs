@@ -30,7 +30,7 @@ namespace MiP.ShellArgs.Implementation
         public TokenConverter(ArgumentFactory argumentFactory)
         {
             if (argumentFactory == null)
-                throw new ArgumentNullException("argumentFactory");
+                throw new ArgumentNullException(nameof(argumentFactory));
 
             _argumentFactory = argumentFactory;
         }

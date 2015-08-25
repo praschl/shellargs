@@ -8,6 +8,7 @@ namespace MiP.ShellArgs.Fluent
 {
     internal class OptionBuilder : IOptionBuilder
     {
+        // TODO: find correct text for ParseAsCollection<T> and replace by nameof()
         private const string ActionsOfICollectionNotSupportedMessage =
             "Actions of type ICollection<T> are not supported, use ParseAsCollection<T> instead.";
 
@@ -95,7 +96,7 @@ namespace MiP.ShellArgs.Fluent
         public void Do(Action<ParsingContext<TArgument>> callback)
         {
             if (callback == null)
-                throw new ArgumentNullException("callback");
+                throw new ArgumentNullException(nameof(callback));
 
             _optionDefinition.ValueSetter = new DelegatingPropertySetter<TArgument>(_stringConverter, value => callback(new ParsingContext<TArgument>(_parser, _optionDefinition.Name, value)));
         }

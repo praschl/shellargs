@@ -24,7 +24,7 @@ namespace MiP.ShellArgs.Fluent
         public IContainerBuilder<TContainer> Do(Action<ParsingContext<TContainer, TArgument>> handler)
         {
             if (handler == null)
-                throw new ArgumentNullException("handler");
+                throw new ArgumentNullException(nameof(handler));
 
             return Do(_name, handler);
         }
@@ -32,10 +32,10 @@ namespace MiP.ShellArgs.Fluent
         private IContainerBuilder<TContainer> Do(string optionName, Action<ParsingContext<TContainer, TArgument>> handler)
         {
             if (string.IsNullOrEmpty(optionName))
-                throw new ArgumentException("must not be null or empty", "optionName");
+                throw new ArgumentException("must not be null or empty", nameof(optionName));
 
             if (handler == null)
-                throw new ArgumentNullException("handler");
+                throw new ArgumentNullException(nameof(handler));
 
             OptionDefinition foundDefinition = _optionDefinitions.FirstOrDefault(o => o.Name.Equals(optionName, StringComparison.OrdinalIgnoreCase));
             if (foundDefinition != null)

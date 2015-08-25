@@ -17,7 +17,7 @@ namespace MiP.ShellArgs.Implementation
 
         public int Position { get; set; }
 
-        public bool IsPositional { get { return Position > 0; } }
+        public bool IsPositional => Position > 0;
 
         public bool IsRequired { get; set; }
 

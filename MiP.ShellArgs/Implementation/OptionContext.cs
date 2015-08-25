@@ -16,11 +16,11 @@ namespace MiP.ShellArgs.Implementation
 
         public event OptionAddedHandler OptionAdded;
 
-        public ICollection<OptionDefinition> Definitions { get { return _definitions; } }
+        public ICollection<OptionDefinition> Definitions => _definitions;
 
-        public ICollection<OptionDefinition> Required { get { return _required; } }
+        public ICollection<OptionDefinition> Required => _required;
 
-        public Queue<OptionDefinition> Positionals { get { return _positionals; } }
+        public Queue<OptionDefinition> Positionals => _positionals;
 
         public void Add(OptionDefinition definition)
         {
@@ -57,8 +57,7 @@ namespace MiP.ShellArgs.Implementation
         private void InvokeOptionAdded(OptionDefinition definition)
         {
             OptionAddedHandler temp = OptionAdded;
-            if (temp != null)
-                temp(definition);
+            temp?.Invoke(definition);
         }
     }
 }

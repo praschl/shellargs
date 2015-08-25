@@ -9,7 +9,7 @@ namespace MiP.ShellArgs.Implementation
         public static Type MakeNotNullable(this Type type)
         {
             if (type == null)
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
 
             Type innerType = Nullable.GetUnderlyingType(type);
             return innerType ?? type;
@@ -33,7 +33,7 @@ namespace MiP.ShellArgs.Implementation
         public static bool IsOrImplementsICollection(this Type type)
         {
             if (type == null)
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
 
             return ImplementsICollection(type) || IsICollection(type);
         }
@@ -41,7 +41,7 @@ namespace MiP.ShellArgs.Implementation
         public static Type GetCollectionItemType(this Type type)
         {
             if (type == null)
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
 
             if (!IsICollection(type))
                 type = (GetICollectionType(type) ?? type);

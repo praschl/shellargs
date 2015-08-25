@@ -14,11 +14,11 @@ namespace MiP.ShellArgs.Implementation.Reflection
         public BooleanPropertySetter(IStringConverter stringConverter, PropertyInfo propertyInfo, object instance)
         {
             if (stringConverter == null)
-                throw new ArgumentNullException("stringConverter");
+                throw new ArgumentNullException(nameof(stringConverter));
             if (propertyInfo == null)
-                throw new ArgumentNullException("propertyInfo");
+                throw new ArgumentNullException(nameof(propertyInfo));
             if (instance == null)
-                throw new ArgumentNullException("instance");
+                throw new ArgumentNullException(nameof(instance));
 
             _stringConverter = stringConverter;
             _propertyInfo = propertyInfo;
@@ -34,7 +34,7 @@ namespace MiP.ShellArgs.Implementation.Reflection
             OnValueSet(new ValueSetEventArgs(_instance, typeof (bool), realValue));
         }
 
-        public override Type ItemType { get { return typeof (bool); } }
+        public override Type ItemType => typeof (bool);
 
         private object GetRealValue(string value)
         {

@@ -10,7 +10,7 @@ namespace MiP.ShellArgs.StringConversion
         /// <summary>
         /// Gets a text describing the intent of the value in help.
         /// </summary>
-        public virtual string ValueDescription { get { return null; } }
+        public virtual string ValueDescription => null;
 
         /// <summary>
         /// Determines whether this instance can parse to the specified target type.

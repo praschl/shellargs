@@ -40,7 +40,7 @@ namespace MiP.ShellArgs
 
         internal string[] ShortBooleans { get; private set; }
 
-        internal IStringParserProvider ParserProvider { get; private set; }
+        internal IStringParserProvider ParserProvider { get; }
 
         /// <summary>
         /// Enables or disable the short booleans.
@@ -68,7 +68,7 @@ namespace MiP.ShellArgs
         public void PrefixWith(params char[] prefixes)
         {
             if (prefixes == null || prefixes.Length == 0)
-                throw new ArgumentException(AllowAtLeastOnePrefixMessage, "prefixes");
+                throw new ArgumentException(AllowAtLeastOnePrefixMessage, nameof(prefixes));
 
             Prefixes = prefixes.Distinct().Select(x => x.ToString(CultureInfo.InvariantCulture)).ToArray();
         }

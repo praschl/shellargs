@@ -22,7 +22,7 @@ namespace MiP.ShellArgs.StringConversion
         public IStringParser GetParser(Type targetType)
         {
             if (targetType == null)
-                throw new ArgumentNullException("targetType");
+                throw new ArgumentNullException(nameof(targetType));
 
             return _parsers.FirstOrDefault(p => p.CanParseTo(targetType));
         }
@@ -30,7 +30,7 @@ namespace MiP.ShellArgs.StringConversion
         public void RegisterParser(IStringParser parser)
         {
             if (parser == null)
-                throw new ArgumentNullException("parser");
+                throw new ArgumentNullException(nameof(parser));
 
             _parsers.Push(parser);
         }

@@ -15,7 +15,7 @@ namespace MiP.ShellArgs.Fluent
         public ParserResult(IDictionary<Type, object> instances)
         {
             if (instances == null)
-                throw new ArgumentNullException("instances");
+                throw new ArgumentNullException(nameof(instances));
 
             _instances = instances;
         }

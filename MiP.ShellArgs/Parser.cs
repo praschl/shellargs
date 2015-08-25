@@ -111,10 +111,10 @@ namespace MiP.ShellArgs
         public void RegisterOption(string name, Action<IOptionBuilder> builderDelegate)
         {
             if (string.IsNullOrEmpty(name))
-                throw new ArgumentException("name must not be null or empty.", "name");
+                throw new ArgumentException("name must not be null or empty.", nameof(name));
 
             if (builderDelegate == null)
-                throw new ArgumentNullException("builderDelegate");
+                throw new ArgumentNullException(nameof(builderDelegate));
 
             RegisterOption(b =>
                            {
@@ -131,7 +131,7 @@ namespace MiP.ShellArgs
         public void RegisterOption(Action<IOptionBuilder> builderDelegate)
         {
             if (builderDelegate == null)
-                throw new ArgumentNullException("builderDelegate");
+                throw new ArgumentNullException(nameof(builderDelegate));
 
             var newDefinition = new OptionDefinition();
 
@@ -252,11 +252,11 @@ namespace MiP.ShellArgs
         public static void RegisterOption<T>(this IParserBuilder parserBuilder, string name, string[] aliases = null, int position = 0, bool collection = false, bool required = false, string valueDescription = null, Action<ParsingContext<T>> callback = null)
         {
             if (parserBuilder == null)
-                throw new ArgumentNullException("parserBuilder");
+                throw new ArgumentNullException(nameof(parserBuilder));
             if (string.IsNullOrEmpty(name))
-                throw new ArgumentException("name must not be null or empty.", "name");
+                throw new ArgumentException("name must not be null or empty.", nameof(name));
             if (callback == null)
-                throw new ArgumentNullException("callback");
+                throw new ArgumentNullException(nameof(callback));
 
             parserBuilder.RegisterOption(builder =>
                                          {
@@ -278,9 +278,9 @@ namespace MiP.ShellArgs
         public static void RegisterOption<T>(this IParserBuilder parserBuilder, Option<T> option)
         {
             if (parserBuilder == null)
-                throw new ArgumentNullException("parserBuilder");
+                throw new ArgumentNullException(nameof(parserBuilder));
             if (option == null)
-                throw new ArgumentNullException("option");
+                throw new ArgumentNullException(nameof(option));
             if (option.Callback == null)
                 throw new InvalidOperationException("Parameter option does not have a callback. This makes the option useless.");
 

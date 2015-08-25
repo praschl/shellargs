@@ -20,7 +20,7 @@ namespace MiP.ShellArgs.StringConversion
         public override bool CanParseTo(Type targetType)
         {
             if (targetType == null)
-                throw new ArgumentNullException("targetType");
+                throw new ArgumentNullException(nameof(targetType));
 
             return targetType.IsEnum;
         }

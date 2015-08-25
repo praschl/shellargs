@@ -12,8 +12,8 @@ namespace MiP.ShellArgs.Implementation
 
         public string Value { get; set; }
 
-        public bool HasName { get { return !string.IsNullOrEmpty(Name); } }
+        public bool HasName => !string.IsNullOrEmpty(Name);
 
-        public bool HasValue { get { return !string.IsNullOrEmpty(Value); } }
+        public bool HasValue => !string.IsNullOrEmpty(Value);
     }
 }

@@ -12,9 +12,9 @@ namespace MiP.ShellArgs.Implementation
         public DelegatingPropertySetter(IStringConverter stringConverter, Action<TItem> setter)
         {
             if (stringConverter == null)
-                throw new ArgumentNullException("stringConverter");
+                throw new ArgumentNullException(nameof(stringConverter));
             if (setter == null)
-                throw new ArgumentNullException("setter");
+                throw new ArgumentNullException(nameof(setter));
 
             _stringConverter = stringConverter;
             _setter = setter;
@@ -29,6 +29,6 @@ namespace MiP.ShellArgs.Implementation
             OnValueSet(new ValueSetEventArgs(typeof (TItem), realValue));
         }
 
-        public override Type ItemType { get { return typeof (TItem); } }
+        public override Type ItemType => typeof (TItem);
     }
 }

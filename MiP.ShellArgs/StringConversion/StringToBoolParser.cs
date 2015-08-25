@@ -11,7 +11,7 @@ namespace MiP.ShellArgs.StringConversion
         /// <summary>
         /// Gets a text describing the intent of the value in help.
         /// </summary>
-        public override string ValueDescription { get { return "bool"; } }
+        public override string ValueDescription => "bool";
 
         /// <summary>
         /// Determines whether this instance can parse to the specified target type.
@@ -36,7 +36,7 @@ namespace MiP.ShellArgs.StringConversion
         public override bool IsValid(Type targetType, string value)
         {
             if (value == null)
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
 
             switch (value.ToUpperInvariant())
             {

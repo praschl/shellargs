@@ -15,7 +15,7 @@ namespace MiP.ShellArgs.StringConversion
         public StringConverter(IStringParserProvider parserProvider)
         {
             if (parserProvider == null)
-                throw new ArgumentNullException("parserProvider");
+                throw new ArgumentNullException(nameof(parserProvider));
 
             _parserProvider = parserProvider;
         }

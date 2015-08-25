@@ -13,7 +13,7 @@ namespace MiP.ShellArgs.Implementation
         public HelpGenerator(IStringParserProvider stringParserProvider)
         {
             if (stringParserProvider == null)
-                throw new ArgumentNullException("stringParserProvider");
+                throw new ArgumentNullException(nameof(stringParserProvider));
 
             _stringParserProvider = stringParserProvider;
             OptionPrefix = '/';
@@ -68,7 +68,7 @@ namespace MiP.ShellArgs.Implementation
 
             // StringToParser
             IStringParser parser = _stringParserProvider.GetParser(targetType);
-            if (parser != null && !string.IsNullOrEmpty(parser.ValueDescription))
+            if (!string.IsNullOrEmpty(parser?.ValueDescription))
                 return parser.ValueDescription;
 
             // Enum

@@ -22,11 +22,11 @@ namespace MiP.ShellArgs.Implementation.Reflection
         public CollectionPropertySetter(IStringConverter stringConverter, PropertyInfo propertyInfo, object instance)
         {
             if (stringConverter == null)
-                throw new ArgumentNullException("stringConverter");
+                throw new ArgumentNullException(nameof(stringConverter));
             if (propertyInfo == null)
-                throw new ArgumentNullException("propertyInfo");
+                throw new ArgumentNullException(nameof(propertyInfo));
             if (instance == null)
-                throw new ArgumentNullException("instance");
+                throw new ArgumentNullException(nameof(instance));
 
             _stringConverter = stringConverter;
             _propertyInfo = propertyInfo;
@@ -79,6 +79,6 @@ namespace MiP.ShellArgs.Implementation.Reflection
             collection.Add(value);
         }
 
-        public override Type ItemType { get { return _itemType; } }
+        public override Type ItemType => _itemType;
     }
 }

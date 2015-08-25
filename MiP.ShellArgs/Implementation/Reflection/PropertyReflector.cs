@@ -16,7 +16,7 @@ namespace MiP.ShellArgs.Implementation.Reflection
         public PropertyReflector(IStringConverter stringConverter)
         {
             if (stringConverter == null)
-                throw new ArgumentNullException("stringConverter");
+                throw new ArgumentNullException(nameof(stringConverter));
 
             _stringConverter = stringConverter;
         }
@@ -92,7 +92,7 @@ namespace MiP.ShellArgs.Implementation.Reflection
             string name = propertyInfo.Name;
 
             var nameAttribute = (OptionAttribute)propertyInfo.GetCustomAttributes(typeof (OptionAttribute), false).FirstOrDefault();
-            if (nameAttribute != null && !string.IsNullOrEmpty(nameAttribute.Name))
+            if (!string.IsNullOrEmpty(nameAttribute?.Name))
                 name = nameAttribute.Name;
 
             return name;

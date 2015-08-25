@@ -21,7 +21,7 @@ namespace MiP.ShellArgs.Fluent
 
         private readonly List<OptionDefinition> _optionDefinitions = new List<OptionDefinition>();
 
-        internal IEnumerable<OptionDefinition> OptionDefinitions { get { return _optionDefinitions; } }
+        internal IEnumerable<OptionDefinition> OptionDefinitions => _optionDefinitions;
 
         private readonly IParserBuilder _parser;
         private readonly PropertyReflector _reflector;
@@ -44,7 +44,7 @@ namespace MiP.ShellArgs.Fluent
         public IContainerCustomizer<TContainer, TArgument> With<TArgument>(string optionName)
         {
             if (optionName == null)
-                throw new ArgumentNullException("optionName");
+                throw new ArgumentNullException(nameof(optionName));
 
             if (!_optionDefinitions.Any(definition => definition.Name.Equals(optionName, StringComparison.OrdinalIgnoreCase)))
                 throw new ParserInitializationException(string.Format(CultureInfo.InvariantCulture, ContainerDoesNotProvideOptionMessage, typeof(TContainer), optionName));
@@ -57,7 +57,7 @@ namespace MiP.ShellArgs.Fluent
         public IContainerCustomizer<TContainer, TArgument> With<TArgument>(Expression<Func<TContainer, TArgument>> optionExpression)
         {
             if (optionExpression == null)
-                throw new ArgumentNullException("optionExpression");
+                throw new ArgumentNullException(nameof(optionExpression));
 
             MemberInfo member = GetProperty(optionExpression);
 

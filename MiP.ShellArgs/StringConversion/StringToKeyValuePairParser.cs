@@ -20,9 +20,9 @@ namespace MiP.ShellArgs.StringConversion
         internal StringToKeyValuePairParser(IStringParserProvider stringParserProvider, ParserSettings settings)
         {
             if (stringParserProvider == null)
-                throw new ArgumentNullException("stringParserProvider");
+                throw new ArgumentNullException(nameof(stringParserProvider));
             if (settings == null)
-                throw new ArgumentNullException("settings");
+                throw new ArgumentNullException(nameof(settings));
 
             _stringParserProvider = stringParserProvider;
             _settings = settings;
@@ -38,7 +38,7 @@ namespace MiP.ShellArgs.StringConversion
         public override bool CanParseTo(Type targetType)
         {
             if (targetType == null)
-                throw new ArgumentNullException("targetType");
+                throw new ArgumentNullException(nameof(targetType));
 
             if (!targetType.IsGenericType)
                 return false;
@@ -64,9 +64,9 @@ namespace MiP.ShellArgs.StringConversion
         public override bool IsValid(Type targetType, string value)
         {
             if (targetType == null)
-                throw new ArgumentNullException("targetType");
+                throw new ArgumentNullException(nameof(targetType));
             if (value == null)
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
 
             Type valueType = targetType.GetGenericArguments()[1].MakeNotNullable();
 
@@ -92,9 +92,9 @@ namespace MiP.ShellArgs.StringConversion
         public override object Parse(Type targetType, string value)
         {
             if (targetType == null)
-                throw new ArgumentNullException("targetType");
+                throw new ArgumentNullException(nameof(targetType));
             if (value == null)
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
 
             Type valueType = targetType.GetGenericArguments()[1].MakeNotNullable();
 
