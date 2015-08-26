@@ -1,10 +1,10 @@
-﻿using MiP.ShellArgs.Fluent;
+﻿using FakeItEasy;
+
+using MiP.ShellArgs.Fluent;
 using MiP.ShellArgs.Implementation;
 using MiP.ShellArgs.StringConversion;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using Moq;
 
 namespace MiP.ShellArgs.Tests.Fluent
 {
@@ -13,26 +13,26 @@ namespace MiP.ShellArgs.Tests.Fluent
     {
         private OptionDefinition _optionDefinition;
         private OptionBuilder<string> _stringOptionBuilder;
-        private Mock<IParserBuilder> _parserMock;
-        private Mock<IStringConverter> _stringConverterMock;
+        private IParserBuilder _parser;
+        private IStringConverter _stringConverter;
         private OptionContext _optionContext;
 
         [TestInitialize]
         public void Initialize()
         {
-            _parserMock = new Mock<IParserBuilder>();
-            _stringConverterMock = new Mock<IStringConverter>();
+            _parser = A.Fake<IParserBuilder>();
+            _stringConverter = A.Fake<IStringConverter>();
 
             _optionDefinition = new OptionDefinition {Name = "notImportant"};
             _optionContext = new OptionContext();
 
-            _stringOptionBuilder = new OptionBuilder<string>(_parserMock.Object, _optionDefinition, _stringConverterMock.Object, _optionContext);
+            _stringOptionBuilder = new OptionBuilder<string>(_parser, _optionDefinition, _stringConverter, _optionContext);
         }
 
         [TestMethod]
         public void SetsIsBoolean()
         {
-            new OptionBuilder<bool>(_parserMock.Object, _optionDefinition, _stringConverterMock.Object, _optionContext);
+            new OptionBuilder<bool>(_parser, _optionDefinition, _stringConverter, _optionContext);
             Assert.IsTrue(_optionDefinition.IsBoolean);
         }
 
@@ -49,7 +49,7 @@ namespace MiP.ShellArgs.Tests.Fluent
 
             _stringOptionBuilder.Do(pc => wasCalled = true);
 
-            _stringConverterMock.Setup(x => x.To(typeof (string), "1")).Returns("1");
+            A.CallTo(() => _stringConverter.To(typeof (string), "1")).Returns("1");
 
             Assert.IsNotNull(_optionDefinition.ValueSetter);
             _optionDefinition.ValueSetter.SetValue("1");

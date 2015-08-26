@@ -1,12 +1,12 @@
 ﻿using System.Linq;
 
+using FakeItEasy;
+
 using MiP.ShellArgs.Fluent;
 using MiP.ShellArgs.Implementation;
 using MiP.ShellArgs.StringConversion;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using Moq;
 
 namespace MiP.ShellArgs.Tests.Fluent
 {
@@ -20,13 +20,13 @@ namespace MiP.ShellArgs.Tests.Fluent
         [TestInitialize]
         public void Initialize()
         {
-            var parserMock = new Mock<IParserBuilder>();
-            var stringConverterMock = new Mock<IStringConverter>();
+            var parser = A.Fake<IParserBuilder>();
+            var stringConverter = A.Fake<IStringConverter>();
 
             _optionDefinition = new OptionDefinition();
             _optionContext = new OptionContext();
 
-            _builder = new OptionBuilder(parserMock.Object, _optionDefinition, stringConverterMock.Object, _optionContext);
+            _builder = new OptionBuilder(parser, _optionDefinition, stringConverter, _optionContext);
         }
 
         [TestMethod]

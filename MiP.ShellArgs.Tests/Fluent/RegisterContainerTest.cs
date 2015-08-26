@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using FakeItEasy;
+
 using MiP.ShellArgs.ContainerAttributes;
 using MiP.ShellArgs.Fluent;
 using MiP.ShellArgs.Implementation;
@@ -10,8 +12,6 @@ using MiP.ShellArgs.StringConversion;
 using MiP.ShellArgs.Tests.TestHelpers;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using Moq;
 
 namespace MiP.ShellArgs.Tests.Fluent
 {
@@ -25,12 +25,12 @@ namespace MiP.ShellArgs.Tests.Fluent
         {
             var container = new TestContainer();
 
-            var parserMock = new Mock<IParserBuilder>();
+            var parser = A.Fake<IParserBuilder>();
 
             var stringConverter = new StringConverter(new ParserSettings().ParserProvider);
             var reflector = new PropertyReflector(stringConverter);
             
-            _builder = new ContainerBuilder<TestContainer>(container, parserMock.Object, reflector);
+            _builder = new ContainerBuilder<TestContainer>(container, parser, reflector);
         }
 
         [TestMethod]

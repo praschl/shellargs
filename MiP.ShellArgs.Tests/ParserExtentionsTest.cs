@@ -1,6 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using FakeItEasy;
 
-using Moq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 
 namespace MiP.ShellArgs.Tests
 {
@@ -8,7 +9,6 @@ namespace MiP.ShellArgs.Tests
     public class ParserExtentionsTest
     {
         private TestContainer _container;
-        private Mock<IParserBuilder> _mock;
         private IParserBuilder _parser;
 
         [TestInitialize]
@@ -16,8 +16,7 @@ namespace MiP.ShellArgs.Tests
         {
             _container = new TestContainer();
 
-            _mock = new Mock<IParserBuilder>();
-            _parser = _mock.Object;
+            _parser = A.Fake<IParserBuilder>();
         }
 
         [TestMethod]
@@ -25,7 +24,7 @@ namespace MiP.ShellArgs.Tests
         {
             _parser.RegisterContainer(_container);
 
-            _mock.Verify(x => x.RegisterContainer(_container));
+            A.CallTo(() => _parser.RegisterContainer(_container)).MustHaveHappened();
         }
 
         public class TestContainer
