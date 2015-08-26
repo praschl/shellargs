@@ -19,7 +19,7 @@ namespace MiP.ShellArgs.Tests.Fluent
     public class RegisterContainerTest
     {
         private ContainerBuilder<TestContainer> _builder;
-
+        
         [TestInitialize]
         public void Initialize()
         {
@@ -29,7 +29,7 @@ namespace MiP.ShellArgs.Tests.Fluent
 
             var stringConverter = new StringConverter(new ParserSettings().ParserProvider);
             var reflector = new PropertyReflector(stringConverter);
-
+            
             _builder = new ContainerBuilder<TestContainer>(container, parserMock.Object, reflector);
         }
 

@@ -1,8 +1,4 @@
-﻿using System;
-
-using MiP.ShellArgs.Tests.TestHelpers;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
 
@@ -29,23 +25,7 @@ namespace MiP.ShellArgs.Tests
         {
             _parser.RegisterContainer(_container);
 
-            _mock.Verify(x => x.RegisterContainer(_container, It.IsAny<Action<IContainerBuilder<TestContainer>>>()));
-        }
-
-        [TestMethod]
-        public void RegisterContainerDelegate()
-        {
-            _parser.RegisterContainer<TestContainer>(b => { });
-
-            _mock.Verify(x => x.RegisterContainer(It.IsAny<TestContainer>(), It.IsAny<Action<IContainerBuilder<TestContainer>>>()));
-        }
-
-        [TestMethod]
-        public void RegisterContainerInstanceAndDelegate()
-        {
-            _parser.RegisterContainer(_container, b => { });
-
-            _mock.Verify(x => x.RegisterContainer(_container, It.IsAny<Action<IContainerBuilder<TestContainer>>>()));
+            _mock.Verify(x => x.RegisterContainer(_container));
         }
 
         public class TestContainer

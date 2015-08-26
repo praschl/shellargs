@@ -15,6 +15,7 @@ namespace MiP.ShellArgs.Tests.Fluent
         private OptionBuilder<string> _stringOptionBuilder;
         private Mock<IParserBuilder> _parserMock;
         private Mock<IStringConverter> _stringConverterMock;
+        private OptionContext _optionContext;
 
         [TestInitialize]
         public void Initialize()
@@ -22,15 +23,16 @@ namespace MiP.ShellArgs.Tests.Fluent
             _parserMock = new Mock<IParserBuilder>();
             _stringConverterMock = new Mock<IStringConverter>();
 
-            _optionDefinition = new OptionDefinition();
+            _optionDefinition = new OptionDefinition {Name = "notImportant"};
+            _optionContext = new OptionContext();
 
-            _stringOptionBuilder = new OptionBuilder<string>(_parserMock.Object, _optionDefinition, _stringConverterMock.Object);
+            _stringOptionBuilder = new OptionBuilder<string>(_parserMock.Object, _optionDefinition, _stringConverterMock.Object, _optionContext);
         }
 
         [TestMethod]
         public void SetsIsBoolean()
         {
-            new OptionBuilder<bool>(_parserMock.Object, _optionDefinition, _stringConverterMock.Object);
+            new OptionBuilder<bool>(_parserMock.Object, _optionDefinition, _stringConverterMock.Object, _optionContext);
             Assert.IsTrue(_optionDefinition.IsBoolean);
         }
 

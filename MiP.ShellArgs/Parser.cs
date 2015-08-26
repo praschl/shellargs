@@ -18,7 +18,6 @@ namespace MiP.ShellArgs
     {
         private const string ParserAlreadyKnowsContainerMessage = "Parser already knows a container of type {0}.";
 
-        private readonly Dictionary<string, object> _containerByOption = new Dictionary<string, object>();
         private readonly Dictionary<Type, object> _containerByType = new Dictionary<Type, object>();
         private readonly OptionContext _optionContext = new OptionContext();
         private readonly ParserSettings _settings;
@@ -66,80 +65,51 @@ namespace MiP.ShellArgs
         /// </summary>
         /// <typeparam name="TContainer">The type of the container.</typeparam>
         /// <param name="container">An instance of the container.</param>
-        /// <param name="builderDelegate">Used to customize the added container and its options.</param>
         /// <returns>
         /// The current instance of <see cref="IParser" />.
         /// </returns>
         [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public void RegisterContainer<TContainer>(TContainer container, Action<IContainerBuilder<TContainer>> builderDelegate) where TContainer : new()
+        public IContainerBuilder<TContainer> RegisterContainer<TContainer>(TContainer container) where TContainer : new()
         {
             if (ReferenceEquals(container, null))
                 container = new TContainer();
-
-            // the important stuff is done by autowiring, its ok to pass a null for the delegate
-            if (builderDelegate == null)
-                builderDelegate = x => { };
 
             if (_containerByType.ContainsKey(typeof (TContainer)))
                 throw new ParserInitializationException(string.Format(CultureInfo.InvariantCulture, ParserAlreadyKnowsContainerMessage, typeof (TContainer)));
 
             _containerByType.Add(typeof (TContainer), container);
             var builder = new ContainerBuilder<TContainer>(container, this, _propertyReflector);
+            _optionContext.AddRange(builder.OptionDefinitions.ToArray());
 
-            builderDelegate(builder);
-
-            OptionDefinition[] newDefinitions = builder.OptionDefinitions.ToArray();
-
-            foreach (OptionDefinition currentDefinition in newDefinitions)
-            {
-                _containerByOption.Add(currentDefinition.Name, container);
-            }
-
-            _optionContext.AddRange(newDefinitions);
+            return builder;
         }
 
         /// <summary>
         /// Adds a stand alone option to the parser.
         /// </summary>
         /// <param name="name">Name of the option.</param>
-        /// <param name="builderDelegate">Used to customize the addded option.</param>
         /// <returns>
         /// The current instance of <see cref="IParser" />.
         /// </returns>
         /// <exception cref="System.ArgumentException">Parameter name must not be null or empty.</exception>
         /// <exception cref="System.ArgumentNullException">builderDelegate</exception>
-        public void RegisterOption(string name, Action<IOptionBuilder> builderDelegate)
+        public IOptionBuilder RegisterOption(string name)
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException("name must not be null or empty.", nameof(name));
 
-            if (builderDelegate == null)
-                throw new ArgumentNullException(nameof(builderDelegate));
-
-            RegisterOption(b =>
-                           {
-                               b.Named(name);
-                               builderDelegate(b);
-                           });
+            return RegisterOption().Named(name);
         }
 
         /// <summary>
         /// Adds a stand alone option to the parser.
         /// </summary>
-        /// <param name="builderDelegate">Used to customize the addded option.</param>
         /// <returns>The current instance of <see cref="IParser"/>.</returns>
-        public void RegisterOption(Action<IOptionBuilder> builderDelegate)
+        public IOptionBuilder RegisterOption()
         {
-            if (builderDelegate == null)
-                throw new ArgumentNullException(nameof(builderDelegate));
-
             var newDefinition = new OptionDefinition();
 
-            var builder = new OptionBuilder(this, newDefinition, _stringConverter);
-
-            builderDelegate(builder);
-
-            _optionContext.Add(newDefinition);
+            return new OptionBuilder(this, newDefinition, _stringConverter, _optionContext);
         }
         
         /// <summary>
@@ -160,7 +130,7 @@ namespace MiP.ShellArgs
 
             return new ParserResult(_containerByType);
         }
-
+        
         #region Super simple static Parse()
 
         /// <summary>
@@ -257,60 +227,23 @@ namespace MiP.ShellArgs
             if (callback == null)
                 throw new ArgumentNullException(nameof(callback));
 
-            parserBuilder.RegisterOption(builder =>
-                                         {
-                                             builder.Named(name);
-                                             builder.Alias(aliases);
+            var builder = parserBuilder.RegisterOption()
+                .Named(name)
+                .Alias(aliases);
 
-                                             if (position > 0)
-                                                 builder.AtPosition(position);
-                                             if (collection)
-                                                 builder = builder.Collection;
+            if (position > 0)
+                builder.AtPosition(position);
 
-                                             builder.Required();
-                                             builder.ValueDescription(valueDescription);
+            if (collection)
+                builder = builder.Collection;
 
-                                             builder.As<T>().Do(callback);
-                                         });
+            if (required)
+                builder.Required();
+
+            if(!string.IsNullOrEmpty(valueDescription))
+                builder.ValueDescription(valueDescription);
+
+            builder.As<T>().Do(callback);
         }
-
-        public static void RegisterOption<T>(this IParserBuilder parserBuilder, Option<T> option)
-        {
-            if (parserBuilder == null)
-                throw new ArgumentNullException(nameof(parserBuilder));
-            if (option == null)
-                throw new ArgumentNullException(nameof(option));
-            if (option.Callback == null)
-                throw new InvalidOperationException("Parameter option does not have a callback. This makes the option useless.");
-
-            if (string.IsNullOrEmpty(option.Name))
-                throw new InvalidOperationException("Parameter option must have a name.");
-
-            parserBuilder.RegisterOption(builder =>
-                                         {
-                                             builder.Named(option.Name);
-                                             builder.Alias(option.Aliases);
-
-                                             if (option.Position > 0)
-                                                 builder.AtPosition(option.Position);
-                                             if (option.IsCollection)
-                                                 builder = builder.Collection;
-
-                                             builder.Required();
-                                             builder.ValueDescription(option.ValueDescription);
-
-                                             builder.As<T>().Do(option.Callback);
-                                         });
-        }
-    }
-
-    public class Option<T>
-    {
-        public string Name { get; set; }
-        public string[] Aliases { get; set; }
-        public int Position { get; set; }
-        public bool IsCollection { get; set; }
-        public Action<ParsingContext<T>> Callback { get; set; }
-        public string ValueDescription { get; set; }
     }
 }

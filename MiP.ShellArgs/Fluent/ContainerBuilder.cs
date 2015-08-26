@@ -11,7 +11,7 @@ using MiP.ShellArgs.Implementation.Reflection;
 
 namespace MiP.ShellArgs.Fluent
 {
-    internal class ContainerBuilder<TContainer> : IContainerBuilder<TContainer>
+    internal class ContainerBuilder<TContainer> : IContainerBuilder<TContainer>, IContainerBuilder
     {
         private const string ExpressionMustBeLikeMessage = 
             "The expression must be either [container => container.Property] or [container => container.Collection.Current()].";
@@ -21,15 +21,18 @@ namespace MiP.ShellArgs.Fluent
 
         private readonly List<OptionDefinition> _optionDefinitions = new List<OptionDefinition>();
 
-        internal IEnumerable<OptionDefinition> OptionDefinitions => _optionDefinitions;
+        public IEnumerable<OptionDefinition> OptionDefinitions => _optionDefinitions;
+        public object Container => _container;
 
         private readonly IParserBuilder _parser;
         private readonly PropertyReflector _reflector;
+        private readonly TContainer _container;
 
         public ContainerBuilder(TContainer container, IParserBuilder parser, PropertyReflector reflector)
         {
             _parser = parser;
             _reflector = reflector;
+            _container = container;
 
             Initialize(container);
         }

@@ -15,25 +15,22 @@ namespace MiP.ShellArgs
         /// </summary>
         /// <typeparam name="TContainer">The type of the container.</typeparam>
         /// <param name="container">An instance of the container.</param>
-        /// <param name="builderDelegate">Used to customize the added container and its options.</param>
         /// <returns>The current instance of <see cref="IParser"/>.</returns>
         [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        void RegisterContainer<TContainer>(TContainer container, Action<IContainerBuilder<TContainer>> builderDelegate) where TContainer : new();
-        
+        IContainerBuilder<TContainer> RegisterContainer<TContainer>(TContainer container) where TContainer : new();
+
         /// <summary>
         /// Adds a stand alone option to the parser and gives it a name.
         /// </summary>
         /// <param name="name">Name of the option.</param>
-        /// <param name="builderDelegate">Used to customize the addded option.</param>
         /// <returns>The current instance of <see cref="IParser"/>.</returns>
-        void RegisterOption(string name, Action<IOptionBuilder> builderDelegate);
-        
+        IOptionBuilder RegisterOption(string name);
+
         /// <summary>
         /// Adds a stand alone option to the parser.
         /// </summary>
-        /// <param name="builderDelegate">Used to customize the addded option.</param>
         /// <returns>The current instance of <see cref="IParser"/>.</returns>
-        void RegisterOption(Action<IOptionBuilder> builderDelegate);
+        IOptionBuilder RegisterOption();
 
         /// <summary>
         /// Occurs when a value of an option was successfully parsed.

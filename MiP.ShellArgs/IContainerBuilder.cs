@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+
+using MiP.ShellArgs.Implementation;
 
 namespace MiP.ShellArgs
 {
@@ -32,5 +35,12 @@ namespace MiP.ShellArgs
         [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "With")]
         [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         IContainerCustomizer<TContainer, TArgument> With<TArgument>(Expression<Func<TContainer, TArgument>> optionExpression);
+    }
+
+    internal interface IContainerBuilder
+    {
+        IEnumerable<OptionDefinition> OptionDefinitions { get; }
+
+        object Container { get; }
     }
 }

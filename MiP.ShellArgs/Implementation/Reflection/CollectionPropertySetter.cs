@@ -76,7 +76,7 @@ namespace MiP.ShellArgs.Implementation.Reflection
 
         private static void Add<TKey, TValue>(IDictionary<TKey, TValue> collection, KeyValuePair<TKey, TValue> value)
         {
-            collection.Add(value);
+            collection[value.Key] = value.Value;
         }
 
         public override Type ItemType => _itemType;

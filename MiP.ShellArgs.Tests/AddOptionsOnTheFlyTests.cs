@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using MiP.ShellArgs.ContainerAttributes;
 using MiP.ShellArgs.Tests.TestHelpers;
@@ -20,14 +18,14 @@ namespace MiP.ShellArgs.Tests
             int result = 0;
 
             var parser = new Parser();
-            parser.RegisterOption(commandBuilder => commandBuilder
+            parser.RegisterOption()
                 .Named("x")
                 .As<string>()
-                .Do(c1 => c1.Parser.RegisterOption(addBuilder => addBuilder
+                .Do(c1 => c1.Parser.RegisterOption()
                     .Named("add")
                     .As<int>()
                     .Do(c2 => result += c2.Value)
-                    )));
+                );
 
             parser.Parse("-x", "irgendwas", "-add", "5");
 
@@ -38,11 +36,11 @@ namespace MiP.ShellArgs.Tests
         public void NewContainerCanBeParsedWithoutError()
         {
             var parser = new Parser();
-            parser.RegisterOption(commandBuilder => commandBuilder
+            parser.RegisterOption()
                 .Named("x")
                 .As<string>()
                 .Do(c1 => c1.Parser.RegisterContainer<NewContainer>()
-                ));
+                );
 
             var result = parser.Parse("-x", "irgendwas", "-add", "5").Result<NewContainer>();
 
@@ -50,20 +48,38 @@ namespace MiP.ShellArgs.Tests
             Assert.AreEqual(5, result.Add);
         }
 
-        // TODO: tests for registering option+container when a option from a container was parsed.
+        [TestMethod]
+        public void RegisterOptionAfterAContainerWasParsed()
+        {
+            var parser = new Parser();
+            parser.RegisterContainer<NewContainer>()
+                .With(x => x.Add)
+                .Do(c1 =>
+                    {
+                        _i1 = c1.Value;
+                        c1.Parser
+                            .RegisterOption("sub")
+                            .As<int>()
+                            .Do(c2 => _i2 = c2.Value);
+                    });
+
+            parser.Parse("-add", "2", "-sub", "5");
+
+            Assert.AreEqual(7, _i1 + _i2);
+        }
 
         [TestMethod]
         public void RegisterOptionFailsWhenAlreadyExists()
         {
             var parser = new Parser();
-            parser.RegisterOption(commandBuilder => commandBuilder
+            parser.RegisterOption()
                 .Named("add")
                 .As<string>()
-                .Do(c1 => c1.Parser.RegisterOption(addBuilder => addBuilder
+                .Do(c1 => c1.Parser.RegisterOption()
                     .Named("add")
                     .As<int>()
                     .Do(c2 => { })
-                    )));
+                );
 
             ExceptionAssert.Throws<ParserInitializationException>(() =>
                 parser.Parse("-add", "irgendwas"),
@@ -74,11 +90,11 @@ namespace MiP.ShellArgs.Tests
         public void RegisterContainerShouldFailsWhenAnOptionAlreadyExists()
         {
             var parser = new Parser();
-            parser.RegisterOption(commandBuilder => commandBuilder
+            parser.RegisterOption()
                 .Named("add")
                 .As<string>()
                 .Do(c1 => c1.Parser.RegisterContainer<NewContainer>()
-                ));
+                );
 
             ExceptionAssert.Throws<ParserInitializationException>(() =>
                 parser.Parse("-add", "irgendwas"),
@@ -89,16 +105,16 @@ namespace MiP.ShellArgs.Tests
         public void RegisterOptionFailsWhenPositionsNotUnique()
         {
             var parser = new Parser();
-            parser.RegisterOption(commandBuilder => commandBuilder
+            parser.RegisterOption()
                 .Named("add")
                 .AtPosition(1)
                 .As<string>()
-                .Do(c1 => c1.Parser.RegisterOption(addBuilder => addBuilder
+                .Do(c1 => c1.Parser.RegisterOption()
                     .Named("sub")
                     .AtPosition(1)
                     .As<int>()
                     .Do(c2 => { })
-                    )));
+                );
 
             ExceptionAssert.Throws<ParserInitializationException>(() =>
                 parser.Parse("-add", "irgendwas"),
@@ -109,12 +125,12 @@ namespace MiP.ShellArgs.Tests
         public void RegisterContainerShouldFailsWhenPositionsNotUnique()
         {
             var parser = new Parser();
-            parser.RegisterOption(commandBuilder => commandBuilder
+            parser.RegisterOption()
                 .Named("add")
                 .AtPosition(1)
                 .As<string>()
                 .Do(c1 => c1.Parser.RegisterContainer<Position1Container>()
-                ));
+                );
 
             ExceptionAssert.Throws<ParserInitializationException>(() =>
                 parser.Parse("-add", "irgendwas"),
@@ -128,7 +144,7 @@ namespace MiP.ShellArgs.Tests
             _i2 = 0;
             _i3 = 0;
 
-            Parser parser = CreateParserWithThreeAddOptions();
+            Parser parser = CreateParserWithThreeDynamicAddOptions();
 
             parser.Parse("-add1", "2", "-add2", "3", "-add3", "4");
             Assert.AreEqual(9, _i1 + _i2 + _i3);
@@ -141,7 +157,7 @@ namespace MiP.ShellArgs.Tests
             _i2 = 0;
             _i3 = 0;
 
-            Parser parser = CreateParserWithThreeAddOptions();
+            Parser parser = CreateParserWithThreeDynamicAddOptions();
 
             parser.Parse("2", "3", "4");
             Assert.AreEqual(9, _i1 + _i2 + _i3);
@@ -152,60 +168,56 @@ namespace MiP.ShellArgs.Tests
         {
             var parser = new Parser();
 
-            parser.RegisterOption(_ => _
+            parser.RegisterOption()
                 .Named("Add1")
                 .Required()
                 .As<int>()
-                .Do(c1 => c1.Parser.RegisterOption(__ => __
+                .Do(c1 => c1.Parser.RegisterOption()
                     .Named("add2")
                     .Required()
                     .As<int>()
-                    .Do(c2 => { }))));
-            
+                    .Do(c2 => { }));
+
             ExceptionAssert.Throws<ParsingException>(() =>
                 parser.Parse("-add1", "1"),
                 ex => Assert.AreEqual("The following option(s) are required, but were not given: [add2].", ex.Message));
         }
 
-        private Parser CreateParserWithThreeAddOptions()
+        private Parser CreateParserWithThreeDynamicAddOptions()
         {
-            var add1 = new Option<int>
-            {
-                Name = "add1",
-                Position = 1,
-            };
-          
-            var add2 = new Option<int>
-                       {
-                           Name = "add2",
-                           Position = 2,
-                       };
-
-            var add3 = new Option<int>
-            {
-                Name = "add3",
-                Position = 3,
-            };
-
-            add1.Callback = c =>
-                            {
-                                _i1 = c.Value;
-                                c.Parser.RegisterOption(add2);
-                            };
-
-            add2.Callback = c =>
-                            {
-                                _i2 = c.Value;
-                                c.Parser.RegisterOption(add3);
-                            };
-
-            add3.Callback = c => _i3 = c.Value;
-
             var parser = new Parser();
 
-            parser.RegisterOption(add1);
+            parser.RegisterOption("add1")
+                .AtPosition(1)
+                .As<int>()
+                .Do(Add1Action);
 
             return parser;
+        }
+
+        private void Add1Action(ParsingContext<int> context)
+        {
+            _i1 = context.Value;
+            context.Parser
+                .RegisterOption("add2")
+                .AtPosition(2)
+                .As<int>()
+                .Do(Add2Action);
+        }
+
+        private void Add2Action(ParsingContext<int> context)
+        {
+            _i2 = context.Value;
+            context.Parser
+                .RegisterOption("add3")
+                .AtPosition(3)
+                .As<int>()
+                .Do(Add3Action);
+        }
+
+        private void Add3Action(ParsingContext<int> context)
+        {
+            _i3 = context.Value;
         }
 
         #region Classes used by test

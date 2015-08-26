@@ -15,12 +15,14 @@ namespace MiP.ShellArgs.Fluent
         private readonly IParserBuilder _parser;
         private readonly OptionDefinition _optionDefinition;
         private readonly IStringConverter _stringConverter;
+        private readonly OptionContext _optionContext;
 
-        internal OptionBuilder(IParserBuilder parser, OptionDefinition optionDefinition, IStringConverter stringConverter)
+        internal OptionBuilder(IParserBuilder parser, OptionDefinition optionDefinition, IStringConverter stringConverter, OptionContext optionContext)
         {
             _parser = parser;
             _optionDefinition = optionDefinition;
             _stringConverter = stringConverter;
+            _optionContext = optionContext;
         }
         
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "ICollection", Justification = "Design time message")]
@@ -30,7 +32,7 @@ namespace MiP.ShellArgs.Fluent
             if (typeof (TArgument).IsOrImplementsICollection())
                 throw new NotSupportedException(ActionsOfICollectionNotSupportedMessage);
 
-            return new OptionBuilder<TArgument>(_parser, _optionDefinition, _stringConverter);
+            return new OptionBuilder<TArgument>(_parser, _optionDefinition, _stringConverter, _optionContext);
         }
 
         public IOptionBuilder Collection
@@ -81,12 +83,14 @@ namespace MiP.ShellArgs.Fluent
         private readonly IParserBuilder _parser;
         private readonly OptionDefinition _optionDefinition;
         private readonly IStringConverter _stringConverter;
+        private readonly OptionContext _optionContext;
 
-        internal OptionBuilder(IParserBuilder parser, OptionDefinition optionDefinition, IStringConverter stringConverter)
+        internal OptionBuilder(IParserBuilder parser, OptionDefinition optionDefinition, IStringConverter stringConverter, OptionContext optionContext)
         {
             _parser = parser;
             _optionDefinition = optionDefinition;
             _stringConverter = stringConverter;
+            _optionContext = optionContext;
 
             Type itemType = typeof (TArgument).MakeNotNullable();
             bool isBool = itemType == typeof (bool);
@@ -99,6 +103,8 @@ namespace MiP.ShellArgs.Fluent
                 throw new ArgumentNullException(nameof(callback));
 
             _optionDefinition.ValueSetter = new DelegatingPropertySetter<TArgument>(_stringConverter, value => callback(new ParsingContext<TArgument>(_parser, _optionDefinition.Name, value)));
+
+            _optionContext.Add(_optionDefinition);
         }
     }
 }

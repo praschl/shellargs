@@ -15,6 +15,7 @@ namespace MiP.ShellArgs.Tests.Fluent
     {
         private OptionBuilder _builder;
         private OptionDefinition _optionDefinition;
+        private OptionContext _optionContext;
 
         [TestInitialize]
         public void Initialize()
@@ -23,8 +24,9 @@ namespace MiP.ShellArgs.Tests.Fluent
             var stringConverterMock = new Mock<IStringConverter>();
 
             _optionDefinition = new OptionDefinition();
+            _optionContext = new OptionContext();
 
-            _builder = new OptionBuilder(parserMock.Object, _optionDefinition, stringConverterMock.Object);
+            _builder = new OptionBuilder(parserMock.Object, _optionDefinition, stringConverterMock.Object, _optionContext);
         }
 
         [TestMethod]

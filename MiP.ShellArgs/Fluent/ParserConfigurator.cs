@@ -16,7 +16,7 @@ namespace MiP.ShellArgs.Fluent
             _settings = settings;
         }
 
-        // TODO: Use <TTarget> here in IStringParser to make it type safe for the user
+        // TODO: Use <TTarget> here in IStringParser (make it IStringParser<TTarget>) to make it type safe for the user
         public void With<TParser>() where TParser : IStringParser, new()
         {
             _settings.RegisterStringParser(new TParser());

@@ -37,21 +37,22 @@ namespace MiP.ShellArgs.Examples
 
             var parser = new Parser(settings);
 
-            parser.RegisterContainer<User>(
-                u => u.With(x => x.Name).Do(p => { })
-                    .With(x => x.Count).Do(pc => counter += pc.Value)
-                    .With(x => x.Variables.CurrentValue()).Do(pc => Console.WriteLine(pc.Container.Variables))
-                );
+            parser.RegisterContainer<User>()
+                .With(x => x.Name).Do(p => { })
+                .With(x => x.Count).Do(pc => counter += pc.Value)
+                .With(x => x.Variables.CurrentValue())
+                .Do(pc => Console.WriteLine(pc.Container.Variables))
+                ;
 
-            parser.RegisterOption(b => b.Named("AddInt")
+            parser.RegisterOption().Named("AddInt")
                 .Alias("add", "a")
                 .AtPosition(1)
                 .Required()
                 .As<int>()
                 .Do(i => counter += i.Value)
-                );
+                ;
 
-            parser.RegisterOption("SubInt", b => b.As<int>().Do(pc => Console.WriteLine(pc.Option)));
+            parser.RegisterOption("SubInt").As<int>().Do(pc => Console.WriteLine(pc.Option));
 
             parser.OptionValueParsed += (o, e) => Console.WriteLine(e.Option, e.Value);
 
@@ -99,21 +100,19 @@ namespace MiP.ShellArgs.Examples
         {
             var parser = new Parser();
 
-            parser.RegisterOption("demo1",
-                b => b.AtPosition(1)
+            parser.RegisterOption("demo1").AtPosition(1)
                     .Required()
                     .As<int>() // single value
-                    .Do(pc => Console.WriteLine(pc.Option, pc.Value)));
+                    .Do(pc => Console.WriteLine(pc.Option, pc.Value));
 
-            parser.RegisterOption("demoCollection",
-                b => b.Collection.As<int>() // collections
+            parser.RegisterOption("demoCollection").Collection.As<int>() // collections
                     .Do(pc =>
                         {
                             Console.WriteLine(pc.Option);
                             Console.WriteLine(pc.Value);
                             // NOTE: the following is planned, but not implemented yet (but soon)
                             //pc.Parser.RegisterOption("dynamicNewOption", o => o.As<int>().Do(Console.WriteLine));
-                        }));
+                        });
 
             parser.Parse("-hello", "1");
         }
@@ -134,18 +133,18 @@ namespace MiP.ShellArgs.Examples
 
             var parser = new Parser();
 
-            parser.RegisterOption(b => b.Named("add")
+            parser.RegisterOption().Named("add")
                 .Alias("a", "ad")
                 .ValueDescription("a number")
                 .AtPosition(1)
                 .Required()
                 .As<int>()
-                .Do(pc => sum += pc.Value));
+                .Do(pc => sum += pc.Value);
 
-            parser.RegisterOption(b => b.Named("sub")
+            parser.RegisterOption().Named("sub")
                 .Collection
                 .As<int>()
-                .Do(pc => sum -= pc.Value));
+                .Do(pc => sum -= pc.Value);
 
             parser.Parse("-add", "10", "-sub", "1", "2");
 

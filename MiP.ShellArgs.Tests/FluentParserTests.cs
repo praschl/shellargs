@@ -42,7 +42,9 @@ namespace MiP.ShellArgs.Tests
             var eventsRaised = new List<ParsingContext<RequiredAndNonRequiredOption, string>>();
 
             var parser = new Parser();
-            parser.RegisterContainer<RequiredAndNonRequiredOption>(c => c.With(x => x.NonRequired).Do(eventsRaised.Add));
+            parser.RegisterContainer<RequiredAndNonRequiredOption>()
+                .With(x => x.NonRequired)
+                .Do(eventsRaised.Add);
             parser.Parse("-r:V1", "-n:V2");
 
             Assert.AreEqual(1, eventsRaised.Count);
@@ -55,7 +57,9 @@ namespace MiP.ShellArgs.Tests
             var eventsRaised = new List<ParsingContext<RenamedOption, string>>();
 
             var parser = new Parser();
-            parser.RegisterContainer<RenamedOption>(c => c.With(x => x.OriginalName).Do(eventsRaised.Add));
+            parser.RegisterContainer<RenamedOption>()
+                .With(x => x.OriginalName)
+                .Do(eventsRaised.Add);
             parser.Parse("-newName:Value");
 
             Assert.AreEqual(1, eventsRaised.Count);
@@ -72,7 +76,7 @@ namespace MiP.ShellArgs.Tests
 
             var parser = new Parser(settings);
             parser.OptionValueParsed += (o, e) => eventsRaised.Add(e);
-            parser.RegisterOption("Hello", b => b.As<string>().Do(x => { }));
+            parser.RegisterOption("Hello").As<string>().Do(x => { });
 
             parser.Parse("+Hello", "World");
 
@@ -91,7 +95,7 @@ namespace MiP.ShellArgs.Tests
 
             var parser = new Parser(settings);
             parser.OptionValueParsed += (o, e) => eventsRaised.Add(e);
-            parser.RegisterOption("Hello", b => b.As<string>().Do(x => { }));
+            parser.RegisterOption("Hello").As<string>().Do(x => { });
 
             parser.Parse("-Hello+World");
 
@@ -107,7 +111,7 @@ namespace MiP.ShellArgs.Tests
             settings.PrefixWith('+');
 
             var parser = new Parser(settings);
-            parser.RegisterOption("Hello", b => b.As<string>().Do(x => { }));
+            parser.RegisterOption("Hello").As<string>().Do(x => { });
 
             string help = parser.GetShortHelp();
             Assert.AreEqual("[+Hello string]", help);
@@ -120,7 +124,7 @@ namespace MiP.ShellArgs.Tests
             settings.PrefixWith('+');
 
             var parser = new Parser(settings);
-            parser.RegisterOption("Hello", b => b.ValueDescription("something").As<string>().Do(x => { }));
+            parser.RegisterOption("Hello").ValueDescription("something").As<string>().Do(x => { });
 
             string help = parser.GetShortHelp();
             Assert.AreEqual("[+Hello something]", help);
@@ -136,13 +140,13 @@ namespace MiP.ShellArgs.Tests
 
             var parser = new Parser();
 
-            parser.RegisterContainer<TestContainer1>(
-                aw => aw.With(c => c.AString1).Do(pc => stringContext1 = pc)
-                    .With(c => c.ANumber1).Do(pc => intContext1 = pc));
+            parser.RegisterContainer<TestContainer1>()
+                .With(c => c.AString1).Do(pc => stringContext1 = pc)
+                .With(c => c.ANumber1).Do(pc => intContext1 = pc);
 
-            parser.RegisterContainer<TestContainer2>(
-                aw => aw.With<string>("AString2").Do(pc => stringContext2 = pc)
-                    .With<int>("ANumber2").Do(pc => intContext2 = pc));
+            parser.RegisterContainer<TestContainer2>()
+                .With<string>("AString2").Do(pc => stringContext2 = pc)
+                .With<int>("ANumber2").Do(pc => intContext2 = pc);
 
             parser.Parse("-AString1", "1", "-AString2", "2", "-ANumber1", "1", "-ANumber2", "2");
 
@@ -166,13 +170,11 @@ namespace MiP.ShellArgs.Tests
 
             var parser = new Parser();
 
-            parser.RegisterOption("add",
-                b => b.As<int>()
-                    .Do(pc => actual += pc.Value));
+            parser.RegisterOption("add").As<int>()
+                    .Do(pc => actual += pc.Value);
 
-            parser.RegisterOption("sub",
-                b => b.As<int>()
-                    .Do(pc => actual -= pc.Value));
+            parser.RegisterOption("sub").As<int>()
+                    .Do(pc => actual -= pc.Value);
 
             parser.Parse("-add", "1", "-add", "2", "-sub", "10", "-add", "4");
 
@@ -186,9 +188,9 @@ namespace MiP.ShellArgs.Tests
 
             var parser = new Parser();
 
-            parser.RegisterContainer<CollectionContainer>(
-                b => b.With(c => c.Values.CurrentValue())
-                    .Do(pc => values.Add(pc.Value)));
+            parser.RegisterContainer<CollectionContainer>()
+                .With(c => c.Values.CurrentValue())
+                .Do(pc => values.Add(pc.Value));
 
             var result = parser.Parse("-a", "1", "2", "3")
                 .Result<CollectionContainer>();
@@ -225,7 +227,7 @@ namespace MiP.ShellArgs.Tests
         public void RegisterContainerWithoutInstance()
         {
             var parser = new Parser();
-            parser.RegisterContainer<TestContainer1>(null, null);
+            parser.RegisterContainer<TestContainer1>(null);
 
             var result = parser.Parse().Result<TestContainer1>();
             Assert.IsNotNull(result);
@@ -238,10 +240,10 @@ namespace MiP.ShellArgs.Tests
 
             var parser = new Parser();
 
-            parser.RegisterOption(b => b.Named("add")
+            parser.RegisterOption().Named("add")
                 .Collection
                 .As<int>()
-                .Do(context => list.Add(context.Value)));
+                .Do(context => list.Add(context.Value));
 
             parser.Parse("-add", "1", "2", "3");
 
@@ -255,10 +257,10 @@ namespace MiP.ShellArgs.Tests
 
             var parser = new Parser();
 
-            parser.RegisterOption(b => b.Named("p")
+            parser.RegisterOption().Named("p")
                 .Collection
                 .As<KeyValuePair<string, string>>()
-                .Do(context => properties[context.Value.Key] = context.Value.Value));
+                .Do(context => properties[context.Value.Key] = context.Value.Value);
 
             parser.Parse("/p:a=b", "/p:c=d", "/p:c=e");
 

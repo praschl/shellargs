@@ -326,10 +326,10 @@ namespace MiP.ShellArgs.Tests
         public void CanNotAddSameOptionTwiceIsCaseInsensitive()
         {
             var parser = new Parser();
-            parser.RegisterOption("add", b => b.As<int>().Do(delegate { }));
-
+            parser.RegisterOption("add").As<int>().Do(delegate { });
+            
             ExceptionAssert.Throws<ParserInitializationException>(() =>
-                parser.RegisterOption("Add", b => b.As<int>().Do(delegate { })),
+               parser.RegisterOption("Add").As<int>().Do(delegate { }),
                 ex => Assert.AreEqual("The following names or aliases are not unique: [add].", ex.Message));
         }
 
@@ -341,10 +341,9 @@ namespace MiP.ShellArgs.Tests
             parser.RegisterContainer<PositionalPropertiesOutOfOrder>();
         }
 
-        //[TestMethod]
+        [TestMethod]
         public void ParseToDictionaryDoubleKey()
         {
-            // TODO: activate test ParseToDictionaryDoubleKey
             var container = Parser.Parse<DictionaryContainer>("-Names", "a=b", "a:c");
 
             Assert.AreEqual(1, container.Names.Count);
