@@ -242,8 +242,7 @@ namespace MiP.ShellArgs
         private void OnParse(OptionValueParsedEventArgs e)
         {
             EventHandler<OptionValueParsedEventArgs> raiseMe = OptionValueParsed;
-            if (raiseMe != null)
-                raiseMe(this, e);
+            raiseMe?.Invoke(this, e);
         }
     }
 

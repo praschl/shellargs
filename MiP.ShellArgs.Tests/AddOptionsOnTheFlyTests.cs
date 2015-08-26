@@ -169,34 +169,37 @@ namespace MiP.ShellArgs.Tests
 
         private Parser CreateParserWithThreeAddOptions()
         {
-            var add3 = new Option<int>
-                       {
-                           Name = "add3",
-                           Position = 3,
-                           Callback = _ => _i3 = _.Value
-                       };
-
+            var add1 = new Option<int>
+            {
+                Name = "add1",
+                Position = 1,
+            };
+          
             var add2 = new Option<int>
                        {
                            Name = "add2",
                            Position = 2,
-                           Callback = _ =>
-                                      {
-                                          _i2 = _.Value;
-                                          _.Parser.RegisterOption(add3);
-                                      }
                        };
 
-            var add1 = new Option<int>
-                       {
-                           Name = "add1",
-                           Position = 1,
-                           Callback = _ =>
-                                      {
-                                          _i1 = _.Value;
-                                          _.Parser.RegisterOption(add2);
-                                      }
-                       };
+            var add3 = new Option<int>
+            {
+                Name = "add3",
+                Position = 3,
+            };
+
+            add1.Callback = c =>
+                            {
+                                _i1 = c.Value;
+                                c.Parser.RegisterOption(add2);
+                            };
+
+            add2.Callback = c =>
+                            {
+                                _i2 = c.Value;
+                                c.Parser.RegisterOption(add3);
+                            };
+
+            add3.Callback = c => _i3 = c.Value;
 
             var parser = new Parser();
 
@@ -204,26 +207,6 @@ namespace MiP.ShellArgs.Tests
 
             return parser;
         }
-
-        //private Parser CreateParserWithThreeAddOptions()
-        //{
-        //    var parser = new Parser();
-        //    parser.RegisterOption<int>("add1", position: 1, callback: ParsedAdd1);
-
-        //    return parser;
-        //}
-
-        //private void ParsedAdd1(ParsingContext<int> c1)
-        //{
-        //    _i1 = c1.Value;
-        //    c1.Parser.RegisterOption<int>("add2", position: 2, callback: ParsedAdd2);
-        //}
-
-        //private void ParsedAdd2(ParsingContext<int> c2)
-        //{
-        //    _i2 = c2.Value;
-        //    c2.Parser.RegisterOption<int>("add3", position: 3, callback: c3 => _i3 = c3.Value);
-        //}
 
         #region Classes used by test
 

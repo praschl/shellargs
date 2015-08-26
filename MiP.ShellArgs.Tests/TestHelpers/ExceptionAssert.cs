@@ -41,8 +41,7 @@ namespace MiP.ShellArgs.Tests.TestHelpers
                 // Calling the validator for the exception object if one was
                 // provided by the caller. The validator is expected to use the
                 // Assert class for performing the verification.
-                if (validator != null)
-                    validator((T) e);
+                validator?.Invoke((T) e);
 
                 // Type check passed and validator did not throw.
                 // Everything is fine.
