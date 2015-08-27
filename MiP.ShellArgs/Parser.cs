@@ -215,35 +215,4 @@ namespace MiP.ShellArgs
             raiseMe?.Invoke(this, e);
         }
     }
-
-    public static class ParserBuilderExtensions
-    {
-        public static void RegisterOption<T>(this IParserBuilder parserBuilder, string name, string[] aliases = null, int position = 0, bool collection = false, bool required = false, string valueDescription = null, Action<ParsingContext<T>> callback = null)
-        {
-            if (parserBuilder == null)
-                throw new ArgumentNullException(nameof(parserBuilder));
-            if (string.IsNullOrEmpty(name))
-                throw new ArgumentException("name must not be null or empty.", nameof(name));
-            if (callback == null)
-                throw new ArgumentNullException(nameof(callback));
-
-            var builder = parserBuilder.RegisterOption()
-                .Named(name)
-                .Alias(aliases);
-
-            if (position > 0)
-                builder.AtPosition(position);
-
-            if (collection)
-                builder = builder.Collection;
-
-            if (required)
-                builder.Required();
-
-            if(!string.IsNullOrEmpty(valueDescription))
-                builder.ValueDescription(valueDescription);
-
-            builder.As<T>().Do(callback);
-        }
-    }
 }
