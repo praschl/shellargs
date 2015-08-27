@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 
-using MiP.ShellArgs.ContainerAttributes;
-using MiP.ShellArgs.StringConversion;
-using MiP.ShellArgs.Tests.TestHelpers;
+using FluentAssertions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using MiP.ShellArgs.ContainerAttributes;
+using MiP.ShellArgs.StringConversion;
 
 namespace MiP.ShellArgs.Tests
 {
@@ -17,8 +18,7 @@ namespace MiP.ShellArgs.Tests
         {
             var result = Parser.Parse<OptionalStringProperties>("a", "b");
 
-            Assert.AreEqual("a", result.S1);
-            Assert.AreEqual("b", result.S2);
+            result.ShouldBeEquivalentTo(new OptionalStringProperties {S1 = "a", S2 = "b"});
         }
 
         [TestMethod]
@@ -26,23 +26,25 @@ namespace MiP.ShellArgs.Tests
         {
             var result = Parser.Parse<OptionalStringProperties>("a");
 
-            Assert.AreEqual("a", result.S1);
+            result.ShouldBeEquivalentTo(new OptionalStringProperties {S1 = "a"});
         }
 
         [TestMethod]
         public void AllRequiredOptionsAreSet()
         {
-            ExceptionAssert.Throws<ParsingException>(
-                () => Parser.Parse<RequiredStringProperties>("a"),
-                ex => Assert.AreEqual("The following option(s) are required, but were not given: [S2].", ex.Message));
+            Action parse = () => Parser.Parse<RequiredStringProperties>("a");
+
+            parse.ShouldThrow<ParsingException>()
+                .WithMessage("The following option(s) are required, but were not given: [S2].");
         }
 
         [TestMethod]
         public void FailsWhenRequiredIsNotSet()
         {
-            ExceptionAssert.Throws<ParsingException>(
-                () => Parser.Parse<RequiredStringProperties>("a", "-failplease"),
-                ex => Assert.AreEqual("'failplease' is not a valid option.", ex.Message));
+            Action parse = () => Parser.Parse<RequiredStringProperties>("a", "-failplease");
+
+            parse.ShouldThrow<ParsingException>()
+                .WithMessage("'failplease' is not a valid option.");
         }
 
         [TestMethod]
@@ -50,25 +52,27 @@ namespace MiP.ShellArgs.Tests
         {
             var result = Parser.Parse<SimpleTypes>("1", "2", "c", "eins", "eins,vier", "12/24/2010", "4.13:24:56.789", "Hi", "3", "4", "5", "6", "7.1", "8.2", "9.3", "10", "11", "12");
 
-            Assert.AreEqual(1, result.Int);
-            Assert.AreEqual(2, result.Long);
-            Assert.AreEqual('c', result.Char);
-            Assert.AreEqual(NormalEnum.Eins, result.NormalEnumValue);
-            Assert.AreEqual(FlagsEnum.Eins | FlagsEnum.Vier, result.FlagsEnumValue);
-            Assert.AreEqual(new DateTime(2010, 12, 24), result.DateTime);
-            Assert.AreEqual(new TimeSpan(4, 13, 24, 56, 789), result.TimeSpan);
-            Assert.AreEqual("Hi", result.String);
-            Assert.AreEqual(3, result.Short);
-            Assert.AreEqual((uint)4, result.UInt);
-            Assert.AreEqual((ulong)5, result.ULong);
-            Assert.AreEqual((ushort)6, result.UShort);
-            Assert.AreEqual(71, (int)(result.Decimal * 10));
-            Assert.AreEqual(82, (int)(result.Double * 10));
-            Assert.AreEqual(93, (int)(result.Float * 10));
+            var expected = new SimpleTypes
+                           {
+                               Int = 1,
+                               Long = 2,
+                               Char = 'c',
+                               NormalEnumValue = NormalEnum.Eins,
+                               FlagsEnumValue = FlagsEnum.Eins | FlagsEnum.Vier,
+                               DateTime = new DateTime(2010, 12, 24),
+                               TimeSpan = new TimeSpan(4, 13, 24, 56, 789),
+                               String = "Hi",
+                               Short = 3,
+                               UInt = 4,
+                               ULong = 5,
+                               UShort = 6,
+                               Decimal = new decimal(7.1),
+                               Double = 8.2,
+                               Float = 9.3f,
+                               Integers = new List<int> {10, 11, 12}
+                           };
 
-            Assert.AreEqual(10, result.Integers[0]);
-            Assert.AreEqual(11, result.Integers[1]);
-            Assert.AreEqual(12, result.Integers[2]);
+            result.ShouldBeEquivalentTo(expected, o => o.WithStrictOrdering());
         }
 
         [TestMethod]
@@ -76,17 +80,15 @@ namespace MiP.ShellArgs.Tests
         {
             var result = Parser.Parse<RequiredStringProperties>("v1", "-s3=v3", "-s2", "v2");
 
-            Assert.AreEqual("v1", result.S1);
-            Assert.AreEqual("v2", result.S2);
-            Assert.AreEqual("v3", result.S3);
+            result.ShouldBeEquivalentTo(new RequiredStringProperties {S1 = "v1", S2 = "v2", S3 = "v3"});
         }
 
         [TestMethod]
         public void RequiredArgumentWithoutValue()
         {
-            ExceptionAssert.Throws<ParsingException>(
-                () => Parser.Parse<RequiredStringProperties>("v1", "-s2", "-s3=v3"),
-                ex => Assert.AreEqual("Option 'S2' has no value assigned.", ex.Message));
+            Action parse = () => Parser.Parse<RequiredStringProperties>("v1", "-s2", "-s3=v3");
+
+            parse.ShouldThrow<ParsingException>().WithMessage("Option 'S2' has no value assigned.");
         }
 
         [TestMethod]
@@ -94,13 +96,13 @@ namespace MiP.ShellArgs.Tests
         {
             var result = Parser.Parse<RequiredStringPropertiesWithCollection>("v1", "v2", "v3a", "v3b", "v3c");
 
-            Assert.AreEqual("v1", result.S1);
-            Assert.AreEqual("v2", result.S2);
-
-            Assert.AreEqual(3, result.S3Collection.Count);
-            Assert.AreEqual("v3a", result.S3Collection[0]);
-            Assert.AreEqual("v3b", result.S3Collection[1]);
-            Assert.AreEqual("v3c", result.S3Collection[2]);
+            result.ShouldBeEquivalentTo(new RequiredStringPropertiesWithCollection
+                                        {
+                                            S1 = "v1",
+                                            S2 = "v2",
+                                            S3Collection = new List<string> {"v3a", "v3b", "v3c"}
+                                        },
+                o => o.WithStrictOrdering());
         }
 
         [TestMethod]
@@ -108,13 +110,13 @@ namespace MiP.ShellArgs.Tests
         {
             var result = Parser.Parse<RequiredStringPropertiesWithCollection>("v1", "-S3Collection", "v3a", "v3b", "v3c", "-S2:v2");
 
-            Assert.AreEqual("v1", result.S1);
-            Assert.AreEqual("v2", result.S2);
-
-            Assert.AreEqual(3, result.S3Collection.Count);
-            Assert.AreEqual("v3a", result.S3Collection[0]);
-            Assert.AreEqual("v3b", result.S3Collection[1]);
-            Assert.AreEqual("v3c", result.S3Collection[2]);
+            result.ShouldBeEquivalentTo(new RequiredStringPropertiesWithCollection
+                                        {
+                                            S1 = "v1",
+                                            S2 = "v2",
+                                            S3Collection = new List<string> {"v3a", "v3b", "v3c"}
+                                        },
+                o => o.WithStrictOrdering());
         }
 
         [TestMethod]
@@ -126,8 +128,13 @@ namespace MiP.ShellArgs.Tests
             var result = Parser
                 .Parse<MyStringOptions>(settings, "IExpectThis");
 
-            Assert.IsNotNull(result.ThisIsMyString);
-            Assert.AreEqual("IExpectThis", result.ThisIsMyString.TheString);
+            result.ShouldBeEquivalentTo(new MyStringOptions
+                                        {
+                                            ThisIsMyString = new MyString
+                                                             {
+                                                                 TheString = "IExpectThis"
+                                                             }
+                                        });
         }
 
         [TestMethod]
@@ -139,8 +146,13 @@ namespace MiP.ShellArgs.Tests
             var result = Parser
                 .Parse<MyStringOptions>(settings, "IExpectThis");
 
-            Assert.IsNotNull(result.ThisIsMyString);
-            Assert.AreEqual("IExpectThis", result.ThisIsMyString.TheString);
+            result.ShouldBeEquivalentTo(new MyStringOptions
+            {
+                ThisIsMyString = new MyString
+                {
+                    TheString = "IExpectThis"
+                }
+            });
         }
 
         //[TestMethod]
@@ -173,9 +185,10 @@ namespace MiP.ShellArgs.Tests
         {
             var result = Parser.Parse<BooleanOptions>("-true", "TRUE", "-false", "false");
 
-            Assert.AreEqual(true, result.True);
-            Assert.AreEqual(false, result.False);
-            Assert.IsNull(result.Null);
+            result.ShouldBeEquivalentTo(new BooleanOptions
+                                        {
+                                            True = true, False = false, Null = null
+                                        });
         }
 
         [TestMethod]
@@ -183,52 +196,54 @@ namespace MiP.ShellArgs.Tests
         {
             var result = Parser.Parse<BooleanOptions>("-true+", "-false=-");
 
-            Assert.AreEqual(true, result.True);
-            Assert.AreEqual(false, result.False);
-            Assert.IsNull(result.Null);
+            result.ShouldBeEquivalentTo(new BooleanOptions
+                                        {
+                                            True = true, False = false, Null = null
+                                        });
         }
 
         [TestMethod]
         public void MoreThanOneValueForNonCollectionFails()
         {
-            ExceptionAssert.Throws<ParsingException>(
-                () => Parser.Parse<OptionalStringProperties>("-s1", "v1", "-s2", "v2", "v3"),
-                ex => Assert.AreEqual("Expected an option instead of value 'v3'.", ex.Message));
+            Action parse = () => Parser.Parse<OptionalStringProperties>("-s1", "v1", "-s2", "v2", "v3");
+
+            parse.ShouldThrow<ParsingException>().WithMessage("Expected an option instead of value 'v3'.");
         }
 
         [TestMethod]
         public void AliasesAreAccepted()
         {
             var result = Parser.Parse<AliasesOptions>("-v1", "aBc");
-
-            Assert.AreEqual("aBc", result.Value1);
+            result.ShouldBeEquivalentTo(new AliasesOptions {Value1 = "aBc"});
 
             result = Parser.Parse<AliasesOptions>("-z", "xYz");
-            Assert.AreEqual("xYz", result.Value1);
+            result.ShouldBeEquivalentTo(new AliasesOptions { Value1 = "xYz" });
         }
 
         [TestMethod]
         public void PassingValueToIgnoreOptionFails()
         {
-            ExceptionAssert.Throws<ParsingException>(
-                () => Parser.Parse<IgnoredOption>("-value1", "v1", "-value2", "v2"),
-                ex => Assert.AreEqual("'value2' is not a valid option.", ex.Message));
+            Action parse = () => Parser.Parse<IgnoredOption>("-value1", "v1", "-value2", "v2");
+    
+            parse.ShouldThrow<ParsingException>().WithMessage("'value2' is not a valid option.");
         }
 
         [TestMethod]
         public void SupportNonPositionalRequiredOptions()
         {
-            ExceptionAssert.Throws<ParsingException>(
-                () => Parser.Parse<RequiredAndNonRequiredOption>(),
-                ex => Assert.AreEqual("The following option(s) are required, but were not given: [Required].", ex.Message));
+            Action parse = () => Parser.Parse<RequiredAndNonRequiredOption>();
+
+            parse.ShouldThrow<ParsingException>()
+                .WithMessage("The following option(s) are required, but were not given: [Required].");
         }
 
         [TestMethod]
         public void RequiredOptionWithDefaultNotGivenAtAllFails()
         {
-            ExceptionAssert.Throws<ParsingException>(
-                () => Parser.Parse<RequiredAndNonRequiredOption>(),
-                ex => Assert.AreEqual("The following option(s) are required, but were not given: [Required].", ex.Message));
+            Action parse = () => Parser.Parse<RequiredAndNonRequiredOption>();
+
+            parse.ShouldThrow<ParsingException>()
+                .WithMessage("The following option(s) are required, but were not given: [Required].");
         }
 
         [TestMethod]
@@ -236,8 +251,7 @@ namespace MiP.ShellArgs.Tests
         {
             var result = Parser.Parse<Booleans>("-True", "-False");
 
-            Assert.IsTrue(result.False);
-            Assert.IsFalse(result.True);
+            result.ShouldBeEquivalentTo(new Booleans {True = false, False = true});
         }
 
         [TestMethod]
@@ -245,16 +259,17 @@ namespace MiP.ShellArgs.Tests
         {
             var instance = new BooleanOptions
                            {
-                               False = true,
-                               True = false,
-                               Null = null
+                               False = true, True = false, Null = null
                            };
 
             Parser.Parse(instance, "-True", "-False", "-null");
 
-            Assert.AreEqual(true, instance.True);
-            Assert.AreEqual(false, instance.False);
-            Assert.AreEqual(true, instance.Null);
+            var expected = new BooleanOptions
+                           {
+                               False = false, True = true, Null = true
+                           };
+
+            instance.ShouldBeEquivalentTo(expected);
         }
 
         [TestMethod]
@@ -273,26 +288,27 @@ namespace MiP.ShellArgs.Tests
             Parser.Parse(instance1, "-s1=inst1");
             Parser.Parse(instance2, "-s1=inst2");
 
-            Assert.AreEqual("inst1", instance1.S1);
-            Assert.AreEqual("inst2", instance2.S1);
+            instance1.ShouldBeEquivalentTo(new OptionalStringProperties {S1 = "inst1"});
+            instance2.ShouldBeEquivalentTo(new OptionalStringProperties {S1 = "inst2"});
         }
 
         [TestMethod]
         public void WhenValueIsNotParsable()
         {
-            ExceptionAssert.Throws<ParsingException>(
-                () => Parser.Parse<NumberOption>("-Number", "abc"),
-                ex =>
-                {
-                    Assert.IsTrue(ex.Message.StartsWith("Could not parse value 'abc' to type System.Int32"));
-                    Assert.IsTrue(ex.Message.EndsWith("."));
-                });
+            Action parse = () => Parser.Parse<NumberOption>("-Number", "abc");
+
+            parse.ShouldThrow<ParsingException>().Which.Message.Should()
+                .StartWith("Could not parse value 'abc' to type System.Int32").And.EndWith(".");
         }
 
         [TestMethod]
         public void StaticParseWithContainerAndSettings()
         {
-            Parser.Parse(new OptionalStringProperties(), new ParserSettings(), new[] {"-S1", "1"});
+            var optionalStringProperties = new OptionalStringProperties();
+
+            Parser.Parse(optionalStringProperties, new ParserSettings(), "-S1", "1");
+
+            optionalStringProperties.ShouldBeEquivalentTo(new OptionalStringProperties { S1 = "1" });
         }
 
         [TestMethod]
@@ -300,26 +316,21 @@ namespace MiP.ShellArgs.Tests
         {
             var container = Parser.Parse<PrivatePropertyContainer>("-Value", "Hello");
 
-            Assert.IsNotNull(container);
-            Assert.AreEqual("Hello", container.GetValue());
+            container.GetValue().Should().Be("Hello");
         }
 
         [TestMethod]
         public void CanParseToDictionary()
         {
-            var container = Parser.Parse<DictionaryContainer>("-Names","a=b","c:d", "-Numbers:e=5");
+            var container = Parser.Parse<DictionaryContainer>("-Names", "a=b", "c:d", "-Numbers:e=5");
 
-            Assert.IsNotNull(container);
-            Assert.AreEqual(2, container.Names.Count);
-            Assert.AreEqual(1, container.Numbers.Count);
+            var expected = new DictionaryContainer
+                           {
+                               Names = new Dictionary<string, string> {["a"] = "b", ["c"] = "d"},
+                               Numbers = new Dictionary<string, int> {["e"] = 5}
+                           };
 
-            Assert.IsTrue(container.Names.ContainsKey("a"));
-            Assert.IsTrue(container.Names.ContainsKey("c"));
-            Assert.IsTrue(container.Numbers.ContainsKey("e"));
-
-            Assert.AreEqual("b", container.Names["a"]);
-            Assert.AreEqual("d", container.Names["c"]);
-            Assert.AreEqual(5, container.Numbers["e"]);
+            container.ShouldBeEquivalentTo(expected);
         }
 
         [TestMethod]
@@ -327,10 +338,11 @@ namespace MiP.ShellArgs.Tests
         {
             var parser = new Parser();
             parser.RegisterOption("add").As<int>().Do(delegate { });
-            
-            ExceptionAssert.Throws<ParserInitializationException>(() =>
-               parser.RegisterOption("Add").As<int>().Do(delegate { }),
-                ex => Assert.AreEqual("The following names or aliases are not unique: [add].", ex.Message));
+
+            Action parse =()=> parser.RegisterOption("Add").As<int>().Do(delegate { });
+
+            parse.ShouldThrow<ParserInitializationException>()
+                .WithMessage("The following names or aliases are not unique: [add].");
         }
 
         [TestMethod]
@@ -338,7 +350,9 @@ namespace MiP.ShellArgs.Tests
         {
             var parser = new Parser();
 
-            parser.RegisterContainer<PositionalPropertiesOutOfOrder>();
+            Action registerContainer = () => parser.RegisterContainer<PositionalPropertiesOutOfOrder>();
+
+            registerContainer.ShouldNotThrow();
         }
 
         [TestMethod]
@@ -346,11 +360,14 @@ namespace MiP.ShellArgs.Tests
         {
             var container = Parser.Parse<DictionaryContainer>("-Names", "a=b", "a:c");
 
-            Assert.AreEqual(1, container.Names.Count);
-            Assert.IsTrue(container.Names.ContainsKey("a"));
-            Assert.AreEqual("c", container.Names["a"]);
+            container.ShouldBeEquivalentTo(
+                new DictionaryContainer
+                {
+                    Names = new Dictionary<string, string> {["a"] = "c"},
+                    Numbers=new Dictionary<string, int>()
+                });
         }
-        
+
         #region Classes used by Test
 
         public class OptionalStringProperties
@@ -579,6 +596,8 @@ namespace MiP.ShellArgs.Tests
                 Value = value;
             }
 
+            // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local
+            // setter is required for test.
             private string Value { get; set; }
 
             public string GetValue()

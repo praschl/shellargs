@@ -4,6 +4,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 // source: http://blogs.msdn.com/b/ddietric/archive/2009/01/06/the-ultimate-exceptionassert-throws-method.aspx
 
+// TODO: remove ExceptionAssert when finished migrating to fluent assertions
+
 namespace MiP.ShellArgs.Tests.TestHelpers
 {
     public static class ExceptionAssert
