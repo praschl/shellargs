@@ -1,7 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Collections.Generic;
+
+using FluentAssertions;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using MiP.ShellArgs.ContainerAttributes;
-using MiP.ShellArgs.Tests.TestHelpers;
 
 namespace MiP.ShellArgs.Tests
 {
@@ -29,7 +33,7 @@ namespace MiP.ShellArgs.Tests
 
             parser.Parse("-x", "irgendwas", "-add", "5");
 
-            Assert.AreEqual(5, result);
+            result.Should().Be(5);
         }
 
         [TestMethod]
@@ -44,28 +48,29 @@ namespace MiP.ShellArgs.Tests
 
             var result = parser.Parse("-x", "irgendwas", "-add", "5").Result<NewContainer>();
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(5, result.Add);
+            result.ShouldBeEquivalentTo(new NewContainer(5));
         }
 
         [TestMethod]
         public void RegisterOptionAfterAContainerWasParsed()
         {
+            List<int> values = new List<int>();
+
             var parser = new Parser();
             parser.RegisterContainer<NewContainer>()
                 .With(x => x.Add)
                 .Do(c1 =>
                     {
-                        _i1 = c1.Value;
+                        values.Add(c1.Value);
                         c1.Parser
                             .RegisterOption("sub")
                             .As<int>()
-                            .Do(c2 => _i2 = c2.Value);
+                            .Do(c2 => values.Add(c2.Value));
                     });
 
             parser.Parse("-add", "2", "-sub", "5");
 
-            Assert.AreEqual(7, _i1 + _i2);
+            values.ShouldAllBeEquivalentTo(new[] {2, 5}, o => o.WithStrictOrdering());
         }
 
         [TestMethod]
@@ -81,9 +86,10 @@ namespace MiP.ShellArgs.Tests
                     .Do(c2 => { })
                 );
 
-            ExceptionAssert.Throws<ParserInitializationException>(() =>
-                parser.Parse("-add", "irgendwas"),
-                ex => Assert.AreEqual("The following names or aliases are not unique: [add].", ex.Message));
+            Action parse = () => parser.Parse("-add", "irgendwas");
+
+            parse.ShouldThrow<ParserInitializationException>()
+                .WithMessage("The following names or aliases are not unique: [add].");
         }
 
         [TestMethod]
@@ -96,9 +102,10 @@ namespace MiP.ShellArgs.Tests
                 .Do(c1 => c1.Parser.RegisterContainer<NewContainer>()
                 );
 
-            ExceptionAssert.Throws<ParserInitializationException>(() =>
-                parser.Parse("-add", "irgendwas"),
-                ex => Assert.AreEqual("The following names or aliases are not unique: [add].", ex.Message));
+            Action parse = () => parser.Parse("-add", "irgendwas");
+
+            parse.ShouldThrow<ParserInitializationException>()
+                .WithMessage("The following names or aliases are not unique: [add].");
         }
 
         [TestMethod]
@@ -116,9 +123,10 @@ namespace MiP.ShellArgs.Tests
                     .Do(c2 => { })
                 );
 
-            ExceptionAssert.Throws<ParserInitializationException>(() =>
-                parser.Parse("-add", "irgendwas"),
-                ex => Assert.AreEqual("The following options have no unique position: [add, sub].", ex.Message));
+            Action parse = () => parser.Parse("-add", "irgendwas");
+
+            parse.ShouldThrow<ParserInitializationException>()
+                .WithMessage("The following options have no unique position: [add, sub].");
         }
 
         [TestMethod]
@@ -132,9 +140,10 @@ namespace MiP.ShellArgs.Tests
                 .Do(c1 => c1.Parser.RegisterContainer<Position1Container>()
                 );
 
-            ExceptionAssert.Throws<ParserInitializationException>(() =>
-                parser.Parse("-add", "irgendwas"),
-                ex => Assert.AreEqual("The following options have no unique position: [add, Sub].", ex.Message));
+            Action parse = () => parser.Parse("-add", "irgendwas");
+
+            parse.ShouldThrow<ParserInitializationException>()
+                .WithMessage("The following options have no unique position: [add, Sub].");
         }
 
         [TestMethod]
@@ -147,7 +156,10 @@ namespace MiP.ShellArgs.Tests
             Parser parser = CreateParserWithThreeDynamicAddOptions();
 
             parser.Parse("-add1", "2", "-add2", "3", "-add3", "4");
-            Assert.AreEqual(9, _i1 + _i2 + _i3);
+
+            _i1.Should().Be(2);
+            _i2.Should().Be(3);
+            _i3.Should().Be(4);
         }
 
         [TestMethod]
@@ -160,7 +172,10 @@ namespace MiP.ShellArgs.Tests
             Parser parser = CreateParserWithThreeDynamicAddOptions();
 
             parser.Parse("2", "3", "4");
-            Assert.AreEqual(9, _i1 + _i2 + _i3);
+
+            _i1.Should().Be(2);
+            _i2.Should().Be(3);
+            _i3.Should().Be(4);
         }
 
         [TestMethod]
@@ -178,9 +193,10 @@ namespace MiP.ShellArgs.Tests
                     .As<int>()
                     .Do(c2 => { }));
 
-            ExceptionAssert.Throws<ParsingException>(() =>
-                parser.Parse("-add1", "1"),
-                ex => Assert.AreEqual("The following option(s) are required, but were not given: [add2].", ex.Message));
+            Action parse = () => parser.Parse("-add1", "1");
+
+            parse.ShouldThrow<ParsingException>()
+                .WithMessage("The following option(s) are required, but were not given: [add2].");
         }
 
         private Parser CreateParserWithThreeDynamicAddOptions()
@@ -224,7 +240,16 @@ namespace MiP.ShellArgs.Tests
 
         private class NewContainer
         {
-            // ReSharper disable once UnusedAutoPropertyAccessor.Local
+            public NewContainer()
+            {
+            }
+
+            public NewContainer(int add)
+            {
+                Add = add;
+            }
+
+            // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local
             public int Add { get; private set; }
         }
 
