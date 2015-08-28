@@ -1,10 +1,12 @@
+using System;
 using System.Collections.Generic;
+
+using FluentAssertions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using MiP.ShellArgs.ContainerAttributes;
 using MiP.ShellArgs.Implementation;
-using MiP.ShellArgs.Tests.TestHelpers;
 
 namespace MiP.ShellArgs.Tests
 {
@@ -14,26 +16,22 @@ namespace MiP.ShellArgs.Tests
         [TestMethod]
         public void EventIsRaised()
         {
-            var eventsByExtensionMethod = new List<OptionValueParsedEventArgs>();
+            var eventsRaised = new List<OptionValueParsedEventArgs>();
 
             var parser = new Parser();
-            parser.OptionValueParsed += (o, e) => eventsByExtensionMethod.Add(e);
+            parser.OptionValueParsed += (o, e) => eventsRaised.Add(e);
 
             parser.RegisterContainer<RequiredAndNonRequiredOption>();
 
             parser.Parse("-r:V1", "-n:V2");
 
-            AssertEventsRaised(eventsByExtensionMethod, "extension");
-        }
+            OptionValueParsedEventArgs[] expectedEvents =
+            {
+                new OptionValueParsedEventArgs(null, "Required", "V1"),
+                new OptionValueParsedEventArgs(null, "NonRequired", "V2")
+            };
 
-        private static void AssertEventsRaised(List<OptionValueParsedEventArgs> eventsRaised, string message)
-        {
-            Assert.AreEqual(2, eventsRaised.Count, message);
-            Assert.AreEqual("Required", eventsRaised[0].Option, message);
-            Assert.AreEqual("V1", eventsRaised[0].Value, message);
-
-            Assert.AreEqual("NonRequired", eventsRaised[1].Option, message);
-            Assert.AreEqual("V2", eventsRaised[1].Value, message);
+            eventsRaised.ShouldAllBeEquivalentTo(expectedEvents, o => o.Excluding(x => x.ParserBuilder));
         }
 
         [TestMethod]
@@ -47,8 +45,13 @@ namespace MiP.ShellArgs.Tests
                 .Do(eventsRaised.Add);
             parser.Parse("-r:V1", "-n:V2");
 
-            Assert.AreEqual(1, eventsRaised.Count);
-            Assert.AreEqual("V2", eventsRaised[0].Value);
+            OptionValueParsedEventArgs[] expectedEvents =
+            {
+                new OptionValueParsedEventArgs(null, "NonRequired", "V2")
+            };
+
+            eventsRaised.ShouldAllBeEquivalentTo(expectedEvents,
+                o => o.Excluding(x => x.Parser).Excluding(x => x.Container));
         }
 
         [TestMethod]
@@ -62,8 +65,13 @@ namespace MiP.ShellArgs.Tests
                 .Do(eventsRaised.Add);
             parser.Parse("-newName:Value");
 
-            Assert.AreEqual(1, eventsRaised.Count);
-            Assert.AreEqual("Value", eventsRaised[0].Value);
+            OptionValueParsedEventArgs[] expectedEvents =
+            {
+                new OptionValueParsedEventArgs(null, "newName", "Value")
+            };
+
+            eventsRaised.ShouldAllBeEquivalentTo(expectedEvents,
+                o => o.Excluding(x => x.Parser).Excluding(x => x.Container));
         }
 
         [TestMethod]
@@ -80,9 +88,13 @@ namespace MiP.ShellArgs.Tests
 
             parser.Parse("+Hello", "World");
 
-            Assert.AreEqual(1, eventsRaised.Count);
-            Assert.AreEqual("Hello", eventsRaised[0].Option);
-            Assert.AreEqual("World", eventsRaised[0].Value);
+            OptionValueParsedEventArgs[] expectedEvents =
+            {
+                new OptionValueParsedEventArgs(null, "Hello", "World")
+            };
+
+            eventsRaised.ShouldAllBeEquivalentTo(expectedEvents,
+                o => o.Excluding(x => x.ParserBuilder));
         }
 
         [TestMethod]
@@ -99,9 +111,13 @@ namespace MiP.ShellArgs.Tests
 
             parser.Parse("-Hello+World");
 
-            Assert.AreEqual(1, eventsRaised.Count);
-            Assert.AreEqual("Hello", eventsRaised[0].Option);
-            Assert.AreEqual("World", eventsRaised[0].Value);
+            OptionValueParsedEventArgs[] expectedEvents =
+            {
+                new OptionValueParsedEventArgs(null, "Hello", "World")
+            };
+
+            eventsRaised.ShouldAllBeEquivalentTo(expectedEvents,
+                o => o.Excluding(x => x.ParserBuilder));
         }
 
         [TestMethod]
@@ -114,7 +130,7 @@ namespace MiP.ShellArgs.Tests
             parser.RegisterOption("Hello").As<string>().Do(x => { });
 
             string help = parser.GetShortHelp();
-            Assert.AreEqual("[+Hello string]", help);
+            help.Should().Be("[+Hello string]");
         }
 
         [TestMethod]
@@ -127,7 +143,7 @@ namespace MiP.ShellArgs.Tests
             parser.RegisterOption("Hello").ValueDescription("something").As<string>().Do(x => { });
 
             string help = parser.GetShortHelp();
-            Assert.AreEqual("[+Hello something]", help);
+            help.Should().Be("[+Hello something]");
         }
 
         [TestMethod]
@@ -150,17 +166,18 @@ namespace MiP.ShellArgs.Tests
 
             parser.Parse("-AString1", "1", "-AString2", "2", "-ANumber1", "1", "-ANumber2", "2");
 
-            Assert.AreEqual("AString1", stringContext1.Option);
-            Assert.AreEqual("1", stringContext1.Value);
-            Assert.AreEqual("ANumber1", intContext1.Option);
-            Assert.AreEqual(1, intContext1.Value);
-            Assert.AreEqual("AString2", stringContext2.Option);
-            Assert.AreEqual("2", stringContext2.Value);
-            Assert.AreEqual("ANumber2", intContext2.Option);
-            Assert.AreEqual(2, intContext2.Value);
+            var expectedStringContext1 = new ParsingContext<TestContainer1, string>(null, null, "AString1", "1");
+            var expectedIntContext1 = new ParsingContext<TestContainer1, int>(null, null, "ANumber1", 1);
+            var expectedStringContext2 = new ParsingContext<TestContainer2, string>(null, null, "AString2", "2");
+            var expectedIntContext2 = new ParsingContext<TestContainer1, int>(null, null, "ANumber2", 2);
 
-            Assert.AreSame(stringContext1.Container, intContext1.Container);
-            Assert.AreSame(stringContext2.Container, intContext2.Container);
+            stringContext1.ShouldBeEquivalentTo(expectedStringContext1, o => o.Excluding(x => x.Container).Excluding(x => x.Parser));
+            intContext1.ShouldBeEquivalentTo(expectedIntContext1, o => o.Excluding(x => x.Container).Excluding(x => x.Parser));
+            stringContext2.ShouldBeEquivalentTo(expectedStringContext2, o => o.Excluding(x => x.Container).Excluding(x => x.Parser));
+            intContext2.ShouldBeEquivalentTo(expectedIntContext2, o => o.Excluding(x => x.Container).Excluding(x => x.Parser));
+
+            stringContext1.Container.Should().BeSameAs(intContext1.Container);
+            stringContext2.Container.Should().BeSameAs(intContext2.Container);
         }
 
         [TestMethod]
@@ -171,14 +188,14 @@ namespace MiP.ShellArgs.Tests
             var parser = new Parser();
 
             parser.RegisterOption("add").As<int>()
-                    .Do(pc => actual += pc.Value);
+                .Do(pc => actual += pc.Value);
 
             parser.RegisterOption("sub").As<int>()
-                    .Do(pc => actual -= pc.Value);
+                .Do(pc => actual -= pc.Value);
 
             parser.Parse("-add", "1", "-add", "2", "-sub", "10", "-add", "4");
 
-            Assert.AreEqual(-3, actual);
+            actual.Should().Be(-3);
         }
 
         [TestMethod]
@@ -195,32 +212,38 @@ namespace MiP.ShellArgs.Tests
             var result = parser.Parse("-a", "1", "2", "3")
                 .Result<CollectionContainer>();
 
-            CollectionAssert.AreEquivalent(new[] {"1", "2", "3"}, result.Values.ToArray());
+            var expectation = new[] {"1", "2", "3"};
+
+            values.ShouldAllBeEquivalentTo(expectation);
+            result.Values.ShouldAllBeEquivalentTo(expectation);
         }
 
         [TestMethod]
         public void RegisterContainerSameTypeTwice()
         {
-            ExceptionAssert.Throws<ParserInitializationException>(() =>
-                                                                  {
-                                                                      var parser = new Parser();
-                                                                      parser.RegisterContainer<TestContainer1>();
-                                                                      parser.RegisterContainer<TestContainer1>();
-                                                                  },
-                ex => Assert.AreEqual(string.Format("Parser already knows a container of type {0}.", typeof (TestContainer1)), ex.Message));
+            Action doubleRegister = () =>
+                                    {
+                                        var parser = new Parser();
+                                        parser.RegisterContainer<TestContainer1>();
+                                        parser.RegisterContainer<TestContainer1>();
+                                    };
+
+            doubleRegister.ShouldThrow<ParserInitializationException>()
+                .WithMessage($"Parser already knows a container of type {typeof (TestContainer1)}.");
         }
 
         [TestMethod]
         public void RegisterContainerSameInstanceTwice()
         {
-            ExceptionAssert.Throws<ParserInitializationException>(
-                () =>
-                {
-                    var parser = new Parser();
-                    parser.RegisterContainer<TestContainer1>();
-                    parser.RegisterContainer(new TestContainer1());
-                },
-                ex => Assert.AreEqual(string.Format("Parser already knows a container of type {0}.", typeof (TestContainer1)), ex.Message));
+            Action sameInstanceRegistration = () =>
+                                              {
+                                                  var parser = new Parser();
+                                                  parser.RegisterContainer<TestContainer1>();
+                                                  parser.RegisterContainer(new TestContainer1());
+                                              };
+
+            sameInstanceRegistration.ShouldThrow<ParserInitializationException>()
+                .WithMessage($"Parser already knows a container of type {typeof (TestContainer1)}.");
         }
 
         [TestMethod]
@@ -230,7 +253,7 @@ namespace MiP.ShellArgs.Tests
             parser.RegisterContainer<TestContainer1>(null);
 
             var result = parser.Parse().Result<TestContainer1>();
-            Assert.IsNotNull(result);
+            result.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -247,7 +270,7 @@ namespace MiP.ShellArgs.Tests
 
             parser.Parse("-add", "1", "2", "3");
 
-            CollectionAssert.AreEquivalent(new[] {1, 2, 3}, list.ToArray());
+            list.ShouldAllBeEquivalentTo(new[] {1, 2, 3});
         }
 
         [TestMethod]
@@ -264,13 +287,13 @@ namespace MiP.ShellArgs.Tests
 
             parser.Parse("/p:a=b", "/p:c=d", "/p:c=e");
 
-            Assert.AreEqual(2, properties.Count);
+            var expectation = new Dictionary<string, string>
+                              {
+                                  ["a"] = "b",
+                                  ["c"] = "e"
+                              };
 
-            Assert.IsTrue(properties.ContainsKey("a"));
-            Assert.IsTrue(properties.ContainsKey("c"));
-
-            Assert.AreEqual("b", properties["a"]);
-            Assert.AreEqual("e", properties["c"]);
+            properties.ShouldAllBeEquivalentTo(expectation);
         }
 
         #region Classes used by Test

@@ -44,6 +44,5 @@ namespace MiP.ShellArgs.Tests
             _settings.ShortBooleansEnabled.Should().BeTrue();
             _settings.ShortBooleans.ShouldAllBeEquivalentTo(new[] {"+", "-"});
         }
-        
     }
 }
