@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using FluentAssertions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -20,7 +20,7 @@ namespace MiP.ShellArgs.Tests
         {
             _settings.AssignWith('a', 'b');
 
-            CollectionAssert.AreEquivalent(_settings.Assignments.ToArray(), new[] {'a', 'b'});
+            _settings.Assignments.ShouldAllBeEquivalentTo(new[] {'a', 'b'});
         }
 
         [TestMethod]
@@ -28,7 +28,7 @@ namespace MiP.ShellArgs.Tests
         {
             _settings.PrefixWith('a', 'b');
 
-            CollectionAssert.AreEquivalent(_settings.Prefixes.ToArray(), new[] {"a", "b"});
+            _settings.Prefixes.ShouldAllBeEquivalentTo(new[] {"a", "b"});
         }
 
         [TestMethod]
@@ -36,13 +36,13 @@ namespace MiP.ShellArgs.Tests
         {
             _settings.EnableShortBooleans(false);
 
-            Assert.IsFalse(_settings.ShortBooleansEnabled);
-            Assert.AreEqual(0, _settings.ShortBooleans.Length);
+            _settings.ShortBooleansEnabled.Should().BeFalse();
+            _settings.ShortBooleans.Length.Should().Be(0);
 
             _settings.EnableShortBooleans(true);
 
-            Assert.IsTrue(_settings.ShortBooleansEnabled);
-            CollectionAssert.AreEquivalent(new[] {"+", "-"}, _settings.ShortBooleans);
+            _settings.ShortBooleansEnabled.Should().BeTrue();
+            _settings.ShortBooleans.ShouldAllBeEquivalentTo(new[] {"+", "-"});
         }
         
     }
