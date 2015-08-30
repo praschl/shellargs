@@ -1,6 +1,8 @@
-﻿using MiP.ShellArgs.Implementation;
+﻿using FluentAssertions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using MiP.ShellArgs.Implementation;
 
 namespace MiP.ShellArgs.Tests.Implementation
 {
@@ -12,11 +14,11 @@ namespace MiP.ShellArgs.Tests.Implementation
         {
             Token result = Token.CreateOption("hello");
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual("hello", result.Name);
-            Assert.IsTrue(result.IsOption);
+            result.Should().NotBeNull();
+            result.Name.Should().Be("hello");
+            result.IsOption.Should().BeTrue();
 
-            Assert.IsNull(result.Value);
+            result.Value.Should().BeNull();
         }
 
         [TestMethod]
@@ -24,11 +26,11 @@ namespace MiP.ShellArgs.Tests.Implementation
         {
             Token result = Token.CreateValue("hello");
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual("hello", result.Value);
-            Assert.IsFalse(result.IsOption);
+            result.Should().NotBeNull();
+            result.Value.Should().Be("hello");
+            result.IsOption.Should().BeFalse();
 
-            Assert.IsNull(result.Name);
+            result.Name.Should().BeNull();
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+
+using FluentAssertions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -28,17 +31,17 @@ namespace MiP.ShellArgs.Tests.Implementation
         [TestMethod]
         public void ThrowsWhenOptionNotFound()
         {
-            ExceptionAssert.Throws<ParsingException>(
-                () => _converter.MapToContainer(new[] {Token.CreateOption("xyz")}, _context),
-                ex => Assert.AreEqual("'xyz' is not a valid option.", ex.Message));
+            Action mapToContainer = () => _converter.MapToContainer(new[] {Token.CreateOption("xyz")}, _context);
+
+            mapToContainer.ShouldThrow<ParsingException>().WithMessage("'xyz' is not a valid option.");
         }
 
         [TestMethod]
         public void ThrowsWhenValueBeforeOption()
         {
-            ExceptionAssert.Throws<ParsingException>(
-                () => _converter.MapToContainer(new[] {Token.CreateValue("xyz")}, _context),
-                ex => Assert.AreEqual("Expected an option instead of value 'xyz'.", ex.Message));
+            Action mapToContainer = () => _converter.MapToContainer(new[] {Token.CreateValue("xyz")}, _context);
+
+            mapToContainer.ShouldThrow<ParsingException>().WithMessage("Expected an option instead of value 'xyz'.");
         }
 
         [TestMethod]
@@ -84,8 +87,8 @@ namespace MiP.ShellArgs.Tests.Implementation
 
             _converter.MapToContainer(tokens, _context);
 
-            CollectionAssert.AreEqual(expected1, values1);
-            CollectionAssert.AreEqual(expected2, values2);
+            values1.ShouldAllBeEquivalentTo(expected1);
+            values2.ShouldAllBeEquivalentTo(expected2);
         }
 
         [TestMethod]
@@ -100,9 +103,10 @@ namespace MiP.ShellArgs.Tests.Implementation
                              ValueSetter = new DelegatingPropertySetter<int>(_stringConverter, x => { })
                          });
 
-            ExceptionAssert.Throws<ParsingException>(
-                () => _converter.MapToContainer(tokens, _context),
-                ex => Assert.AreEqual("The following option(s) are required, but were not given: [set].", ex.Message));
+            Action mapToContainer = () => _converter.MapToContainer(tokens, _context);
+
+            mapToContainer.ShouldThrow<ParsingException>()
+                .WithMessage("The following option(s) are required, but were not given: [set].");
         }
     }
 }

@@ -15,7 +15,7 @@ namespace MiP.ShellArgs
         TContainer Result<TContainer>();
 
         /// <summary>
-        /// Puts the results to <paramref name="result"/>. This overload is useful when you use more than once container.
+        /// Puts the results to <paramref name="result"/>. This overload is useful when you use more than one container.
         /// </summary>
         /// <typeparam name="TContainer">The type of the container to get.</typeparam>
         /// <param name="result">Will hold the container instance..</param>

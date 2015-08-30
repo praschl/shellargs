@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using FluentAssertions;
+
 using MiP.ShellArgs.Implementation;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,15 +17,15 @@ namespace MiP.ShellArgs.Tests.Implementation
         {
             Type type = typeof (int?);
 
-            Assert.AreEqual(typeof (int), type.MakeNotNullable());
+            type.MakeNotNullable().Should().Be(typeof (int));
         }
 
         [TestMethod]
         public void MakeNotNullableReturnsOriginalType()
         {
             Type type = typeof (int);
-
-            Assert.AreEqual(type, type.MakeNotNullable());
+            
+            type.MakeNotNullable().Should().Be(typeof(int));
         }
 
         [TestMethod]
@@ -31,7 +33,7 @@ namespace MiP.ShellArgs.Tests.Implementation
         {
             Type type = typeof (List<int>);
 
-            Assert.IsTrue(type.IsOrImplementsICollection());
+            type.IsOrImplementsICollection().Should().BeTrue();
         }
 
         [TestMethod]
@@ -39,7 +41,7 @@ namespace MiP.ShellArgs.Tests.Implementation
         {
             Type type = typeof (ICollection<int>);
 
-            Assert.IsTrue(type.IsOrImplementsICollection());
+            type.IsOrImplementsICollection().Should().BeTrue();
         }
 
         [TestMethod]
@@ -47,7 +49,7 @@ namespace MiP.ShellArgs.Tests.Implementation
         {
             Type type = typeof(IDisposable);
 
-            Assert.IsFalse(type.IsOrImplementsICollection());
+            type.IsOrImplementsICollection().Should().BeFalse();
         }
 
         [TestMethod]
@@ -55,7 +57,7 @@ namespace MiP.ShellArgs.Tests.Implementation
         {
             Type type = typeof(string);
 
-            Assert.IsFalse(type.IsOrImplementsICollection());
+            type.IsOrImplementsICollection().Should().BeFalse();
         }
 
         [TestMethod]
@@ -63,7 +65,7 @@ namespace MiP.ShellArgs.Tests.Implementation
         {
             Type type = typeof (List<int?>);
 
-            Assert.AreEqual(typeof (int?), type.GetCollectionItemType());
+            type.GetCollectionItemType().Should().Be(typeof(int?));
         }
 
         [TestMethod]
@@ -71,7 +73,7 @@ namespace MiP.ShellArgs.Tests.Implementation
         {
             Type type = typeof(int?);
 
-            Assert.AreEqual(typeof(int?), type.GetCollectionItemType());
+           type.GetCollectionItemType().Should().Be(typeof(int?));
         }
 
         [TestMethod]
@@ -79,7 +81,7 @@ namespace MiP.ShellArgs.Tests.Implementation
         {
             Type type = typeof (IDictionary<string, int>);
 
-            Assert.IsTrue(type.IsOrImplementsICollection());
+            type.IsOrImplementsICollection().Should().Be(true);
         }
 
         [TestMethod]
@@ -87,7 +89,7 @@ namespace MiP.ShellArgs.Tests.Implementation
         {
             Type type = typeof (Dictionary<string, int>);
 
-            Assert.AreEqual(typeof (KeyValuePair<string, int>), type.GetCollectionItemType());
+            type.GetCollectionItemType().Should().Be(typeof(KeyValuePair<string, int>));
         }
     }
 }
