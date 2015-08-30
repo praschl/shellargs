@@ -2,6 +2,8 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 
+using FluentAssertions;
+
 using MiP.ShellArgs.StringConversion;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -25,14 +27,14 @@ namespace MiP.ShellArgs.Tests.StringConversion
         public void CanConvertToInt32()
         {
             object result = _converter.To(typeof (int), "123");
-            Assert.AreEqual(123, result);
+            result.Should().Be(123);
         }
 
         [TestMethod]
         public void CanConvertToNullableInt32()
         {
             object result = _converter.To(typeof (int?), "123");
-            Assert.AreEqual(123, result);
+            result.Should().Be(123);
         }
 
         //[TestMethod]
@@ -40,35 +42,35 @@ namespace MiP.ShellArgs.Tests.StringConversion
         {
             // TODO: after implement format/pattern reactivate this test
             object result = _converter.To(typeof (DateTime), "08 09 10");
-            Assert.AreEqual(new DateTime(2009, 08, 10), result);
+            result.Should().Be(new DateTime(2009,08,10));
         }
 
         [TestMethod]
         public void CanConvertToDateTimeWithoutFormat()
         {
             object result = _converter.To(typeof (DateTime), "2010-12-24");
-            Assert.AreEqual(new DateTime(2010, 12, 24), result);
+            result.Should().Be(new DateTime(2010, 12, 24));
         }
 
         [TestMethod]
         public void CanConvertToNullableDateTime()
         {
             object result = _converter.To(typeof (DateTime?), "2009-08-10");
-            Assert.AreEqual(new DateTime(2009, 08, 10), result);
+            result.Should().Be(new DateTime(2009, 08, 10));
         }
 
         [TestMethod]
         public void CanConvertToEnum()
         {
             object result = _converter.To(typeof (TestEnum), "Zwei");
-            Assert.AreEqual(TestEnum.Zwei, result);
+            result.Should().Be(TestEnum.Zwei);
         }
 
         [TestMethod]
         public void CanConvertToNullableEnum()
         {
             object result = _converter.To(typeof (TestEnum?), "Drei");
-            Assert.AreEqual(TestEnum.Drei, result);
+            result.Should().Be(TestEnum.Drei);
         }
 
         [TestMethod]
@@ -76,7 +78,7 @@ namespace MiP.ShellArgs.Tests.StringConversion
         {
             object result = _converter.To(typeof (TimeSpan), "1.2:03:04");
 
-            Assert.AreEqual(new TimeSpan(1, 2, 3, 4), result);
+            result.Should().Be(new TimeSpan(1,2,3,4));
         }
 
         [TestMethod]
@@ -84,7 +86,7 @@ namespace MiP.ShellArgs.Tests.StringConversion
         {
             object result = _converter.To(typeof (TimeSpan), "2.12:23:34");
 
-            Assert.AreEqual(new TimeSpan(2, 12, 23, 34), result);
+            result.Should().Be(new TimeSpan(2, 12, 23, 34));
         }
 
         [TestMethod]
@@ -92,13 +94,13 @@ namespace MiP.ShellArgs.Tests.StringConversion
         {
             object result = _converter.To(typeof (CustomTypeForTypeDescriptorTest), "Hello World");
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(typeof (CustomTypeForTypeDescriptorTest), result.GetType());
+            result.Should().NotBeNull();
+            result.GetType().Should().Be(typeof (CustomTypeForTypeDescriptorTest));
 
             var custom = (CustomTypeForTypeDescriptorTest)result;
-            Assert.AreEqual("Hello World", custom.Value);
+            custom.Value.Should().Be("Hello World");
 
-            Assert.AreEqual("Hello World", CustomTypeConverter.LastConvertedValue);
+            CustomTypeConverter.LastConvertedValue.Should().Be("Hello World");
         }
 
         [TypeConverter(typeof (CustomTypeConverter))]

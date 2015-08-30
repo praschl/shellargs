@@ -1,3 +1,7 @@
+using System;
+
+using FluentAssertions;
+
 using MiP.ShellArgs.StringConversion;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -19,21 +23,21 @@ namespace MiP.ShellArgs.Tests.StringConversion
         public void ParsesEnums()
         {
             var result = (Numbers)_parser.Parse(typeof (Numbers), "One");
-            Assert.AreEqual(Numbers.One, result);
+            result.Should().Be(Numbers.One);
         }
 
         [TestMethod]
         public void ParsesInt()
         {
             var result = (int)_parser.Parse(typeof (int), "1234");
-            Assert.AreEqual(1234, result);
+            result.Should().Be(1234);
         }
 
         [TestMethod]
         public void CallsIsValid()
         {
-            Assert.IsFalse(_parser.IsValid(typeof (int), "abc"));
-            Assert.IsTrue(_parser.IsValid(typeof (int), "123"));
+            _parser.IsValid(typeof (int), "abc").Should().BeFalse();
+            _parser.IsValid(typeof (int), "123").Should().BeTrue();
         }
 
         private enum Numbers

@@ -1,5 +1,7 @@
 using System.ComponentModel;
 
+using FluentAssertions;
+
 using MiP.ShellArgs.StringConversion;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -21,20 +23,20 @@ namespace MiP.ShellArgs.Tests.StringConversion
         public void ParsesEnumsCaseInsensitive()
         {
             var result = (Numbers)_parser.Parse(typeof(Numbers), "one");
-            Assert.AreEqual(Numbers.One, result);
+            result.Should().Be(Numbers.One);
         }
 
         [TestMethod]
         public void IsValidIgnoresCase()
         {
-            Assert.IsTrue(_parser.IsValid(typeof (Numbers), "one"));
+            _parser.IsValid(typeof (Numbers), "one").Should().BeTrue();
         }
 
         [TestMethod]
         public void ParsesEnumWithTypeConverter()
         {
             var result = (Numbers2)_parser.Parse(typeof(Numbers2), "zwei");
-            Assert.AreEqual(Numbers2.Two, result);
+            result.Should().Be(Numbers2.Two);
         }
 
         private enum Numbers

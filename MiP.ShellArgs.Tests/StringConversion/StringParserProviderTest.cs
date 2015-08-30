@@ -1,5 +1,7 @@
 using System;
 
+using FluentAssertions;
+
 using MiP.ShellArgs.StringConversion;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,9 +22,9 @@ namespace MiP.ShellArgs.Tests.StringConversion
         [TestMethod]
         public void DefaultParsersAvailable()
         {
-            Assert.AreEqual(typeof (StringToBoolParser), _provider.GetParser(typeof (bool)).GetType());
-            Assert.AreEqual(typeof (StringToEnumParser), _provider.GetParser(typeof (StringSplitOptions)).GetType());
-            Assert.AreEqual(typeof(StringToObjectParser), _provider.GetParser(typeof(TimeSpan)).GetType());
+            _provider.GetParser(typeof (bool)).GetType().Should().Be(typeof(StringToBoolParser));
+            _provider.GetParser(typeof (StringSplitOptions)).GetType().Should().Be(typeof (StringToEnumParser));
+            _provider.GetParser(typeof(TimeSpan)).GetType().Should().Be(typeof(StringToObjectParser));
         }
 
         [TestMethod]
@@ -34,7 +36,7 @@ namespace MiP.ShellArgs.Tests.StringConversion
 
             IStringParser result = _provider.GetParser(typeof (DateTime));
 
-            Assert.AreSame(expected, result);
+            result.Should().BeSameAs(result);
         }
 
         private class MyParser : StringParser

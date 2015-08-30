@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+using FluentAssertions;
+
 using MiP.ShellArgs.StringConversion;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -23,48 +25,48 @@ namespace MiP.ShellArgs.Tests.StringConversion
         [TestMethod]
         public void CanParseToReturnsFalse()
         {
-            Assert.IsFalse(_parser.CanParseTo(typeof (IDisposable)));
-            Assert.IsFalse(_parser.CanParseTo(typeof (List<int>)));
-            Assert.IsFalse(_parser.CanParseTo(typeof (List<string>)));
-            Assert.IsFalse(_parser.CanParseTo(typeof(KeyValuePair<int, string>)));
+            _parser.CanParseTo(typeof (IDisposable)).Should().BeFalse();
+            _parser.CanParseTo(typeof (List<int>)).Should().BeFalse();
+            _parser.CanParseTo(typeof (List<string>)).Should().BeFalse();
+            _parser.CanParseTo(typeof(KeyValuePair<int, string>)).Should().BeFalse();
         }
 
         [TestMethod]
         public void CanParseToReturnsTrue()
         {
-            Assert.IsTrue(_parser.CanParseTo(typeof (KeyValuePair<string, int>)));
+            _parser.CanParseTo(typeof (KeyValuePair<string, int>)).Should().BeTrue();
         }
 
         [TestMethod]
         public void IsValidReturnsFalse()
         {
-            Assert.IsFalse(_parser.IsValid(typeof (KeyValuePair<string, string>), "abcde"));
-            Assert.IsFalse(_parser.IsValid(typeof (KeyValuePair<string, string>), "=abcde"));
-            Assert.IsFalse(_parser.IsValid(typeof (KeyValuePair<string, string>), ":abcde"));
+            _parser.IsValid(typeof (KeyValuePair<string, string>), "abcde").Should().BeFalse();
+            _parser.IsValid(typeof (KeyValuePair<string, string>), "=abcde").Should().BeFalse();
+            _parser.IsValid(typeof (KeyValuePair<string, string>), ":abcde").Should().BeFalse();
             
-            Assert.IsFalse(_parser.IsValid(typeof (KeyValuePair<string, int>), "a=b"));
+            _parser.IsValid(typeof (KeyValuePair<string, int>), "a=b").Should().BeFalse();
         }
 
         [TestMethod]
         public void IsValidReturnsTrue()
         {
-            Assert.IsTrue(_parser.IsValid(typeof(KeyValuePair<string, string>), "abc=def"));
-            Assert.IsTrue(_parser.IsValid(typeof(KeyValuePair<string, string>), "abc:def"));
-            Assert.IsTrue(_parser.IsValid(typeof(KeyValuePair<string, int>), "abc:123"));
+            _parser.IsValid(typeof(KeyValuePair<string, string>), "abc=def").Should().BeTrue();
+            _parser.IsValid(typeof(KeyValuePair<string, string>), "abc:def").Should().BeTrue();
+            _parser.IsValid(typeof(KeyValuePair<string, int>), "abc:123").Should().BeTrue();
         }
 
         [TestMethod]
         public void ParseReturnsParsedPairOfString()
         {
             var result = _parser.Parse(typeof(KeyValuePair<string, string>), "abc=def");
-            Assert.AreEqual(new KeyValuePair<string, string>("abc", "def"), result);
+            result.ShouldBeEquivalentTo(new KeyValuePair<string, string>("abc", "def"));
         }
         
         [TestMethod]
         public void ParseReturnsParsedPairOfInt32()
         {
             var result = _parser.Parse(typeof(KeyValuePair<string, int>), "abc=123");
-            Assert.AreEqual(new KeyValuePair<string, int>("abc", 123), result);
+            result.ShouldBeEquivalentTo(new KeyValuePair<string, int>("abc", 123));
         }
     }
 }
