@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+using FluentAssertions;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using MiP.ShellArgs.ContainerAttributes;
@@ -42,7 +44,7 @@ namespace MiP.ShellArgs.Tests.Implementation
 
             string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
-            Assert.AreEqual("[-J string]", help);
+            help.Should().Be("[-J string]");
         }
 
         [TestMethod]
@@ -54,7 +56,7 @@ namespace MiP.ShellArgs.Tests.Implementation
 
             string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
-            Assert.AreEqual("[[-C] string]", help);
+            help.Should().Be("[[-C] string]");
         }
 
         [TestMethod]
@@ -64,7 +66,7 @@ namespace MiP.ShellArgs.Tests.Implementation
 
             string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
-            Assert.AreEqual("[-A] string", help);
+            help.Should().Be("[-A] string");
         }
 
         [TestMethod]
@@ -74,7 +76,7 @@ namespace MiP.ShellArgs.Tests.Implementation
 
             string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
-            Assert.AreEqual("-H string", help);
+            help.Should().Be("-H string");
         }
 
         [TestMethod]
@@ -104,7 +106,7 @@ namespace MiP.ShellArgs.Tests.Implementation
 
             string fullHelp = _helpGenerator.GetParameterHelp(orderedContext.Definitions);
 
-            Assert.AreEqual(fullHelp, help);
+            help.Should().Be(fullHelp);
         }
 
         [TestMethod]
@@ -114,7 +116,7 @@ namespace MiP.ShellArgs.Tests.Implementation
 
             string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
-            Assert.AreEqual("-Enum (Eins|Zwei|Drei)", help);
+            help.Should().Be("-Enum (Eins|Zwei|Drei)");
         }
 
         [TestMethod]
@@ -124,7 +126,7 @@ namespace MiP.ShellArgs.Tests.Implementation
 
             string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
-            Assert.AreEqual("-FlagsEnum (Eins,Zwei,Vier,Acht)", help);
+            help.Should().Be("-FlagsEnum (Eins,Zwei,Vier,Acht)");
         }
 
         [TestMethod]
@@ -134,7 +136,7 @@ namespace MiP.ShellArgs.Tests.Implementation
 
             string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
-            Assert.AreEqual("-Date date", help);
+            help.Should().Be("-Date date");
         }
 
         [TestMethod]
@@ -144,7 +146,7 @@ namespace MiP.ShellArgs.Tests.Implementation
 
             string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
-            Assert.AreEqual("-DateRenamed renamed", help);
+            help.Should().Be("-DateRenamed renamed");
         }
 
         [TestMethod]
@@ -154,7 +156,7 @@ namespace MiP.ShellArgs.Tests.Implementation
 
             string help = _helpGenerator.GetParameterHelp(_context.Definitions);
 
-            Assert.AreEqual("-Numbers int [...]", help);
+            help.Should().Be("-Numbers int [...]");
         }
 
         private static OptionDefinition GetPropertyInfo(string name)

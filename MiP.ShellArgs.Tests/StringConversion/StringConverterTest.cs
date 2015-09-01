@@ -4,8 +4,6 @@ using System.Globalization;
 
 using FluentAssertions;
 
-using MiP.ShellArgs.StringConversion;
-
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using StringConverter = MiP.ShellArgs.StringConversion.StringConverter;

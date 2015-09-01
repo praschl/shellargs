@@ -7,7 +7,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using MiP.ShellArgs.Implementation;
 using MiP.ShellArgs.StringConversion;
-using MiP.ShellArgs.Tests.TestHelpers;
 
 namespace MiP.ShellArgs.Tests.Implementation
 {

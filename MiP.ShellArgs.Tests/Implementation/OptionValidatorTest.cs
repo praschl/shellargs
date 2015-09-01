@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
-using MiP.ShellArgs.Implementation;
-using MiP.ShellArgs.Tests.TestHelpers;
+using FluentAssertions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using MiP.ShellArgs.Implementation;
 
 namespace MiP.ShellArgs.Tests.Implementation
 {
@@ -40,9 +42,10 @@ namespace MiP.ShellArgs.Tests.Implementation
                               }
                           };
 
-            const string expectedMessage = "The following names or aliases are not unique: [A, B].";
+            Action validate = () => _validator.Validate(options);
 
-            CallValidate(options, expectedMessage);
+            validate.ShouldThrow<ParserInitializationException>()
+                .WithMessage("The following names or aliases are not unique: [A, B].");
         }
 
         [TestMethod]
@@ -72,9 +75,10 @@ namespace MiP.ShellArgs.Tests.Implementation
                               }
                           };
 
-            const string expectedMessage = "The following options have no unique position: [A, B, C, D].";
+            Action validate = () => _validator.Validate(options);
 
-            CallValidate(options, expectedMessage);
+            validate.ShouldThrow<ParserInitializationException>()
+                .WithMessage("The following options have no unique position: [A, B, C, D].");
         }
 
         [TestMethod]
@@ -94,11 +98,12 @@ namespace MiP.ShellArgs.Tests.Implementation
                               },
                           };
 
-            const string expectedMessage = "Option with position 3 was found but position 2 is missing.";
+            Action validate = () => _validator.Validate(options);
 
-            CallValidate(options, expectedMessage);
+            validate.ShouldThrow<ParserInitializationException>()
+                .WithMessage("Option with position 3 was found but position 2 is missing.");
         }
-            
+
         [TestMethod]
         public void NoRequiredFollowsOptional()
         {
@@ -124,9 +129,10 @@ namespace MiP.ShellArgs.Tests.Implementation
                               },
                           };
 
-            const string expectedMessage = "Positional options must specify all required before optional options, but optional 'B' was followed by required 'C'.";
+            Action validate = () => _validator.Validate(options);
 
-            CallValidate(options, expectedMessage);
+            validate.ShouldThrow<ParserInitializationException>()
+                .WithMessage("Positional options must specify all required before optional options, but optional 'B' was followed by required 'C'.");
         }
 
         [TestMethod]
@@ -153,9 +159,10 @@ namespace MiP.ShellArgs.Tests.Implementation
                               },
                           };
 
-            const string expectedMessage = "Only the last positional option may be a collection, but 'B' and 'C' are positional collection options.";
+            Action validate = () => _validator.Validate(options);
 
-            CallValidate(options, expectedMessage);
+            validate.ShouldThrow<ParserInitializationException>()
+                .WithMessage("Only the last positional option may be a collection, but 'B' and 'C' are positional collection options.");
         }
 
         [TestMethod]
@@ -170,16 +177,10 @@ namespace MiP.ShellArgs.Tests.Implementation
                               }
                           };
 
-            const string expectedMessage = "There are options which have no name. Use the .Named() method to give a name to an option";
+            Action validate = () => _validator.Validate(options);
 
-            CallValidate(options, expectedMessage);
-        }
-
-        private void CallValidate(ICollection<OptionDefinition> options, string expectedMessage)
-        {
-            ExceptionAssert.Throws<ParserInitializationException>(
-                () => _validator.Validate(options),
-                ex => Assert.AreEqual(expectedMessage, ex.Message));
+            validate.ShouldThrow<ParserInitializationException>()
+                .WithMessage("There are options which have no name. Use the .Named() method to give a name to an option");
         }
     }
 }

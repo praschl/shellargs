@@ -1,7 +1,8 @@
-using MiP.ShellArgs.Implementation;
-using MiP.ShellArgs.Tests.TestHelpers;
+using FluentAssertions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using MiP.ShellArgs.Implementation;
 
 namespace MiP.ShellArgs.Tests.Implementation
 {
@@ -22,8 +23,11 @@ namespace MiP.ShellArgs.Tests.Implementation
             const string arg = "thisIs,Just: a value|=withNoArgument";
             Argument argument = _factory.Parse(arg);
 
-            Assert.AreEqual(string.Empty, argument.Name);
-            Assert.AreEqual(arg, argument.Value);
+            argument.ShouldBeEquivalentTo(new Argument
+                                          {
+                                              Name = string.Empty,
+                                              Value = arg
+                                          });
         }
 
         [TestMethod]
@@ -32,8 +36,11 @@ namespace MiP.ShellArgs.Tests.Implementation
             const string arg = "-ThisIsMyArgument";
             Argument argument = _factory.Parse(arg);
 
-            Assert.IsTrue(string.IsNullOrEmpty(argument.Value));
-            Assert.AreEqual(arg.Substring(1), argument.Name);
+            argument.ShouldBeEquivalentTo(new Argument
+                                          {
+                                              Name = arg.Substring(1),
+                                              Value = string.Empty
+                                          });
         }
 
         [TestMethod]
@@ -42,8 +49,11 @@ namespace MiP.ShellArgs.Tests.Implementation
             const string arg = "-/-ThisIsMyArgumentWithMultiPrefixes";
             Argument argument = _factory.Parse(arg);
 
-            Assert.IsTrue(string.IsNullOrEmpty(argument.Value));
-            Assert.AreEqual(arg.Substring(1), argument.Name);
+            argument.ShouldBeEquivalentTo(new Argument
+                                          {
+                                              Name = arg.Substring(1),
+                                              Value = string.Empty
+                                          });
         }
 
         [TestMethod]
@@ -52,7 +62,11 @@ namespace MiP.ShellArgs.Tests.Implementation
             const string arg = "-name:value";
             Argument argument = _factory.Parse(arg);
 
-            Assert.AreEqual("name", argument.Name);
+            argument.ShouldBeEquivalentTo(new Argument
+                                          {
+                                              Name = "name"
+                                          },
+                o => o.Including(x => x.Name));
         }
 
         [TestMethod]
@@ -61,20 +75,20 @@ namespace MiP.ShellArgs.Tests.Implementation
             const string arg = "-:value";
             Argument argument = _factory.Parse(arg);
 
-            Assert.IsFalse(argument.HasName);
-            Assert.IsTrue(argument.HasValue);
-            Assert.AreEqual(arg, argument.Value);
+            argument.HasName.Should().BeFalse();
+            argument.HasValue.Should().BeTrue();
+            argument.Value.Should().Be(arg);
         }
 
         [TestMethod]
         public void AcceptStandAloneOptionPrefixAsValue()
         {
             const string arg = "/";
-
             Argument argument = _factory.Parse(arg);
-            Assert.IsFalse(argument.HasName);
-            Assert.IsTrue(argument.HasValue);
-            Assert.AreEqual("/", argument.Value);
+
+            argument.HasName.Should().BeFalse();
+            argument.HasValue.Should().BeTrue();
+            argument.Value.Should().Be("/");
         }
 
         [TestMethod]
@@ -83,7 +97,7 @@ namespace MiP.ShellArgs.Tests.Implementation
             const string arg = "-name:value";
             Argument argument = _factory.Parse(arg);
 
-            Assert.AreEqual("value", argument.Value);
+            argument.Value.Should().Be("value");
         }
 
         [TestMethod]
@@ -92,7 +106,7 @@ namespace MiP.ShellArgs.Tests.Implementation
             const string arg = "-name=";
             Argument argument = _factory.Parse(arg);
 
-            Assert.AreEqual(string.Empty, argument.Value);
+            argument.Value.Should().Be(string.Empty);
         }
 
         [TestMethod]
@@ -101,8 +115,8 @@ namespace MiP.ShellArgs.Tests.Implementation
             const string arg = "-name+";
             Argument argument = _factory.Parse(arg);
 
-            Assert.AreEqual("name", argument.Name);
-            Assert.AreEqual("+", argument.Value);
+            argument.Name.Should().Be("name");
+            argument.Value.Should().Be("+");
         }
 
         [TestMethod]
@@ -111,7 +125,7 @@ namespace MiP.ShellArgs.Tests.Implementation
             const string arg = "-name=value+";
             Argument argument = _factory.Parse(arg);
 
-            Assert.AreEqual("value+", argument.Value);
+            argument.Value.Should().Be("value+");
         }
     }
 }

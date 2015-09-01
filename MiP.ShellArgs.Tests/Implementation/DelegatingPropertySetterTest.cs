@@ -1,4 +1,6 @@
-﻿using MiP.ShellArgs.Implementation;
+﻿using FluentAssertions;
+
+using MiP.ShellArgs.Implementation;
 using MiP.ShellArgs.StringConversion;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,7 +26,7 @@ namespace MiP.ShellArgs.Tests.Implementation
 
             setter.SetValue("2");
 
-            Assert.AreEqual(2, value);
+            value.Should().Be(2);
         }
 
         [TestMethod]
@@ -37,8 +39,9 @@ namespace MiP.ShellArgs.Tests.Implementation
             setter.ValueSet += (o, e) => eventArgs = e;
             setter.SetValue("1");
 
-            Assert.IsNotNull(eventArgs);
-            Assert.AreEqual(1, eventArgs.Value);
+            var expectedArgs = new ValueSetEventArgs(typeof (int), 1);
+
+            eventArgs.ShouldBeEquivalentTo(expectedArgs);
         }
     }
 }
