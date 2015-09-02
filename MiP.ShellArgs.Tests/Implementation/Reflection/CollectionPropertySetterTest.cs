@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+
+using FluentAssertions;
 
 using MiP.ShellArgs.Implementation;
 using MiP.ShellArgs.Implementation.Reflection;
 using MiP.ShellArgs.StringConversion;
-using MiP.ShellArgs.Tests.TestHelpers;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -15,7 +17,6 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
     public class CollectionPropertySetterTest
     {
         private CollectionProperties _instance;
-        private List<int> _expected;
         private ReadonlyCollectionProperties _readonlyInstance;
         private PropertyInfo _readonlyPropertyInfo;
         private StringConverter _stringConverter;
@@ -33,11 +34,6 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
             _readonlyPropertyInfo = typeof (ReadonlyCollectionProperties).GetProperty("ReadOnly");
 
             _stringConverter = new StringConverter(new ParserSettings().ParserProvider);
-
-            _expected = new List<int>
-                        {
-                            1
-                        };
         }
 
         [TestMethod]
@@ -51,10 +47,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
             listSetter.SetValue("2");
             listSetter.SetValue("3");
 
-            _expected.Add(2);
-            _expected.Add(3);
-
-            CollectionAssert.AreEqual(_expected, _instance.List);
+            _instance.List.ShouldAllBeEquivalentTo(new[] {"1", "2", "3"}, o => o.WithStrictOrdering());
         }
 
         [TestMethod]
@@ -68,15 +61,18 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
             listSetter.SetValue("2");
             listSetter.SetValue("3");
 
-            Assert.AreEqual(0, _instance.List.Count);
+            _instance.List.Should().BeEmpty();
         }
 
         [TestMethod]
         public void ThrowsWhenReadOnlyPropertyIsNotInitialized()
         {
-            string expectedMessage = string.Format("The read only collection property '{0}' is not initialized.", _readonlyPropertyInfo);
-            ExceptionAssert.Throws<ParserInitializationException>(() => new CollectionPropertySetter(_stringConverter, _readonlyPropertyInfo, _readonlyInstance),
-                ex => Assert.AreEqual(expectedMessage, ex.Message));
+            Action constructor = () => new CollectionPropertySetter(_stringConverter, _readonlyPropertyInfo, _readonlyInstance);
+
+            string expectedMessage = $"The read only collection property '{_readonlyPropertyInfo}' is not initialized.";
+
+            constructor.ShouldThrow<ParserInitializationException>()
+                .Which.Message.Should().Be(expectedMessage);
         }
 
         [TestMethod]
@@ -86,7 +82,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
 
             listSetter.SetValue("1");
 
-            CollectionAssert.AreEqual(_expected, _instance.List);
+            _instance.List.ShouldBeEquivalentTo(new [] {1});
         }
 
         [TestMethod]
@@ -96,9 +92,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
 
             icollectionSetter.SetValue("1");
 
-            Assert.IsNotNull(_instance.ICollection);
-            Assert.AreEqual(1, _instance.ICollection.Count);
-            Assert.AreEqual(1, _instance.ICollection.First());
+            _instance.ICollection.ShouldAllBeEquivalentTo(new[] {1});
         }
 
         [TestMethod]
@@ -111,8 +105,8 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
             icollectionSetter.ValueSet += (o, e) => eventArgs = e;
             icollectionSetter.SetValue("1");
 
-            Assert.IsNotNull(eventArgs);
-            Assert.AreEqual(1, eventArgs.Value);
+            eventArgs.Should().NotBeNull();
+            eventArgs.Value.Should().Be(1);
         }
 
         private class CollectionProperties

@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 
+using FluentAssertions;
+
 using MiP.ShellArgs.Implementation;
 using MiP.ShellArgs.Implementation.Reflection;
 using MiP.ShellArgs.StringConversion;
@@ -32,7 +34,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
         {
             _valueSetter.SetValue("1");
 
-            Assert.AreEqual(1, _instance.Value);
+            _instance.Value.Should().Be(1);
         }
 
         [TestMethod]
@@ -40,7 +42,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
         {
             _nullableValueSetter.SetValue("1");
 
-            Assert.AreEqual(1, _instance.NullableValue);
+            _instance.NullableValue.Should().Be(1);
         }
 
         [TestMethod]
@@ -51,8 +53,8 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
             _nullableValueSetter.ValueSet += (o, e) => eventArgs = e;
             _nullableValueSetter.SetValue("1");
 
-            Assert.IsNotNull(eventArgs);
-            Assert.AreEqual(1, eventArgs.Value);
+            eventArgs.Should().NotBeNull();
+            eventArgs.Value.Should().Be(1);
         }
 
         public class TestProperties

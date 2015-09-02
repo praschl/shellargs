@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 
+using FluentAssertions;
+
 using MiP.ShellArgs.Implementation;
 using MiP.ShellArgs.Implementation.Reflection;
 using MiP.ShellArgs.StringConversion;
@@ -32,7 +34,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
         {
             _valueSetter.SetValue("true");
 
-            Assert.IsTrue(_instance.Value);
+            _instance.Value.Should().BeTrue();
         }
 
         [TestMethod]
@@ -42,7 +44,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
 
             _valueSetter.SetValue("False");
 
-            Assert.IsFalse(_instance.Value);
+            _instance.Value.Should().BeFalse();
         }
 
         [TestMethod]
@@ -52,7 +54,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
 
             _valueSetter.SetValue(TokenConverter.ToggleBoolean);
 
-            Assert.IsFalse(_instance.Value);
+            _instance.Value.Should().BeFalse();
         }
 
         [TestMethod]
@@ -62,7 +64,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
 
             _valueSetter.SetValue(TokenConverter.ToggleBoolean);
 
-            Assert.IsTrue(_instance.Value);
+            _instance.Value.Should().BeTrue();
         }
 
         [TestMethod]
@@ -70,8 +72,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
         {
             _nullableValueSetter.SetValue("true");
 
-            Assert.IsTrue(_instance.NullableValue.HasValue);
-            Assert.IsTrue(_instance.NullableValue.Value);
+            _instance.NullableValue.Should().BeTrue();
         }
 
         [TestMethod]
@@ -82,8 +83,8 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
             _nullableValueSetter.ValueSet += (o, e) => eventArgs = e;
             _nullableValueSetter.SetValue("true");
 
-            Assert.IsNotNull(eventArgs);
-            Assert.AreEqual(true, eventArgs.Value);
+            eventArgs.Should().NotBeNull();
+            eventArgs.Value.Should().Be(true);
         }
 
         private class BooleanProperties

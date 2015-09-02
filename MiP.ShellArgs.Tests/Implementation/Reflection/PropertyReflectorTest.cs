@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+using FluentAssertions;
+
 using MiP.ShellArgs.ContainerAttributes;
 using MiP.ShellArgs.Implementation;
 using MiP.ShellArgs.Implementation.Reflection;
@@ -28,13 +30,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
 
             var expected = new[] {"A", "B", "D", "E", "F", "G", "I"};
 
-            string[] expectedButNotFound = expected.Except(options).ToArray();
-            if (expectedButNotFound.Any())
-                Assert.Fail("Expected properties were not found: " + string.Join(", ", expectedButNotFound));
-
-            string[] foundButNotExpected = options.Except(expected).ToArray();
-            if (foundButNotExpected.Any())
-                Assert.Fail("Unexpected properties were found: " + string.Join(", ", foundButNotExpected));
+            options.ShouldAllBeEquivalentTo(expected);
         }
 
         [TestMethod]
@@ -42,9 +38,9 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
         {
             ICollection<OptionDefinition> options = _reflector.CreateOptionDefinitions(typeof (SetterProperties), new SetterProperties());
 
-            Assert.AreEqual(typeof (DefaultPropertySetter), options.First(o => o.Name == "A").ValueSetter.GetType());
-            Assert.AreEqual(typeof (CollectionPropertySetter), options.First(o => o.Name == "B").ValueSetter.GetType());
-            Assert.AreEqual(typeof (BooleanPropertySetter), options.First(o => o.Name == "C").ValueSetter.GetType());
+            options.First(o => o.Name == "A").ValueSetter.GetType().Should().Be(typeof (DefaultPropertySetter));
+            options.First(o => o.Name == "B").ValueSetter.GetType().Should().Be(typeof (CollectionPropertySetter));
+            options.First(o => o.Name == "C").ValueSetter.GetType().Should().Be(typeof (BooleanPropertySetter));
         }
 
         [TestMethod]
@@ -52,10 +48,20 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
         {
             OptionDefinition option = _reflector.CreateOptionDefinitions(typeof (AttributedProperties), new AttributedProperties()).First();
 
-            Assert.AreEqual("NewName", option.Name);
-            CollectionAssert.AreEquivalent(new[] {"a", "b", "c"}, option.Aliases.ToArray());
-            Assert.AreEqual(1, option.Position);
-            Assert.AreEqual(true, option.IsRequired);
+            OptionDefinition expected = new OptionDefinition
+                                        {
+                                            Name = "NewName",
+                                            Aliases =new List<string>
+                                                     {
+                                                "a",
+                                                "b",
+                                                "c"
+                                            },
+                                            Position = 1,
+                                            IsRequired = true
+                                        };
+
+            option.ShouldBeEquivalentTo(expected, o => o.Excluding(x => x.ValueSetter));
         }
 
         [TestMethod]
@@ -63,21 +69,15 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
         {
             ICollection<OptionDefinition> options = _reflector.CreateOptionDefinitions(typeof (SetterProperties), new SetterProperties());
 
-            OptionDefinition option = options.First(o => o.Name == "A");
-            Assert.IsFalse(option.IsBoolean);
-            Assert.IsFalse(option.IsCollection);
+            OptionDefinition[] expected =
+            {
+                new OptionDefinition {Name = "A",IsBoolean = false, IsCollection = false},
+                new OptionDefinition {Name = "B",IsBoolean = false, IsCollection = true},
+                new OptionDefinition {Name = "C",IsBoolean = true, IsCollection = false},
+                new OptionDefinition {Name = "D",IsBoolean = true, IsCollection = true}
+            };
 
-            option = options.First(o => o.Name == "B");
-            Assert.IsFalse(option.IsBoolean);
-            Assert.IsTrue(option.IsCollection);
-
-            option = options.First(o => o.Name == "C");
-            Assert.IsTrue(option.IsBoolean);
-            Assert.IsFalse(option.IsCollection);
-
-            option = options.First(o => o.Name == "D");
-            Assert.IsTrue(option.IsBoolean);
-            Assert.IsTrue(option.IsCollection);
+            options.ShouldAllBeEquivalentTo(expected, o => o.Excluding(x => x.ValueSetter));
         }
 
         private class RelevantProperties
