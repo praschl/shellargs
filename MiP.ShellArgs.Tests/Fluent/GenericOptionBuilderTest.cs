@@ -1,5 +1,7 @@
 ﻿using FakeItEasy;
 
+using FluentAssertions;
+
 using MiP.ShellArgs.Fluent;
 using MiP.ShellArgs.Implementation;
 using MiP.ShellArgs.StringConversion;
@@ -33,13 +35,13 @@ namespace MiP.ShellArgs.Tests.Fluent
         public void SetsIsBoolean()
         {
             new OptionBuilder<bool>(_parser, _optionDefinition, _stringConverter, _optionContext);
-            Assert.IsTrue(_optionDefinition.IsBoolean);
+            _optionDefinition.IsBoolean.Should().BeTrue();
         }
 
         [TestMethod]
-        public void DoesNotSetIsBoolean()
+        public void IsBooleanIsFalseByDefault()
         {
-            Assert.IsFalse(_optionDefinition.IsBoolean);
+            _optionDefinition.IsBoolean.Should().BeFalse();
         }
 
         [TestMethod]
@@ -51,10 +53,11 @@ namespace MiP.ShellArgs.Tests.Fluent
 
             A.CallTo(() => _stringConverter.To(typeof (string), "1")).Returns("1");
 
-            Assert.IsNotNull(_optionDefinition.ValueSetter);
+            _optionDefinition.ValueSetter.Should().NotBeNull();
+
             _optionDefinition.ValueSetter.SetValue("1");
 
-            Assert.IsTrue(wasCalled);
+            wasCalled.Should().BeTrue();
         }
     }
 }

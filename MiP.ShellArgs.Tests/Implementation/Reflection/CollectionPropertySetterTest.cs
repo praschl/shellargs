@@ -72,7 +72,7 @@ namespace MiP.ShellArgs.Tests.Implementation.Reflection
             string expectedMessage = $"The read only collection property '{_readonlyPropertyInfo}' is not initialized.";
 
             constructor.ShouldThrow<ParserInitializationException>()
-                .Which.Message.Should().Be(expectedMessage);
+                .WithMessage(expectedMessage);
         }
 
         [TestMethod]

@@ -2,6 +2,8 @@
 
 using FakeItEasy;
 
+using FluentAssertions;
+
 using MiP.ShellArgs.Fluent;
 using MiP.ShellArgs.Implementation;
 using MiP.ShellArgs.StringConversion;
@@ -34,7 +36,7 @@ namespace MiP.ShellArgs.Tests.Fluent
         {
             _builder.Named("Something");
 
-            Assert.AreEqual("Something", _optionDefinition.Name);
+            _optionDefinition.Name.Should().Be("Something");
         }
 
         [TestMethod]
@@ -44,7 +46,7 @@ namespace MiP.ShellArgs.Tests.Fluent
 
             _builder.Alias(expected);
 
-            CollectionAssert.AreEquivalent(expected, _optionDefinition.Aliases.ToArray());
+            _optionDefinition.Aliases.ShouldAllBeEquivalentTo(expected);
         }
 
         [TestMethod]
@@ -52,8 +54,8 @@ namespace MiP.ShellArgs.Tests.Fluent
         {
             _builder.AtPosition(1);
 
-            Assert.AreEqual(1, _optionDefinition.Position);
-            Assert.IsTrue(_optionDefinition.IsPositional);
+            _optionDefinition.Position.Should().Be(1);
+            _optionDefinition.IsPositional.Should().BeTrue();
         }
 
         [TestMethod]
@@ -61,7 +63,7 @@ namespace MiP.ShellArgs.Tests.Fluent
         {
             _builder.Required();
 
-            Assert.IsTrue(_optionDefinition.IsRequired);
+            _optionDefinition.IsRequired.Should().BeTrue();
         }
 
         [TestMethod]
@@ -69,7 +71,7 @@ namespace MiP.ShellArgs.Tests.Fluent
         {
             _builder = (OptionBuilder)_builder.Collection;
 
-            Assert.IsTrue(_optionDefinition.IsCollection);
+            _optionDefinition.IsCollection.Should().BeTrue();
         }
 
         [TestMethod]
@@ -77,7 +79,7 @@ namespace MiP.ShellArgs.Tests.Fluent
         {
             _builder.ValueDescription("omg");
 
-            Assert.AreEqual("omg", _optionDefinition.Description.ValueDescription);
+            _optionDefinition.Description.ValueDescription.Should().Be("omg");
         }
     }
 }

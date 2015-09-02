@@ -73,7 +73,6 @@
     <Compile Include="StringConversion\StringToEnumParserTest.cs" />
     <Compile Include="StringConversion\StringToKeyValuePairParserTest.cs" />
     <Compile Include="StringConversion\StringToObjectParserTest.cs" />
-    <Compile Include="TestHelpers\ExceptionAssert.cs" />
     <Compile Include="Implementation\ArgumentFactoryTest.cs" />
     <Compile Include="Implementation\Reflection\BooleanPropertySetterTest.cs" />
     <Compile Include="Implementation\Reflection\CollectionPropertySetterTest.cs" />

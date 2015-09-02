@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using FluentAssertions;
+
 using MiP.ShellArgs.Fluent;
-using MiP.ShellArgs.Tests.TestHelpers;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -34,8 +35,8 @@ namespace MiP.ShellArgs.Tests.Fluent
             var result1 = _result.Result<TestContainer1>();
             var result2 = _result.Result<TestContainer2>();
 
-            Assert.AreSame(_container1, result1);
-            Assert.AreSame(_container2, result2);
+            result1.Should().BeSameAs(_container1);
+            result2.Should().BeSameAs(_container2);
         }
 
         [TestMethod]
@@ -47,15 +48,17 @@ namespace MiP.ShellArgs.Tests.Fluent
             _result.ResultTo(out outResult1);
             _result.ResultTo(out outResult2);
 
-            Assert.AreSame(_container1, outResult1);
-            Assert.AreSame(_container2, outResult2);
+            outResult1.Should().BeSameAs(_container1);
+            outResult2.Should().BeSameAs(_container2);
         }
 
         [TestMethod]
         public void FailsWhenTypeNotFound()
         {
-            ExceptionAssert.Throws<KeyNotFoundException>(() => _result.Result<string>(),
-                ex => Assert.AreEqual("Type System.String is not a known argument container type, add it with RegisterContainer<T>(), RegisterContainer<T>(T instance) or Parse<T>().", ex.Message));
+            Action getResult = () => _result.Result<string>();
+
+            getResult.ShouldThrow<KeyNotFoundException>()
+                .WithMessage("Type System.String is not a known argument container type, add it with RegisterContainer<T>(), RegisterContainer<T>(T instance) or Parse<T>().");
         }
 
         #region Classes used by Test

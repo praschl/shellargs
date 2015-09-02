@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 using FakeItEasy;
+
+using FluentAssertions;
 
 using MiP.ShellArgs.ContainerAttributes;
 using MiP.ShellArgs.Fluent;
 using MiP.ShellArgs.Implementation;
 using MiP.ShellArgs.Implementation.Reflection;
 using MiP.ShellArgs.StringConversion;
-using MiP.ShellArgs.Tests.TestHelpers;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -38,9 +40,14 @@ namespace MiP.ShellArgs.Tests.Fluent
         {
             OptionDefinition[] definitions = _builder.OptionDefinitions.ToArray();
 
-            Assert.AreEqual(3, definitions.Length);
-            Assert.AreEqual("AString", definitions[0].Name);
-            Assert.AreEqual("ANumber", definitions[1].Name);
+            OptionDefinition[] expected = 
+                {
+                new OptionDefinition {Name = "AString"},
+                new OptionDefinition {Name = "ANumber"},
+                new OptionDefinition {Name = "Collection"}
+            };
+
+            definitions.ShouldAllBeEquivalentTo(expected, o => o.Including(x => x.Name));
         }
 
         [TestMethod]
@@ -52,10 +59,10 @@ namespace MiP.ShellArgs.Tests.Fluent
 
             _builder.OptionDefinitions.First(x => x.Name == "AString").ValueSetter.SetValue("Hurray");
 
-            Assert.IsNotNull(stringContainer);
-            Assert.AreEqual("AString", stringContainer.Option);
-            Assert.AreEqual("Hurray", stringContainer.Value);
-            Assert.AreEqual("Hurray", stringContainer.Container.AString);
+            stringContainer.Should().NotBeNull();
+            stringContainer.Option.Should().Be("AString");
+            stringContainer.Value.Should().Be("Hurray");
+            stringContainer.Container.AString.Should().Be("Hurray");
         }
 
         [TestMethod]
@@ -67,10 +74,10 @@ namespace MiP.ShellArgs.Tests.Fluent
 
             _builder.OptionDefinitions.First(x => x.Name == "AString").ValueSetter.SetValue("Hurray");
 
-            Assert.IsNotNull(stringContainer);
-            Assert.AreEqual("AString", stringContainer.Option);
-            Assert.AreEqual("Hurray", stringContainer.Value);
-            Assert.AreEqual("Hurray", stringContainer.Container.AString);
+            stringContainer.Should().NotBeNull();
+            stringContainer.Option.Should().Be("AString");
+            stringContainer.Value.Should().Be("Hurray");
+            stringContainer.Container.AString.Should().Be("Hurray");
         }
 
         [TestMethod]
@@ -85,28 +92,31 @@ namespace MiP.ShellArgs.Tests.Fluent
             setter.SetValue("Hello");
             setter.SetValue("World");
 
-            CollectionAssert.AreEqual(new[] {"Hello", "World"}, values.ToArray());
+            values.ShouldAllBeEquivalentTo(new[] { "Hello", "World" });
         }
 
         [TestMethod]
         public void RegisterOptionDoesNotAcceptPropertyOfCollection()
         {
-            ExceptionAssert.Throws<NotSupportedException>(
-                () => _builder.With(c => c.Collection.Count), Assert.IsNotNull);
+            Action with = () => _builder.With(c => c.Collection.Count);
+
+            with.ShouldThrow<NotSupportedException>();
         }
 
         [TestMethod]
         public void RegisterOptionDoesNotAcceptPropertyOfProperty()
         {
-            ExceptionAssert.Throws<NotSupportedException>(
-                () => _builder.With(c => c.Child.AString), Assert.IsNotNull);
+            Action with = () => _builder.With(c => c.Child.AString);
+
+            with.ShouldThrow<NotSupportedException>();
         }
 
         [TestMethod]
         public void RegisterOptionCollectionDoesNotAcceptAnythingButCurrentValue()
         {
-            ExceptionAssert.Throws<NotSupportedException>(
-                () => _builder.With(c => c.Collection.Last()), Assert.IsNotNull);
+            Action with = () => _builder.With(c => c.Collection.Last());
+
+            with.ShouldThrow<NotSupportedException>();
         }
 
         [TestMethod]
@@ -114,15 +124,18 @@ namespace MiP.ShellArgs.Tests.Fluent
         {
             var cont = new TestContainer();
 
-            ExceptionAssert.Throws<NotSupportedException>(
-                () => _builder.With(c => cont.Collection.CurrentValue()), Assert.IsNotNull);
+            Action with = () => _builder.With(c => cont.Collection.CurrentValue());
+
+            with.ShouldThrow<NotSupportedException>();
         }
 
         [TestMethod]
         public void RegisterOptionThrowsWhenOptionIsUnknown()
         {
-            ExceptionAssert.Throws<ParserInitializationException>(() => _builder.With<string>("nooption"),
-                ex => Assert.AreEqual(string.Format("The container {0} does not provide the option '{1}'.", typeof (TestContainer), "nooption"), ex.Message));
+            Action with = () => _builder.With<string>("nooption");
+
+            with.ShouldThrow<ParserInitializationException>()
+                .WithMessage($"The container {typeof(TestContainer)} does not provide the option '{"nooption"}'.");
         }
 
         public class TestContainer

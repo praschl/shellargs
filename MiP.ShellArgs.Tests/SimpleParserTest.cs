@@ -297,8 +297,8 @@ namespace MiP.ShellArgs.Tests
         {
             Action parse = () => Parser.Parse<NumberOption>("-Number", "abc");
 
-            parse.ShouldThrow<ParsingException>().Which.Message.Should()
-                .StartWith("Could not parse value 'abc' to type System.Int32").And.EndWith(".");
+            parse.ShouldThrow<ParsingException>()
+                .WithMessage("Could not parse value 'abc' to type System.Int32*.");
         }
 
         [TestMethod]
